@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Contact | Cylosh Blog</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<meta name="description" content="Cyberlinks Open Source" />
+	<meta name="description" content="Cyberlinks Open Source Supporter" />
 	<meta name="keywords" content="Cyberspace, Cyberlinks, Cylosh, Blog, Open Source" />
 	<meta name="author" content="AI Cylosh" />
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -15,6 +15,13 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+		<link rel="stylesheet" type="text/css" href="css/particles.css">
+		<!-- Set config -->
+		<script type="application/x-javascript" src="js/particles/winter.js"></script>
+		<script>
+			var particlesID = 'particlesjs-winter';
+			var particlesHeight = '240px';
+		</script>
 </head>
 <body>
 
@@ -23,7 +30,7 @@
 		<div class="overlay">
 			<!-- start:header-top -->
 			<div class="header-top">
-				<div class="text-center">
+				<div class="text-center" id="particlesjs-winter">
 					<div class="sosmed-header-top">
 						<a href="https://twitter.com/Cylosh"><i class="fa fa-twitter" data-toggle="tooltip" data-placement="bottom" title="Twitter"></i></a>
 						<a href="http://stackoverflow.com/users/2039952/cylosh?tab=profile"><i class="fa fa-github" data-toggle="tooltip" data-placement="bottom" title="Github"></i></a>
@@ -54,66 +61,70 @@
 
 	<!-- start:navbar -->
 	<nav class="navbar navbar-default navbar-static-top" role="navigation">
-		<div class="container">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="index.html"><strong><i class="fa fa-sun-o"></i> KAGUM.</strong></a>
-			</div>
-		
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse navbar-ex1-collapse">
-				<ul class="nav navbar-nav">
-					<li><a href="index.html">HOME</a></li>
-					<li><a href="about.html">ABOUT</a></li>
-					<li class="dropdown active">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">CONTACT <b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="contact.html">CONTACT</a></li>
-							<li><a href="contact-alt.html">CONTACT WITH SIDEBAR</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">PAGES <b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="single.html">SINGLE BLOG</a></li>
-							<li><a href="login.html">LOGIN</a></li>
-							<li><a href="login-alt.html">LOGIN ALTERNATIF</a></li>
-							<li><a href="register.html">REGISTER</a></li>
-							<li><a href="register-alt.html">REGISTER ALTERNATIF</a></li>
-							<li><a href="blank.html">BLANK PAGE</a></li>
-						</ul>
-					</li>
-				</ul>
-				<form class="navbar-form navbar-right" role="search">
-					<div class="input-group">
-				      	<input type="text" class="form-control" placeholder="Search">
-				      	<span class="input-group-btn">
-				        	<button class="btn btn-default" type="button">Go!</button>
-				      	</span>
-				    </div>
-				</form>
-			</div><!-- /.navbar-collapse -->
-		</div>
+		 <div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					 <span class="sr-only">Toggle navigation</span>
+					 <span class="icon-bar"></span>
+					 <span class="icon-bar"></span>
+					 <span class="icon-bar"></span>
+					 </button>
+					 <a class="navbar-brand" href="index.html"><strong><i class="fa fa-sun-o"></i> Cyberlinks Open Source</strong></a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse navbar-ex1-collapse">
+			
+					 <ul class="nav navbar-nav">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">BLOG <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="index.html">HOME</a></li>
+						<li><a href="login-alt.html">LOGIN</a></li>
+					<li><a href="register-alt.html">REGISTER</a></li>
+					</ul>
+				</li>
+				<li ><a href="about.html">ABOUT</a></li>
+							<li><a href="contact.html" class="active">CONTACT</a></li>
+
+
+							<li class="dropdown">
+								 <a href="#"  class="dropdown-toggle" data-toggle="dropdown">LINKS <b class="caret"></b></a>
+								 <ul class="dropdown-menu">
+						<li><a href="resources.html">RESOURCES</a></li>
+						<li><a href="https://www.freelancer.com/affiliates/email/4790347/">REQUEST A QUOTE <i class="fa fa-wrench" aria-hidden="true"></i>
+						<li><a href="single.html">SINGLE BLOG</a></li>
+
+								 </ul>
+							</li>
+
+					 </ul>
+					 <form class="navbar-form navbar-right" role="search">
+				
+							<div class="input-group">
+								 <input type="text" class="form-control" placeholder="Search">
+								 <span class="input-group-btn">
+								 <button class="btn btn-default" type="button">Go!</button>
+								 </span>
+							</div>
+					 </form>
+				</div>
+				<!-- /.navbar-collapse -->
+		 </div>
 	</nav>
 	<!-- end:navbar -->
 
 	<!-- start:main contact -->
 	<div id="main-contact">
 		<div class="maps-default">
-			<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63245.97055414073!2d110.37484495!3d-7.803250449999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a5787bd5b6bc5%3A0x21723fd4d3684f71!2sYogyakarta!5e0!3m2!1sen!2s!4v1404127909069" width="100%" height="550" frameborder="0" style="border:0"></iframe>
+			<iframe width="100%" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=Sibiu%2C%20Rom%C3%A2nia&key=AIzaSyAzT_9I-TQQNKUGa4slWIyedfQ-vAtt7Xw" allowfullscreen></iframe>
 		</div>
 		<div class="content-contact">
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-8 col-lg-offset-2">
 						<div class="text-center	tagline-contact">
-							<span>KOWE ISO NGEHUBUNGI AKU LAN TEAM KU SEKO LIVE CHAT, EMAIL, SKYPE, FACEBOOK, TWITTER, TELEPHONE KARO SING IYANE. NEK RA HUBUNGI AKU WAE NING KENE 0856 4398 763</span>
+							<span>Technical guiding tool making your software idea a reality.</span>
 						</div>
 					</div>
 				</div>
@@ -138,7 +149,7 @@
 										<textarea class="form-control" rows="10" placeholder="Messages.."></textarea>
 									</div>
 									<div class="form-group col-md-12">
-										<button class="btn btn-lg btn-default">SEND ME</button>
+										<button class="btn btn-lg btn-default"><i class="fa fa-envelope"></i> SEND ME</button>
 									</div>
 								</div>
 							</form>
@@ -149,32 +160,18 @@
 							<h3 class="title-sidebar-contact">
 								<span>//</span> MY SERVICE
 							</h3>
-							<p>Service iki pancen di kanggoke gawe kalian sing rep takon - takon karo team cahcode. Ojo isin-isin yo.</p>
-							<div class="text-center sosmed-contact">
-								<span>
-									<a href="#"><i class="fa fa-facebook fa-2x"></i></a>
-									<a href="#"><i class="fa fa-twitter fa-2x"></i></a>
-									<a href="#"><i class="fa fa-google-plus fa-2x"></i></a>
-									<a href="#"><i class="fa fa-youtube fa-2x"></i></a>
-									<a href="#"><i class="fa fa-envelope fa-2x"></i></a>
-								</span>
-							</div>
+							<p>Development and management of web applications and sites using technologies such as PHP, SQL, Regex, SOAP,
+ HTML5 (Velocity), CSS3 (SCSS/Sass, Bootstrap, Responsive and Adaptive methodologies), JavaScript (jQuery, Underscore.js, Angular.js) and integrating Social Media APIs, Google API, eBay store customization, Bitcoin & Blockchain technology, Web Scraping/Crawlers</p>
 						</div>
 						<div class="sidebar-contact">
 							<h3 class="title-sidebar-contact">
 								<span>//</span> MY ADDRESS
 							</h3>
 							<address>
-							  	<strong>Kagum, Inc.</strong><br><br>
-							  	795 Folsom Ave, Suite 600<br>
-							  	San Francisco, CA 94107<br>
-							  	<abbr title="Phone">P:</abbr> (123) 456-7890
-							</address>
-
-							<address>
-							  	<strong>Full Name</strong><br><br>
-							  	<i class="fa fa-envelope"></i> <a href="mailto:#">first.last@example.com</a><br>
-							  	<i class="fa fa-share-alt"></i> <a href="#">http://www.domainname.com</a>
+							  	<strong>Cylosh, Freelancer</strong><br><br>
+							  	Tilișca, Sibiu<br>
+							  	SB, 550145 România <br>
+							  	<abbr title="Phone">P:</abbr> (+40) 734-020-123<br>
 							</address>
 						</div>
 					</div>
@@ -294,7 +291,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-8">
-					<p>Copyright © 2014 YourCompany</p>
+					<p>Copyright © 2015-2017 Cylosh</p>
 				</div>
 				<div class="col-lg-4">
 					<p class="pull-right">
@@ -311,7 +308,8 @@
 	<!-- start:javascript -->
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
-	<script src="js/kagum.js"></script>
+	<script src="js/particles/min.js"></script>
+	<script src="js/particles/init.js"></script>
 	<!-- end:javascript -->
 
 </body>

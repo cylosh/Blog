@@ -7,7 +7,7 @@
       <title>About | Cylosh Blog</title>
 	  <link rel="icon" href="favicon.ico" type="image/x-icon" />
       <link rel="stylesheet" type="text/css" href="css/style.css">
-      <meta name="description" content="Cyberlinks Open Source" />
+      <meta name="description" content="Cyberlinks Open Source Supporter" />
       <meta name="keywords" content="Cyberspace, Cyberlinks, Cylosh, Blog, Open Source" />
       <meta name="author" content="AI Cylosh" />
       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -16,14 +16,23 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
       <![endif]-->
-   </head>
+		<link rel="stylesheet" type="text/css" href="css/particles.css">
+		<!-- Set configs -->
+		<script type="application/x-javascript" src="js/particles/winter.js"></script>
+		<script>
+			var particlesID = 'particlesjs-winter';
+			var particlesHeight = '240px';
+		</script>
+	</head>
    <body>
+		
+			
       <!-- start:header -->
       <div id="header">
          <div class="overlay">
             <!-- start:header-top -->
             <div class="header-top">
-               <div class="text-center">
+               <div class="text-center" id="particlesjs-winter">
                   <div class="sosmed-header-top">
 						<a href="https://twitter.com/Cylosh"><i class="fa fa-twitter" data-toggle="tooltip" data-placement="bottom" title="Twitter"></i></a>
 						<a href="http://stackoverflow.com/users/2039952/cylosh?tab=profile"><i class="fa fa-github" data-toggle="tooltip" data-placement="bottom" title="Github"></i></a>
@@ -34,7 +43,7 @@
                </div>
             </div>
             <!-- end:header-top -->
-            <div class="container">
+            <div  class="container">
                <div class="row">
                   <div class="col-lg-4 col-lg-offset-4 col-md-4">
                      <div class="text-center">
@@ -66,32 +75,33 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
+					
                <ul class="nav navbar-nav">
-                  <li><a href="index.html">HOME</a></li>
-                  <li class="active"><a href="about.html">ABOUT</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">BLOG <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="index.html">HOME</a></li>
+								<li><a href="login-alt.html">LOGIN</a></li>
+							<li><a href="register-alt.html">REGISTER</a></li>
+							</ul>
+						</li>
+						<li class="active"><a href="about.html">ABOUT</a></li>
+                  <li><a href="contact.html">CONTACT</a></li>
+
+
                   <li class="dropdown">
-                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">CONTACT <b class="caret"></b></a>
+                     <a href="#"  class="dropdown-toggle" data-toggle="dropdown">LINKS <b class="caret"></b></a>
                      <ul class="dropdown-menu">
-                        <li><a href="contact.html">CONTACT</a></li>
-                        <li><a href="contact-alt.html">CONTACT WITH SIDEBAR</a></li>
+								<li><a href="resources.html">RESOURCES</a></li>
+								<li><a href="https://www.freelancer.com/affiliates/email/4790347/">REQUEST A QUOTE <i class="fa fa-wrench" aria-hidden="true"></i>
+								<li><a href="single.html">SINGLE BLOG</a></li>
+
                      </ul>
                   </li>
-                  <li class="dropdown">
-                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">PAGES <b class="caret"></b></a>
-                     <ul class="dropdown-menu">
-                        <li><a href="single.html">SINGLE BLOG</a></li>
-                        <li><a href="login.html">LOGIN</a></li>
-                        <li><a href="login-alt.html">LOGIN ALTERNATIF</a></li>
-                        <li><a href="register.html">REGISTER</a></li>
-                        <li><a href="register-alt.html">REGISTER ALTERNATIF</a></li>
-                        <li><a href="blank.html">BLANK PAGE</a></li>
-                     </ul>
-                  </li>
-                  <li><a href="links.html">LINKS</a></li>
-                  <li><a href="https://www.freelancer.com/affiliates/email/4790347/">REQUEST A QUOTE <i class="fa fa-wrench" aria-hidden="true"></i>
-</a></li>
+
                </ul>
                <form class="navbar-form navbar-right" role="search">
+						
                   <div class="input-group">
                      <input type="text" class="form-control" placeholder="Search">
                      <span class="input-group-btn">
@@ -435,7 +445,13 @@
       <script src="js/jquery-1.11.1.min.js"></script>
       <script src="js/bootstrap.min.js"></script>
       <script src="js/owl.carousel.min.js"></script>
-      <script src="js/kagum.js"></script>
+		<script src="js/particles/min.js"></script>
+		<script src="js/particles/init.js"></script>
+		<script src="js/init.js"></script>
       <!-- end:javascript -->
+		
+		
+</script>
+
    </body>
 </html>
