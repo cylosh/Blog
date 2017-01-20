@@ -2,7 +2,7 @@
 
 $('i.fa').tooltip();
 
-// owl carousel
+// initiate configuration of different modules
 
 $(document).ready(function() {
  
@@ -23,5 +23,7 @@ $(document).ready(function() {
       	// itemsMobile : false
  
   	});
+	
+
  
 });
