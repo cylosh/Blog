@@ -24,8 +24,10 @@ $(document).ready(function() {
  
   	});
 	
-	$('#showdown').click(function(){
+	var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+console.log(scrollBottom);
+	$('a[href=#showdown]').click(function(){
 		$('body').animate({
-			scrollTop: $(".navbar-header").offset().top},1500);});
+			scrollBottom: 0},4000);});
 
 });

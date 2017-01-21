@@ -472,6 +472,11 @@ a:hover{
 	font-weight: 600;
 }
 
+#header .button-down:hover {
+	cursor: pointer;
+	color: #f1c40f;
+}
+
 #header .button-down i.fa{
 	font-weight: 600;
 	font-size: 18pt;

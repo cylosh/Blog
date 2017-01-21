@@ -2,7 +2,7 @@
 
 $('i.fa').tooltip();
 
-// initiate configuration of different modules
+// owl carousel
 
 $(document).ready(function() {
  
@@ -23,9 +23,5 @@ $(document).ready(function() {
       	// itemsMobile : false
  
   	});
-	
-	$('#showdown').click(function(){
-		$('body').animate({
-			scrollTop: $(".navbar-header").offset().top},1500);});
-
+ 
 });
