@@ -1,7 +1,8 @@
-# Blog
+# [Blog](https://cylo.ro/)
 Bootstrap combined with jQuery for frontend. The dashboard made through PHP api components.
 
 # External Libraries
+[jQuery](https://github.com/jquery/jquery)
 
 [Particles JS](https://github.com/VincentGarreau/particles.js)
 
