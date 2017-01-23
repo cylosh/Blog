@@ -57,7 +57,12 @@ require("config.php");
 				
 			}
 			$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-		
+			
+			// bypass unix case sensitive file system
+			if (preg_match('%(.*?/Controllers/)([a-z])(.*)%', $fileName, $matchParts)) {
+				$fileName =  $matchParts['1'].ucfirst($matchParts['2']).$matchParts['3'];
+			}
+
 			$fullFileName = $includePath . DIRECTORY_SEPARATOR . $fileName;
 			
 			if (file_exists($fullFileName)) {
