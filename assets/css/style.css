@@ -405,7 +405,7 @@ a:hover{
 ===============================*/
 
 #header{
-	background: url('../img/bg-body.jpg') no-repeat center center fixed;
+	background: url('../images/bg-body.jpg') no-repeat center center fixed;
 	color: #ecf0f1;
 	background-size: cover;
 	-webkit-background-size: cover;
@@ -1135,7 +1135,7 @@ ul.comments p.meta{
 ===============================*/
 
 #login{
-	background: url('../img/bg-body.jpg')no-repeat center center fixed;
+	background: url('../images/bg-body.jpg')no-repeat center center fixed;
 	background-size: cover;
 	-webkit-background-size: cover;
 	   -moz-background-size: cover;
@@ -1198,7 +1198,7 @@ ul.comments p.meta{
 ===============================*/
 
 #register{
-	background: url('../img/bg-body.jpg')no-repeat center center fixed;
+	background: url('../images/bg-body.jpg')no-repeat center center fixed;
 	background-size: cover;
 	-webkit-background-size: cover;
 	   -moz-background-size: cover;

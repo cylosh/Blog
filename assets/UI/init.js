@@ -28,8 +28,8 @@ $(document).ready(function() {
 		$('body').animate({
 			scrollTop: $(".navbar-header").offset().top},1500);});
 
-	
-	$('body').animate({
-		scrollTop: $("#scrolltojs").offset().top},3000);
-
+	if ( $( "#scrolltojs" ).length ) {
+		$('body').animate({
+			scrollTop: $("#scrolltojs").offset().top},3000);
+	}
 });

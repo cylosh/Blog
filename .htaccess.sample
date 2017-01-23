@@ -1,0 +1,33 @@
+Options All -Indexes
+ServerSignature Off
+
+<Files .htaccess>
+ order allow,deny
+ deny from all
+</Files>
+
+
+# edit RewriteBase; don't modify unless 
+# you know what you're doing
+# (©cylosh 23 Ian 2017)
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteBase /path/to/
+
+RewriteRule ^error(.*?)$ includes/error.php?code=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3" [L,QSA]
+</IfModule>
+# edit RewriteBase; don't modify unless 
+# you know what you're doing
+
+# edit PATH based on installation path
+# (©cylosh 23 Ian 2017)
+ErrorDocument 400     /path/to/error/400
+ErrorDocument 403     /path/to/error/403
+ErrorDocument 404     /path/to/error/404
+ErrorDocument 405     /path/to/error/405
+ErrorDocument 501     /path/to/error/501
+ErrorDocument 503     /path/to/error/503

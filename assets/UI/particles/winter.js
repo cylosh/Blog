@@ -20,7 +20,7 @@ var particlesConf = {
 			"nb_sides": 3
 		  },
 		  "image": {
-			"src": "img/github.svg",
+			"src": "assets/images/github.svg",
 			"width": 100,
 			"height": 100
 		  }

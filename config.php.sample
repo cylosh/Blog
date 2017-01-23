@@ -1,0 +1,9 @@
+<?php
+// block direct access
+if (__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
+    header("Location: /error/403");
+    exit;
+}
+
+// base where application is hosted
+define("SITE_URI", ""); // don't include ending trail

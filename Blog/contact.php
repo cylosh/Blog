@@ -1,118 +1,16 @@
-<!DOCTYPE html>
+<?php
+define("TITLE", 'Contact | Cylosh Blog');
+define("HEADER_TITLE", 'Contact Me');
+define("HEADER_SUBTITLE", '');
+?><!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Contact | Cylosh Blog</title>
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<meta name="description" content="Cyberlinks Open Source Supporter" />
-	<meta name="keywords" content="Cyberspace, Cyberlinks, Cylosh, Blog, Open Source" />
-	<meta name="author" content="AI Cylosh" />
-	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-		<link rel="stylesheet" type="text/css" href="css/particles.css">
-		<!-- Set config -->
-		<script type="application/x-javascript" src="js/particles/winter.js"></script>
-		<script>
-			var particlesID = 'particlesjs-winter';
-			var particlesHeight = '240px';
-		</script>
-</head>
+<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
+
 <body>
 
-	<!-- start:header -->
-	<div id="header">
-		<div class="overlay">
-			<!-- start:header-top -->
-			<div class="header-top">
-				<div class="text-center" id="particlesjs-winter">
-					<div class="sosmed-header-top">
-						<a href="https://twitter.com/Cylosh"><i class="fa fa-twitter" data-toggle="tooltip" data-placement="bottom" title="Twitter"></i></a>
-						<a href="http://stackoverflow.com/users/2039952/cylosh?tab=profile"><i class="fa fa-github" data-toggle="tooltip" data-placement="bottom" title="Github"></i></a>
-						<a href="https://github.com/cylosh"><i class="fa fa-stack-overflow" data-toggle="tooltip" data-placement="bottom" title="StackOverflow"></i></a>
-						<a href="https://www.linkedin.com/in/cylosh"><i class="fa fa-linkedin" data-toggle="tooltip" data-placement="bottom" title="Linkedin"></i></a>
-						<a href="skype:cylosh?call"><i class="fa fa-skype" data-toggle="tooltip" data-placement="bottom" title="Skype"></i></a>
-					</div>
-				</div>
-			</div>
-			<!-- end:header-top -->
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-4 col-lg-offset-4 col-md-4">
-						<div class="text-center">
-							<div class="title-header">
-								<h1>
-									<span>//</span> Contact Me
-								</h1>
-								<p>Ionuț A. Tudor</p>
-							</div>	
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end:header -->
+<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
+<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
 
-	<!-- start:navbar -->
-	<nav class="navbar navbar-default navbar-static-top" role="navigation">
-		 <div class="container">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-					 <span class="sr-only">Toggle navigation</span>
-					 <span class="icon-bar"></span>
-					 <span class="icon-bar"></span>
-					 <span class="icon-bar"></span>
-					 </button>
-					 <a class="navbar-brand" href="index.html"><strong><i class="fa fa-sun-o"></i> Cyberlinks Open Source</strong></a>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse navbar-ex1-collapse">
-			
-					 <ul class="nav navbar-nav">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">BLOG <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="index.html">HOME</a></li>
-						<li><a href="login-alt.html">LOGIN</a></li>
-					<li><a href="register-alt.html">REGISTER</a></li>
-					</ul>
-				</li>
-				<li ><a href="about.html">ABOUT</a></li>
-							<li><a href="contact.html" class="active">CONTACT</a></li>
-
-
-							<li class="dropdown">
-								 <a href="#"  class="dropdown-toggle" data-toggle="dropdown">LINKS <b class="caret"></b></a>
-								 <ul class="dropdown-menu">
-						<li><a href="resources.html">RESOURCES</a></li>
-						<li><a href="https://www.freelancer.com/affiliates/email/4790347/">REQUEST A QUOTE <i class="fa fa-wrench" aria-hidden="true"></i>
-						<li><a href="single.html">SINGLE BLOG</a></li>
-
-								 </ul>
-							</li>
-
-					 </ul>
-					 <form class="navbar-form navbar-right" role="search">
-				
-							<div class="input-group">
-								 <input type="text" class="form-control" placeholder="Search">
-								 <span class="input-group-btn">
-								 <button class="btn btn-default" type="button">Go!</button>
-								 </span>
-							</div>
-					 </form>
-				</div>
-				<!-- /.navbar-collapse -->
-		 </div>
-	</nav>
-	<!-- end:navbar -->
 
 	<!-- start:main contact -->
 	<div id="main-contact">
@@ -251,32 +149,32 @@
 						<div class="flickr">
 							<a href="#">
 								<div class="thumbnail">
-									<img src="img/content/thumbnail1.jpg" class="img-responsive">
+									<img src="assets/images/content/thumbnail1.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="img/content/thumbnail4.jpg" class="img-responsive">
+									<img src="assets/images/content/thumbnail4.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="img/content/thumbnail5.jpg" class="img-responsive">
+									<img src="assets/images/content/thumbnail5.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="img/content/thumbnail6.jpg" class="img-responsive">
+									<img src="assets/images/content/thumbnail6.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="img/content/thumbnail7.jpg" class="img-responsive">
+									<img src="assets/images/content/thumbnail7.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="img/content/thumbnail8.jpg" class="img-responsive">
+									<img src="assets/images/content/thumbnail8.jpg" class="img-responsive">
 								</div>
 							</a>
 						</div>
@@ -285,31 +183,14 @@
 			</div>
 		</div>
 	</footer>
-	<!-- end:footer -->
-	<!-- start:footer bottom -->
-	<div class="footer-bottom">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8">
-					<p>Copyright © 2015-2017 Cylosh</p>
-				</div>
-				<div class="col-lg-4">
-					<p class="pull-right">
-						<a href="index.html">HOME</a>
-						<a href="about.html">ABOUT US</a>
-						<a href="contact.html">CONTACT US</a>
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end:footer bottom -->
+	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
+
 
 	<!-- start:javascript -->
-	<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/particles/min.js"></script>
-	<script src="js/particles/init.js"></script>
+	<script src="assets/UI/jquery-1.11.1.min.js"></script>
+	<script src="assets/UI/bootstrap.min.js"></script>
+	<script src="assets/UI/particles/min.js"></script>
+	<script src="assets/UI/particles/init.js"></script>
 	<!-- end:javascript -->
 
 </body>
