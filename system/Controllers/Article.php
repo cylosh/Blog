@@ -5,13 +5,15 @@ use \system\Core;
 
 defined("SITE_URI") OR die(header("Location: error/403"));
 
-class Single extends Core{
+class Article extends Core{
     
+	public static $defaultMethod = 'blog';
+	
     function __construct(){
     }
     
-    public function get(){
-        return $this->HtmlView(array("Blog", "single"));
+    public function blog(){
+        return $this->HtmlView(array("Blog", "article"));
     }
     
 	// return boolean depending on user permissions

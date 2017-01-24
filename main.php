@@ -100,7 +100,7 @@ require("config.php");
 	
 	// default method to call in controllers
 	if($method == ''){
-		$method = 'get';
+		$method = $controller::$defaultMethod;
 	}
     
     if(!empty($method) && $method!='presentation'){

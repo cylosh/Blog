@@ -7,10 +7,12 @@ defined("SITE_URI") OR die(header("Location: error/403"));
 
 class About extends Core{
     
+	public static $defaultMethod = 'index';
+	
     function __construct(){
     }
     
-    public function get(){
+    public function index(){
         return $this->HtmlView(array("Blog", "about"));
     }
     

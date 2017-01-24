@@ -32,7 +32,7 @@
 								 <ul class="dropdown-menu">
 						<li><a href="resources.html">RESOURCES</a></li>
 						<li><a href="https://www.freelancer.com/affiliates/email/4790347/">REQUEST A QUOTE <i class="fa fa-wrench" aria-hidden="true"></i>
-						<li><a href="single">SINGLE BLOG</a></li>
+						<li><a href="article">VIEW ARTICLE</a></li>
 
 								 </ul>
 							</li>

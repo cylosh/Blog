@@ -112,7 +112,7 @@
 				</div>
 				<div class="col-lg-4">
 					<p class="pull-right">
-						<a href="index">HOME</a>
+						<a href="./">HOME</a>
 						<a href="about">ABOUT US</a>
 						<a href="contact">CONTACT US</a>
 					</p>

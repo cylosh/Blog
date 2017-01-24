@@ -7,7 +7,10 @@ defined("SITE_URI") OR die(header("Location: error/403"));
 
 class Blog extends Core{
     
+	public static $defaultMethod = 'get';
+	
     function __construct(){
+		
     }
     
     public function get(){
