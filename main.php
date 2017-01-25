@@ -18,14 +18,14 @@ require("config.php");
 
 	/*
 	 * URLRewrite - avoid ending trail issue
-	 */
+	 
 	if(substr($_SERVER['REQUEST_URI'], -1) === '/'){
 		$url = rtrim($_SERVER['REQUEST_URI'], "/ \t\n\r");
 		if (!preg_match('#'.preg_quote($url).'$#i', SITE_URI)) {
 			header("Location: ".$url);
 			exit;
 		}
-	}
+	}*/
 
 	/*
 	 * URLRewrite Parameters 
