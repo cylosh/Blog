@@ -8,6 +8,8 @@
  * @copyright : https://opensource.org/licenses/MIT
 
  * @version 1.0: 23 January 2017
+ * @version 2: 25 January 2017
+ *			added link resolver
 */
 namespace system;
 
@@ -105,6 +107,7 @@ class Core{
     }
     
     public function presentation(){
+		
 		// get content shipping method
 		if(isset($_GET['json']))
 			$_SESSION['shipment'] = 'json';
@@ -118,8 +121,51 @@ class Core{
 		else
 			header("Content-Type: application/{$_SESSION['shipment']}; charset=utf-8");
 		
-		
+		ob_start("ob_gzhandler");
 		include $this->HTMLPath;
+		print $this->linkBridge(ob_get_clean());
+	}
+	
+	/*
+	* linkBridge: Link resolver
+	* @param string $html
+	*		Page HTML to fix links for css, images,
+	*		
+	* @return string
+	* 
+	* @author : Cylosh
+	* @link : https://www.cylo.ro
+	* @copyright : https://opensource.org/licenses/MIT
+	 */
+	private function linkBridge($html, $pathToAssets = 'assets/', $pathToSite=SITE_URI){
+		
+		// ignore links that already have an address
+		$ignores = array('http', 'skype');
+		
+		$newhtml = '';
+		while (preg_match('/href=("|\')(.*?)("|\')/', $html, $link, PREG_OFFSET_CAPTURE)) {
+			
+			$newhtml .= substr($html,0, $link[2][1]);
+			$html = substr($html, $link[2][1]+strlen($link[2][0]));
+			
+			foreach($ignores as $ignore)
+				if(preg_match('/^'.preg_quote($ignore).'/', $link[2][0])){
+				
+				continue 2;
+				
+				}
+			
+			$newhtml .= $pathToSite.'/'.$link[2][0];
+		}
+		$newhtml .= $html;
+
+		$html = preg_replace_callback ('%("|\')'.preg_quote($pathToAssets).'%'
+			, function($matches)use ($pathToAssets, $pathToSite){
+				return $matches[1].$pathToSite.'/'.$pathToAssets;
+			}
+			, $newhtml);
+		
+		return $html;
 	}
 	
 	

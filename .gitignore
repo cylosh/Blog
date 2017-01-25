@@ -1,3 +1,4 @@
 *.komodoproject
 /.htaccess
 /config.php
+exe.php

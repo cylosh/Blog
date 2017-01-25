@@ -8,9 +8,12 @@
  * @copyright : https://opensource.org/licenses/MIT
 
  * @version 1.0: 23 January 2017
+ * 		@version 1.1: 24 January 2017
+ * 		added default method for controllers
 */
 
 session_start();
+
 require("config.php");
 
 	/*
@@ -88,10 +91,10 @@ require("config.php");
     $controller = factory("system\\Controllers\\$class");
 	
 	if($controller === false) $controller->error->accessDeny();
-
+	
     // Check to see the method exists or its accessible
     $allowedCalls = get_class_methods($controller);
-
+	
     if($method != '' && !in_array($method, $allowedCalls)
     ){
         header("Location: ".SITE_URI."/error/405");
@@ -109,10 +112,10 @@ require("config.php");
 	/*
 	 * End Routing 
 	 */
-
+	
 	/*
 	 * Viewer 
 	 */
     $controller->presentation();
-     
+    
 ?>
