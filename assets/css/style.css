@@ -17,7 +17,7 @@
 @import url('owl.carousel.css');
 @import url('owl.theme.css');
 @import url('owl.transitions.css');
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+@import url('fontgoogleapis.css'); /* http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700 */
 
 /* GENERAL
 ===============================*/
