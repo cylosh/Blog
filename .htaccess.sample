@@ -6,6 +6,11 @@ ServerSignature Off
  deny from all
 </Files>
 
+<IfModule mod_headers.c>
+	<FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
+		Header set Access-Control-Allow-Origin "*"
+	</FilesMatch>
+</IfModule>
 
 # edit RewriteBase; don't modify unless 
 # you know what you're doing

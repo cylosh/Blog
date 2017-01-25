@@ -150,7 +150,7 @@ class Core{
 			
 			foreach($ignores as $ignore)
 				if(preg_match('/^'.preg_quote($ignore).'/', $link[2][0])){
-				
+				$newhtml .= $link[2][0];
 				continue 2;
 				
 				}
