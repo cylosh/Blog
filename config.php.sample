@@ -13,4 +13,4 @@ elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED
     $isSecure = true;
 
 // base where application is hosted
-define("SITE_URI", ""); // don't include ending trail
+define("SITE_URI", ($isSecure ? 'https' : 'http').":://site.com/blog"); // don't include ending trail
