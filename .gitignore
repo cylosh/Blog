@@ -2,3 +2,4 @@
 /.htaccess
 /config.php
 exe.php
+error_log
