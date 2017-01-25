@@ -54,5 +54,11 @@ Bootstrap combined with jQuery for frontend. The dashboard made through PHP api 
 
 [Particles JS](https://github.com/VincentGarreau/particles.js)
 
+[jquerypp](https://github.com/bitovi/jquerypp)
+
+[Modernizr](https://github.com/Modernizr/Modernizr)
+
+[BookBlock](https://github.com/codrops/BookBlock)
+
 #License
 The project is open-sourced software licensed under the <a href="https://opensource.org/licenses/MIT">MIT license</a>.

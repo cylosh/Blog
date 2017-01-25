@@ -4,8 +4,9 @@ define("HEADER_TITLE", 'Contact Me');
 define("HEADER_SUBTITLE", '');
 ?><!DOCTYPE html>
 <html lang="en">
+<head>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
-
+</head>
 <body>
 
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>

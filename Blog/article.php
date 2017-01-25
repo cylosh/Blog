@@ -4,7 +4,9 @@ define("HEADER_TITLE", 'The Cylosh Blog');
 define("HEADER_SUBTITLE", 'Unfolding the Article');
 ?><!DOCTYPE html>
 <html lang="en">
+<head>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
+</head>
 <body>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
 <article id="scrolltojs"></article> <!-- hack to check its an blog article that needs to automatically scroll to the content -->

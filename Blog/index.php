@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head-main.php"; ?>
+</head>
 <body>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header-main.php"; ?>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
