@@ -19,7 +19,7 @@
 					<div class="col-lg-4 col-lg-offset-4 col-md-4">
 						<div class="text-center" >
 							<div class="user">
-								<img src="assets/images/user/user.jpg">
+								<img alt="Profile Picture" src="assets/images/user/user-min.jpg">
 							</div>
 							<div class="slide-header">
 								<h5>Hello, i am</h5>

@@ -29,7 +29,7 @@
 						<p class="content-footer">
 							Excepteur culpa qui officia deserunt mollit anim id est laborum.
 						</p>
-						<form role="form">
+						<form>
 							<div class="form-group">
 								<div class="input-group">
 								  	<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
@@ -68,32 +68,32 @@
 						<div class="flickr">
 							<a href="#">
 								<div class="thumbnail">
-									<img src="assets/images/content/thumbnail1.jpg" class="img-responsive">
+									<img alt="Flick image" src="assets/images/content/thumbnail1_icon.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="assets/images/content/thumbnail4.jpg" class="img-responsive">
+									<img alt="Flick image" src="assets/images/content/thumbnail4_icon.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="assets/images/content/thumbnail5.jpg" class="img-responsive">
+									<img alt="Flick image" src="assets/images/content/thumbnail5_icon.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="assets/images/content/thumbnail6.jpg" class="img-responsive">
+									<img alt="Flick image" src="assets/images/content/thumbnail6_icon.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="assets/images/content/thumbnail7.jpg" class="img-responsive">
+									<img alt="Flick image" src="assets/images/content/thumbnail7_icon.jpg" class="img-responsive">
 								</div>
 							</a>
 							<a href="#">
 								<div class="thumbnail">
-									<img src="assets/images/content/thumbnail8.jpg" class="img-responsive">
+									<img alt="Flick image" src="assets/images/content/thumbnail8_icon.jpg" class="img-responsive">
 								</div>
 							</a>
 						</div>

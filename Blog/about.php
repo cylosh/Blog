@@ -2,11 +2,13 @@
 define("TITLE", 'About | Cylosh Blog');
 define("HEADER_TITLE", 'About Me');
 define("HEADER_SUBTITLE", 'Ionuț A. Tudor');
+define("MENU_ACTIVE", 'about');
+
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
-<link rel="stylesheet" type="text/css" href="assets/css/bookblock.css" />
+<link rel="stylesheet" type="text/css" href="cached-assets/css/bookblock.css" />
 </head>
 
    <body>
@@ -246,16 +248,7 @@ define("HEADER_SUBTITLE", 'Ionuț A. Tudor');
 
 
 	<!-- start:javascript -->
-	<script src="assets/UI/jquery-1.11.1.min.js"></script>
-	<script src="assets/UI/bootstrap.min.js"></script>
-	<script src="assets/UI/owl.carousel.min.js"></script>
-	<script src="assets/UI/particles/min.js"></script>
-	<script src="assets/UI/particles/init.js"></script>
-	<script src="assets/UI/init.js"></script>
-	<script src="assets/UI/bookblock/modernizr.custom.js"></script>
-	<script src="assets/UI/bookblock/jquerypp.custom.min.js"></script>
-	<script src="assets/UI/bookblock/jquery.bookblock.js"></script>
-	<script src="assets/UI/bookblock/init.js"></script>
+	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/winter.js,particles/min.js,particles/init.js,init.js,bookblock/modernizr.custom.js,bookblock/jquerypp.custom.min.js,bookblock/jquery.bookblock.js,bookblock/init.js"></script>
 	<!-- end:javascript -->
 		
    </body>

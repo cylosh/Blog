@@ -108,6 +108,8 @@ class Core{
     
     public function presentation(){
 		
+		$content = '';
+		
 		// get content shipping method
 		if(isset($_GET['json']))
 			$_SESSION['shipment'] = 'json';
@@ -116,20 +118,42 @@ class Core{
 		elseif(!isset($_SESSION['shipment']) OR isset($_GET['html']))
 			$_SESSION['shipment'] = 'html';
 		
-		if($_SESSION['shipment'] == 'html')
-			header("Content-Type: text/{$_SESSION['shipment']}; charset=utf-8");
-		else
+		if($_SESSION['shipment'] != 'html')
+			
 			header("Content-Type: application/{$_SESSION['shipment']}; charset=utf-8");
 		
-		ob_start("ob_gzhandler");
-		include $this->HTMLPath;
-		print $this->linkBridge(ob_get_clean());
+		else{ // ENABLE COMPRESSION for HTML
+			
+			ob_start("ob_gzhandler");
+			include $this->HTMLPath;
+			$content = $this->linkBridge(ob_get_clean());
+			
+			// Determine supported compression method
+			$gzip = strstr($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+			$deflate = strstr($_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate');
+			
+			// Determine used compression method
+			$encoding = $gzip ? 'gzip' : ($deflate ? 'deflate' : false);
+
+			if($encoding){
+				$content = gzencode(trim( preg_replace( '/\s+/', ' ', $content ) ), 9);
+				$offset = 60 * 60 * 24;
+				$expire = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
+				header('Content-Encoding: gzip');
+				header("content-type: text/html; charset: UTF-8");
+				header( $expire );
+				header('Content-Length: ' . strlen( $content ) );
+				header('Vary: Accept-Encoding');
+			}
+		}
+		
+		print $content;
 	}
 	
 	/*
 	* linkBridge: Link resolver
 	* @param string $html
-	*		Page HTML to fix links for css, images,
+	*		Page HTML to fix links for css, images, javascript
 	*		
 	* @return string
 	* 
@@ -137,7 +161,7 @@ class Core{
 	* @link : https://www.cylo.ro
 	* @copyright : https://opensource.org/licenses/MIT
 	 */
-	private function linkBridge($html, $pathToAssets = 'assets/', $pathToSite=SITE_URI){
+	private function linkBridge($html, $pathToAssets = array('assets/', 'cached-assets/'), $pathToSite=SITE_URI){
 		
 		// ignore links that already have an address
 		$ignores = array('http', 'skype');
@@ -158,14 +182,18 @@ class Core{
 			$newhtml .= $pathToSite.'/'.$link[2][0];
 		}
 		$newhtml .= $html;
-
-		$html = preg_replace_callback ('%("|\')'.preg_quote($pathToAssets).'%'
-			, function($matches)use ($pathToAssets, $pathToSite){
-				return $matches[1].$pathToSite.'/'.$pathToAssets;
-			}
-			, $newhtml);
 		
-		return $html;
+		foreach($pathToAssets as $pathToAsset){
+		
+			$newhtml = preg_replace_callback ('%("|\')'.preg_quote($pathToAsset).'%',
+				function($matches) use ($pathToAsset, $pathToSite){
+				
+				return $matches[1].$pathToSite.'/'.$pathToAsset;
+				}
+			, $newhtml);
+		}
+		
+		return $newhtml;
 	}
 	
 	

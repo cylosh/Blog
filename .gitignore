@@ -3,3 +3,5 @@
 /config.php
 exe.php
 error_log
+/resources/cache/**
+!*.gitkeep

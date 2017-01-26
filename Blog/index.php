@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+<?php
+define("MENU_ACTIVE", 'index');
+
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head-main.php"; ?>
@@ -17,15 +20,13 @@
 						<div class="row">
 							<div class="col-lg-6 col-md-6">
 								<aside>
-									<img src="assets/images/content/thumbnail1.jpg" class="img-responsive">
+									<img alt="Title Article" src="assets/images/content/thumbnail1_medium.jpg" class="img-responsive">
 									<div class="content-title">
 										<div class="text-center">
 											<h3><a href="single.html">Niki Postingan Sing Kepisan Njeh, Perdana Ngoten</a></h3>
 										</div>
 									</div>
 									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
 										<span class="pull-right">
 											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
 											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
@@ -35,15 +36,13 @@
 							</div>
 							<div class="col-lg-6 col-md-6">
 								<aside>
-									<img src="assets/images/content/thumbnail4.jpg" class="img-responsive">
+									<img alt="Title Article" src="assets/images/content/thumbnail4_medium.jpg" class="img-responsive">
 									<div class="content-title">
 										<div class="text-center">
 											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
 										</div>
 									</div>
 									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
 										<span class="pull-right">
 											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
 											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
@@ -53,15 +52,13 @@
 							</div>
 							<div class="col-lg-6 col-md-6">
 								<aside>
-									<img src="assets/images/content/thumbnail5.jpg" class="img-responsive">
+									<img alt="Title Article" src="assets/images/content/thumbnail5_medium.jpg" class="img-responsive">
 									<div class="content-title">
 										<div class="text-center">
 											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
 										</div>
 									</div>
 									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
 										<span class="pull-right">
 											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
 											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
@@ -71,87 +68,13 @@
 							</div>
 							<div class="col-lg-6 col-md-6">
 								<aside>
-									<img src="assets/images/content/thumbnail6.jpg" class="img-responsive">
+									<img alt="Title Article" src="assets/images/content/thumbnail6_medium.jpg" class="img-responsive">
 									<div class="content-title">
 										<div class="text-center">
 											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
 										</div>
 									</div>
 									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
-										<span class="pull-right">
-											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
-											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
-										</span>
-									</div>
-								</aside>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<aside>
-									<img src="assets/images/content/thumbnail7.jpg" class="img-responsive">
-									<div class="content-title">
-										<div class="text-center">
-											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
-										</div>
-									</div>
-									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
-										<span class="pull-right">
-											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
-											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
-										</span>
-									</div>
-								</aside>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<aside>
-									<img src="assets/images/content/thumbnail8.jpg" class="img-responsive">
-									<div class="content-title">
-										<div class="text-center">
-											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
-										</div>
-									</div>
-									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
-										<span class="pull-right">
-											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
-											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
-										</span>
-									</div>
-								</aside>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<aside>
-									<img src="assets/images/content/thumbnail11.jpg" class="img-responsive">
-									<div class="content-title">
-										<div class="text-center">
-											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
-										</div>
-									</div>
-									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
-										<span class="pull-right">
-											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
-											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
-										</span>
-									</div>
-								</aside>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<aside>
-									<img src="assets/images/content/thumbnail10.jpg" class="img-responsive">
-									<div class="content-title">
-										<div class="text-center">
-											<h3><a href="single.html">Niki Postingan Sing Kepindo Njeh, Wis Ra Perdana</a></h3>
-										</div>
-									</div>
-									<div class="content-footer">
-										<img src="assets/images/user/user.jpg">
-										<span>John Doe</span>
 										<span class="pull-right">
 											<a href="#"><i class="fa fa-comments" data-toggle="tooltip" data-placement="top" title="Comments"></i> 30</a>
 											<a href="#"><i class="fa fa-heart" data-toggle="tooltip" data-placement="top" title="Loved"></i> 20</a>
@@ -187,12 +110,7 @@
 
 
 	<!-- start:javascript -->
-	<script src="assets/UI/jquery-1.11.1.min.js"></script>
-	<script src="assets/UI/bootstrap.min.js"></script>
-	<script src="assets/UI/owl.carousel.min.js"></script>
-	<script src="assets/UI/particles/min.js"></script>
-	<script src="assets/UI/particles/init.js"></script>
-	<script src="assets/UI/init.js"></script>
+	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/winter.js,particles/min.js,particles/init.js,init.js"></script>
 	<!-- end:javascript -->
 
 </body>

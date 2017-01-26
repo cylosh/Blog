@@ -11,6 +11,7 @@
  * 		@version 1.1: 24 January 2017
  * 		added default method for controllers
 */
+ini_set('zlib.output_compression_level', 1);
 
 session_start();
 

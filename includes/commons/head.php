@@ -3,19 +3,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?php echo (defined("TITLE") ? TITLE : 'Cylosh Blog'); ?></title>
 <link rel="icon" href="favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+<?php
+echo "<style>";
+include "assets/css/bootstrap.min.css";
+include "assets/css/fontgoogleapis.min.css";
+include "assets/css/owl.carousel.min.css";
+include "assets/css/style-pages.min.css";
+echo "</style>";
+?>
+<link rel="stylesheet" type="text/css" href="cached-assets/css/font-awesome.min.css,style.min.css,particles.css">
 <meta name="description" content="Cyberlinks Open Source Supporter" />
 <meta name="keywords" content="Cyberspace, Cyberlinks, Cylosh, Blog, Open Source" />
 <meta name="author" content="AI Cylosh" />
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <script src="cached-assets/js/html5shiv.js,respond.min.js"></script>
 <![endif]-->
-<link rel="stylesheet" type="text/css" href="assets/css/particles.css">
 <!-- Set configs -->
-<script type="application/x-javascript" src="assets/UI/particles/winter.js"></script>
 <script>
 	var particlesID = 'particlesjs-winter';
 	var particlesHeight = '240px';

@@ -12,6 +12,14 @@ ServerSignature Off
 	</FilesMatch>
 </IfModule>
 
+# BEGIN GZIP
+<IfModule mod_deflate.c>
+	<IfModule mod_filter.c>
+		AddOutputFilterByType DEFLATE text/css application/x-javascript application/javascript
+	</IfModule>
+</IfModule>
+# END GZIP
+
 # edit RewriteBase; don't modify unless 
 # you know what you're doing
 # (©cylosh 23 Ian 2017)
@@ -20,6 +28,9 @@ RewriteEngine on
 RewriteBase /path/to/
 
 RewriteRule ^error(.*?)$ includes/error.php?code=$1 [L,QSA]
+RewriteRule ^cached-assets/css/(.*\.css)$ libraries/Combiner/compress.php?type=css&files=$1 [L]
+RewriteRule ^cached-assets/js/(.*\.js)$ libraries/Combiner/compress.php?type=javascript&files=$1 [L]
+RewriteRule ^cached-assets/(.*)$ assets/$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

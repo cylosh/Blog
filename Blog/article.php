@@ -147,10 +147,8 @@ define("HEADER_SUBTITLE", 'Unfolding the Article');
 
 
 	<!-- start:javascript -->
-	<script src="assets/UI/jquery-1.11.1.min.js"></script>
-	<script src="assets/UI/bootstrap.min.js"></script>
-	<script src="assets/UI/owl.carousel.min.js"></script>
-	<script src="assets/UI/init.js"></script>
+	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/winter.js,particles/min.js,particles/init.js,init.js"></script>
+
 	<!-- end:javascript -->
 
 </body>

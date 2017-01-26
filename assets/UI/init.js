@@ -26,10 +26,10 @@ $(document).ready(function() {
 	
 	$('#showdown').click(function(){
 		$('body').animate({
-			scrollTop: $(".navbar-header").offset().top},1500);});
+			scrollTop: $(".navbar-header").offset().top},1200);});
 
 	if ( $( "#scrolltojs" ).length ) {
 		$('body').animate({
-			scrollTop: $("#scrolltojs").offset().top},3000);
+			scrollTop: $("#scrolltojs").offset().top},2000);
 	}
 });
