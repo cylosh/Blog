@@ -140,7 +140,7 @@ class Core{
 				$offset = 60 * 60 * 24;
 				$expire = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
 				header('Content-Encoding: gzip');
-				header("content-type: text/html; charset: UTF-8");
+				header("content-type: text/html; charset=UTF-8");
 				header( $expire );
 				header('Content-Length: ' . strlen( $content ) );
 				header('Vary: Accept-Encoding');
