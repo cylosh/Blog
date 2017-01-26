@@ -20,21 +20,30 @@ require("config.php");
 	/*
 	 * URLRewrite - avoid ending trail issue
 	 */
-	
 	$urlBase = parse_url($_SERVER['REQUEST_URI']);
-	$urlBasePath = urldecode($urlBase['path']);
-	
+	if(!$urlBase)
+		list($urlBasePath, $urlBaseQ) = explode('?', $_SERVER['REQUEST_URI']);
+	else{
+		$urlBasePath = urldecode($urlBase['path']);
+		$urlBaseQ = $urlBase['query'];
+	}
+
 	// Process only URIs with multiple ending trails
 	if(preg_match('%/{2,}%', $urlBasePath)){
-		
-		$urlBasePath = preg_replace('%/{2,}%', '/', $urlBasePath);
+		$urlBasePath = preg_replace('%/{2,}%', '/', trim($urlBasePath));
 		$siteBase = parse_url(urldecode(SITE_URI));
 		
 		// Verify and combine the relative paths
-		if (!preg_match('#^'.preg_quote($urlBasePath).'#i', $siteBase['path'])) {
+		if (preg_match('#^'.preg_quote($urlBasePath).'#i', $siteBase['path'])
+			||
+			preg_match('#^'.preg_quote($siteBase['path']).'#i', $urlBasePath)
+			) {
 
-			$url = $siteBase['scheme'].'://'.$siteBase['host'].$urlBasePath.'?'.$urlBase['query'];
-
+			$url = $siteBase['scheme'].'://'.$siteBase['host'].$urlBasePath;
+			
+			if($urlBaseQ != '')
+				$url .= '?'.$urlBaseQ;
+			
 			header("Location: ".$url);
 			exit;
 		}
