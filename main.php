@@ -19,14 +19,26 @@ require("config.php");
 
 	/*
 	 * URLRewrite - avoid ending trail issue
-	 
-	if(substr($_SERVER['REQUEST_URI'], -1) === '/'){
-		$url = rtrim($_SERVER['REQUEST_URI'], "/ \t\n\r");
-		if (!preg_match('#'.preg_quote($url).'$#i', SITE_URI)) {
+	 */
+	
+	$urlBase = parse_url($_SERVER['REQUEST_URI']);
+	$urlBasePath = urldecode($urlBase['path']);
+	
+	// Process only URIs with multiple ending trails
+	if(preg_match('%/{2,}%', $urlBasePath)){
+		
+		$urlBasePath = preg_replace('%/{2,}%', '/', $urlBasePath);
+		$siteBase = parse_url(urldecode(SITE_URI));
+		
+		// Verify and combine the relative paths
+		if (!preg_match('#^'.preg_quote($urlBasePath).'#i', $siteBase['path'])) {
+
+			$url = $siteBase['scheme'].'://'.$siteBase['host'].$urlBasePath.'?'.$urlBase['query'];
+
 			header("Location: ".$url);
 			exit;
 		}
-	}*/
+	}
 
 	/*
 	 * URLRewrite Parameters 
