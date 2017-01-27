@@ -209,7 +209,7 @@ class Core{
 				$content = gzencode(trim( preg_replace( '/\s+/', ' ', $content ) ), 9);
 				$offset = 60 * 60 * 24;
 				$expire = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
-				header('Content-Encoding: gzip');
+				header('Content-Encoding: '.$encoding);
 				header("content-type: text/html; charset=UTF-8");
 				header( $expire );
 				header("Cache-Control: max-age=".$offset);

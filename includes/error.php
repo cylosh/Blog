@@ -6,12 +6,13 @@ if(!isset($_SESSION['shipment']))
     $_SESSION['shipment'] = 'html';
 
 $error = preg_replace("/[^\d]/", "", $_GET['code']);
+$errorCode = 400;
 
 switch($error){
     
-    case "400":
     case "403":
     case "405":
+    case "500":
     case "501":
     case "503":
         $errorCode = $error;
