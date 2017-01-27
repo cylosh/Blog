@@ -9,9 +9,32 @@
 
  * @version 1.0: 23 January 2017
  * 		@version 1.1: 24 January 2017
- * 		added default method for controllers
+ * 			added default method for controllers
+ * 		@version 1.2: 27 January 2017
+ * 			added XSS prevention and Session protection
 */
+
 ini_set('zlib.output_compression_level', 1);
+
+// **PREVENTING SESSION HIJACKING**
+// Prevents javascript XSS attacks aimed to steal the session ID
+ini_set('session.cookie_httponly', 1);
+
+// **PREVENTING SESSION FIXATION**
+// Session ID cannot be passed through URLs
+ini_set('session.use_only_cookies', 1);
+
+// Uses a secure connection (HTTPS) if possible
+ini_set('session.cookie_secure', 1);
+
+// detect https & avoid CORS issues(Origin Resource Sharing)
+$isSecure = false;
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+    $isSecure = true;
+}
+elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+    $isSecure = true;
+}
 
 session_start();
 

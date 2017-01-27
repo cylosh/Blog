@@ -212,6 +212,7 @@ class Core{
 				header('Content-Encoding: gzip');
 				header("content-type: text/html; charset=UTF-8");
 				header( $expire );
+				header("Cache-Control: max-age=".$offset);
 				header('Content-Length: ' . strlen( $content ) );
 				header('Vary: Accept-Encoding');
 			}

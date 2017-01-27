@@ -7,8 +7,7 @@
 						<h4 class="title-widget-footer">
 							Links
 						</h4>
-						<p class="content-footer">
-<a href="http://www.beyondsecurity.com/vulnerability-scanner-verification/cylo.ro"><img src="https://seal.beyondsecurity.com/verification-images/cylo.ro/vulnerability-scanner-2.gif" alt="Website Security Test" style="border: 0;" /></a>						</p>
+						<p class="content-footer"><a target="_blank" href="http://www.beyondsecurity.com/vulnerability-scanner-verification/cylo.ro"><img src="https://seal.beyondsecurity.com/verification-images/cylo.ro/vulnerability-scanner-15.gif" alt="Vulnerability Scanner" style="border: 0;"></a></p>
 
 						<p class="content-footer">
 							<a href="http://www.w3.org/Status" title="W3C's Open Source, bringing you free Web quality tools and more"><img src="//www.w3.org/Icons/WWW/w3c_home_nb" alt="W3C" width="72" height="47"><img src="https://validator.w3.org/images/opensource-55x48.png" alt="Open-Source" title="We are building certified Open Source/Free Software. - see www.opensource.org" width="55" height="48"></a>
