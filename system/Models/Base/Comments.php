@@ -2,6 +2,9 @@
 
 namespace Base;
 
+use \Articles as ChildArticles;
+use \ArticlesQuery as ChildArticlesQuery;
+use \Comments as ChildComments;
 use \CommentsQuery as ChildCommentsQuery;
 use \DateTime;
 use \Exception;
@@ -11,7 +14,9 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -76,6 +81,27 @@ abstract class Comments implements ActiveRecordInterface
     protected $article_id;
 
     /**
+     * The value for the lft field.
+     * 
+     * @var        int
+     */
+    protected $lft;
+
+    /**
+     * The value for the rgt field.
+     * 
+     * @var        int
+     */
+    protected $rgt;
+
+    /**
+     * The value for the lvl field.
+     * 
+     * @var        int
+     */
+    protected $lvl;
+
+    /**
      * The value for the user_id field.
      * 
      * @var        int
@@ -90,11 +116,30 @@ abstract class Comments implements ActiveRecordInterface
     protected $content;
 
     /**
+     * The value for the flag field.
+     * 
+     * @var        int
+     */
+    protected $flag;
+
+    /**
+     * The value for the edited field.
+     * 
+     * @var        DateTime
+     */
+    protected $edited;
+
+    /**
      * The value for the posted field.
      * 
      * @var        DateTime
      */
     protected $posted;
+
+    /**
+     * @var        ChildArticles
+     */
+    protected $aArticles;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -103,6 +148,46 @@ abstract class Comments implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    // nested_set behavior
+    
+    /**
+     * Queries to be executed in the save transaction
+     * @var        array
+     */
+    protected $nestedSetQueries = array();
+    
+    /**
+     * Internal cache for children nodes
+     * @var        null|ObjectCollection
+     */
+    protected $collNestedSetChildren = null;
+    
+    /**
+     * Internal cache for parent node
+     * @var        null|ChildComments
+     */
+    protected $aNestedSetParent = null;
+    
+    /**
+     * Left column for the set
+     */
+    const LEFT_COL = 'comments.lft';
+    
+    /**
+     * Right column for the set
+     */
+    const RIGHT_COL = 'comments.rgt';
+    
+    /**
+     * Level column for the set
+     */
+    const LEVEL_COL = 'comments.lvl';
+    
+    /**
+     * Scope column for the set
+     */
+    const SCOPE_COL = 'comments.article_id';
 
     /**
      * Initializes internal state of Base\Comments object.
@@ -350,6 +435,36 @@ abstract class Comments implements ActiveRecordInterface
     }
 
     /**
+     * Get the [lft] column value.
+     * 
+     * @return int
+     */
+    public function getLft()
+    {
+        return $this->lft;
+    }
+
+    /**
+     * Get the [rgt] column value.
+     * 
+     * @return int
+     */
+    public function getRgt()
+    {
+        return $this->rgt;
+    }
+
+    /**
+     * Get the [lvl] column value.
+     * 
+     * @return int
+     */
+    public function getLvl()
+    {
+        return $this->lvl;
+    }
+
+    /**
      * Get the [user_id] column value.
      * 
      * @return int
@@ -367,6 +482,36 @@ abstract class Comments implements ActiveRecordInterface
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Get the [flag] column value.
+     * 
+     * @return int
+     */
+    public function getFlag()
+    {
+        return $this->flag;
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [edited] column value.
+     * 
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getEdited($format = NULL)
+    {
+        if ($format === null) {
+            return $this->edited;
+        } else {
+            return $this->edited instanceof \DateTimeInterface ? $this->edited->format($format) : null;
+        }
     }
 
     /**
@@ -426,8 +571,72 @@ abstract class Comments implements ActiveRecordInterface
             $this->modifiedColumns[CommentsTableMap::COL_ARTICLE_ID] = true;
         }
 
+        if ($this->aArticles !== null && $this->aArticles->getId() !== $v) {
+            $this->aArticles = null;
+        }
+
         return $this;
     } // setArticleId()
+
+    /**
+     * Set the value of [lft] column.
+     * 
+     * @param int $v new value
+     * @return $this|\Comments The current object (for fluent API support)
+     */
+    public function setLft($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->lft !== $v) {
+            $this->lft = $v;
+            $this->modifiedColumns[CommentsTableMap::COL_LFT] = true;
+        }
+
+        return $this;
+    } // setLft()
+
+    /**
+     * Set the value of [rgt] column.
+     * 
+     * @param int $v new value
+     * @return $this|\Comments The current object (for fluent API support)
+     */
+    public function setRgt($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->rgt !== $v) {
+            $this->rgt = $v;
+            $this->modifiedColumns[CommentsTableMap::COL_RGT] = true;
+        }
+
+        return $this;
+    } // setRgt()
+
+    /**
+     * Set the value of [lvl] column.
+     * 
+     * @param int $v new value
+     * @return $this|\Comments The current object (for fluent API support)
+     */
+    public function setLvl($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->lvl !== $v) {
+            $this->lvl = $v;
+            $this->modifiedColumns[CommentsTableMap::COL_LVL] = true;
+        }
+
+        return $this;
+    } // setLvl()
 
     /**
      * Set the value of [user_id] column.
@@ -468,6 +677,46 @@ abstract class Comments implements ActiveRecordInterface
 
         return $this;
     } // setContent()
+
+    /**
+     * Set the value of [flag] column.
+     * 
+     * @param int $v new value
+     * @return $this|\Comments The current object (for fluent API support)
+     */
+    public function setFlag($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->flag !== $v) {
+            $this->flag = $v;
+            $this->modifiedColumns[CommentsTableMap::COL_FLAG] = true;
+        }
+
+        return $this;
+    } // setFlag()
+
+    /**
+     * Sets the value of [edited] column to a normalized version of the date/time value specified.
+     * 
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Comments The current object (for fluent API support)
+     */
+    public function setEdited($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->edited !== null || $dt !== null) {
+            if ($this->edited === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->edited->format("Y-m-d H:i:s.u")) {
+                $this->edited = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[CommentsTableMap::COL_EDITED] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setEdited()
 
     /**
      * Sets the value of [posted] column to a normalized version of the date/time value specified.
@@ -531,13 +780,31 @@ abstract class Comments implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CommentsTableMap::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->article_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CommentsTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CommentsTableMap::translateFieldName('Lft', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->lft = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CommentsTableMap::translateFieldName('Rgt', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->rgt = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CommentsTableMap::translateFieldName('Lvl', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->lvl = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : CommentsTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CommentsTableMap::translateFieldName('Content', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : CommentsTableMap::translateFieldName('Content', TableMap::TYPE_PHPNAME, $indexType)];
             $this->content = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CommentsTableMap::translateFieldName('Posted', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : CommentsTableMap::translateFieldName('Flag', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->flag = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : CommentsTableMap::translateFieldName('Edited', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->edited = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : CommentsTableMap::translateFieldName('Posted', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -550,7 +817,7 @@ abstract class Comments implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = CommentsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = CommentsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Comments'), 0, $e);
@@ -572,6 +839,9 @@ abstract class Comments implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aArticles !== null && $this->article_id !== $this->aArticles->getId()) {
+            $this->aArticles = null;
+        }
     } // ensureConsistency
 
     /**
@@ -611,6 +881,7 @@ abstract class Comments implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aArticles = null;
         } // if (deep)
     }
 
@@ -637,9 +908,24 @@ abstract class Comments implements ActiveRecordInterface
             $deleteQuery = ChildCommentsQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
+            // nested_set behavior
+            if ($this->isRoot()) {
+                throw new PropelException('Deletion of a root node is disabled for nested sets. Use ChildCommentsQuery::deleteTree($scope) instead to delete an entire tree');
+            }
+            
+            if ($this->isInTree()) {
+                $this->deleteDescendants($con);
+            }
+
             if ($ret) {
                 $deleteQuery->delete($con);
                 $this->postDelete($con);
+                // nested_set behavior
+                if ($this->isInTree()) {
+                    // fill up the room that was used by the node
+                    ChildCommentsQuery::shiftRLValues(-2, $this->getRightValue() + 1, null, $this->getScopeValue(), $con);
+                }
+
                 $this->setDeleted(true);
             }
         });
@@ -675,10 +961,34 @@ abstract class Comments implements ActiveRecordInterface
         return $con->transaction(function () use ($con) {
             $ret = $this->preSave($con);
             $isInsert = $this->isNew();
+            // nested_set behavior
+            if ($this->isNew() && $this->isRoot()) {
+                // check if no other root exist in, the tree
+                $rootExists = ChildCommentsQuery::create()
+                    ->addUsingAlias(ChildComments::LEFT_COL, 1, Criteria::EQUAL)
+                    ->addUsingAlias(ChildComments::SCOPE_COL, $this->getScopeValue(), Criteria::EQUAL)
+                    ->exists($con);
+                if ($rootExists) {
+                        throw new PropelException(sprintf('A root node already exists in this tree with scope "%s".', $this->getScopeValue()));
+                }
+            }
+            $this->processNestedSetQueries($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                
+                if (!$this->isColumnModified(CommentsTableMap::COL_POSTED)) {
+                    $this->setPosted(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
+                if (!$this->isColumnModified(CommentsTableMap::COL_EDITED)) {
+                    $this->setEdited(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(CommentsTableMap::COL_EDITED)) {
+                    $this->setEdited(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -713,6 +1023,18 @@ abstract class Comments implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
+
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aArticles !== null) {
+                if ($this->aArticles->isModified() || $this->aArticles->isNew()) {
+                    $affectedRows += $this->aArticles->save($con);
+                }
+                $this->setArticles($this->aArticles);
+            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -757,11 +1079,26 @@ abstract class Comments implements ActiveRecordInterface
         if ($this->isColumnModified(CommentsTableMap::COL_ARTICLE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'article_id';
         }
+        if ($this->isColumnModified(CommentsTableMap::COL_LFT)) {
+            $modifiedColumns[':p' . $index++]  = 'lft';
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_RGT)) {
+            $modifiedColumns[':p' . $index++]  = 'rgt';
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_LVL)) {
+            $modifiedColumns[':p' . $index++]  = 'lvl';
+        }
         if ($this->isColumnModified(CommentsTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
         if ($this->isColumnModified(CommentsTableMap::COL_CONTENT)) {
             $modifiedColumns[':p' . $index++]  = 'content';
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_FLAG)) {
+            $modifiedColumns[':p' . $index++]  = 'flag';
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_EDITED)) {
+            $modifiedColumns[':p' . $index++]  = 'edited';
         }
         if ($this->isColumnModified(CommentsTableMap::COL_POSTED)) {
             $modifiedColumns[':p' . $index++]  = 'posted';
@@ -783,11 +1120,26 @@ abstract class Comments implements ActiveRecordInterface
                     case 'article_id':                        
                         $stmt->bindValue($identifier, $this->article_id, PDO::PARAM_INT);
                         break;
+                    case 'lft':                        
+                        $stmt->bindValue($identifier, $this->lft, PDO::PARAM_INT);
+                        break;
+                    case 'rgt':                        
+                        $stmt->bindValue($identifier, $this->rgt, PDO::PARAM_INT);
+                        break;
+                    case 'lvl':                        
+                        $stmt->bindValue($identifier, $this->lvl, PDO::PARAM_INT);
+                        break;
                     case 'user_id':                        
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
                     case 'content':                        
                         $stmt->bindValue($identifier, $this->content, PDO::PARAM_STR);
+                        break;
+                    case 'flag':                        
+                        $stmt->bindValue($identifier, $this->flag, PDO::PARAM_INT);
+                        break;
+                    case 'edited':                        
+                        $stmt->bindValue($identifier, $this->edited ? $this->edited->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'posted':                        
                         $stmt->bindValue($identifier, $this->posted ? $this->posted->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -861,12 +1213,27 @@ abstract class Comments implements ActiveRecordInterface
                 return $this->getArticleId();
                 break;
             case 2:
-                return $this->getUserId();
+                return $this->getLft();
                 break;
             case 3:
-                return $this->getContent();
+                return $this->getRgt();
                 break;
             case 4:
+                return $this->getLvl();
+                break;
+            case 5:
+                return $this->getUserId();
+                break;
+            case 6:
+                return $this->getContent();
+                break;
+            case 7:
+                return $this->getFlag();
+                break;
+            case 8:
+                return $this->getEdited();
+                break;
+            case 9:
                 return $this->getPosted();
                 break;
             default:
@@ -886,10 +1253,11 @@ abstract class Comments implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
         if (isset($alreadyDumpedObjects['Comments'][$this->hashCode()])) {
@@ -900,12 +1268,21 @@ abstract class Comments implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getArticleId(),
-            $keys[2] => $this->getUserId(),
-            $keys[3] => $this->getContent(),
-            $keys[4] => $this->getPosted(),
+            $keys[2] => $this->getLft(),
+            $keys[3] => $this->getRgt(),
+            $keys[4] => $this->getLvl(),
+            $keys[5] => $this->getUserId(),
+            $keys[6] => $this->getContent(),
+            $keys[7] => $this->getFlag(),
+            $keys[8] => $this->getEdited(),
+            $keys[9] => $this->getPosted(),
         );
-        if ($result[$keys[4]] instanceof \DateTime) {
-            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        if ($result[$keys[8]] instanceof \DateTime) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
+        }
+        
+        if ($result[$keys[9]] instanceof \DateTime) {
+            $result[$keys[9]] = $result[$keys[9]]->format('c');
         }
         
         $virtualColumns = $this->virtualColumns;
@@ -913,6 +1290,23 @@ abstract class Comments implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
         
+        if ($includeForeignObjects) {
+            if (null !== $this->aArticles) {
+                
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'articles';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'articles';
+                        break;
+                    default:
+                        $key = 'Articles';
+                }
+        
+                $result[$key] = $this->aArticles->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+        }
 
         return $result;
     }
@@ -953,12 +1347,27 @@ abstract class Comments implements ActiveRecordInterface
                 $this->setArticleId($value);
                 break;
             case 2:
-                $this->setUserId($value);
+                $this->setLft($value);
                 break;
             case 3:
-                $this->setContent($value);
+                $this->setRgt($value);
                 break;
             case 4:
+                $this->setLvl($value);
+                break;
+            case 5:
+                $this->setUserId($value);
+                break;
+            case 6:
+                $this->setContent($value);
+                break;
+            case 7:
+                $this->setFlag($value);
+                break;
+            case 8:
+                $this->setEdited($value);
+                break;
+            case 9:
                 $this->setPosted($value);
                 break;
         } // switch()
@@ -994,13 +1403,28 @@ abstract class Comments implements ActiveRecordInterface
             $this->setArticleId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setUserId($arr[$keys[2]]);
+            $this->setLft($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setContent($arr[$keys[3]]);
+            $this->setRgt($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPosted($arr[$keys[4]]);
+            $this->setLvl($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setUserId($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setContent($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setFlag($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setEdited($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setPosted($arr[$keys[9]]);
         }
     }
 
@@ -1049,11 +1473,26 @@ abstract class Comments implements ActiveRecordInterface
         if ($this->isColumnModified(CommentsTableMap::COL_ARTICLE_ID)) {
             $criteria->add(CommentsTableMap::COL_ARTICLE_ID, $this->article_id);
         }
+        if ($this->isColumnModified(CommentsTableMap::COL_LFT)) {
+            $criteria->add(CommentsTableMap::COL_LFT, $this->lft);
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_RGT)) {
+            $criteria->add(CommentsTableMap::COL_RGT, $this->rgt);
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_LVL)) {
+            $criteria->add(CommentsTableMap::COL_LVL, $this->lvl);
+        }
         if ($this->isColumnModified(CommentsTableMap::COL_USER_ID)) {
             $criteria->add(CommentsTableMap::COL_USER_ID, $this->user_id);
         }
         if ($this->isColumnModified(CommentsTableMap::COL_CONTENT)) {
             $criteria->add(CommentsTableMap::COL_CONTENT, $this->content);
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_FLAG)) {
+            $criteria->add(CommentsTableMap::COL_FLAG, $this->flag);
+        }
+        if ($this->isColumnModified(CommentsTableMap::COL_EDITED)) {
+            $criteria->add(CommentsTableMap::COL_EDITED, $this->edited);
         }
         if ($this->isColumnModified(CommentsTableMap::COL_POSTED)) {
             $criteria->add(CommentsTableMap::COL_POSTED, $this->posted);
@@ -1145,8 +1584,13 @@ abstract class Comments implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setArticleId($this->getArticleId());
+        $copyObj->setLft($this->getLft());
+        $copyObj->setRgt($this->getRgt());
+        $copyObj->setLvl($this->getLvl());
         $copyObj->setUserId($this->getUserId());
         $copyObj->setContent($this->getContent());
+        $copyObj->setFlag($this->getFlag());
+        $copyObj->setEdited($this->getEdited());
         $copyObj->setPosted($this->getPosted());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1177,16 +1621,75 @@ abstract class Comments implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a ChildArticles object.
+     *
+     * @param  ChildArticles $v
+     * @return $this|\Comments The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setArticles(ChildArticles $v = null)
+    {
+        if ($v === null) {
+            $this->setArticleId(NULL);
+        } else {
+            $this->setArticleId($v->getId());
+        }
+
+        $this->aArticles = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildArticles object, it will not be re-added.
+        if ($v !== null) {
+            $v->addComments($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildArticles object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildArticles The associated ChildArticles object.
+     * @throws PropelException
+     */
+    public function getArticles(ConnectionInterface $con = null)
+    {
+        if ($this->aArticles === null && ($this->article_id !== null)) {
+            $this->aArticles = ChildArticlesQuery::create()->findPk($this->article_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aArticles->addCommentss($this);
+             */
+        }
+
+        return $this->aArticles;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
+        if (null !== $this->aArticles) {
+            $this->aArticles->removeComments($this);
+        }
         $this->id = null;
         $this->article_id = null;
+        $this->lft = null;
+        $this->rgt = null;
+        $this->lvl = null;
         $this->user_id = null;
         $this->content = null;
+        $this->flag = null;
+        $this->edited = null;
         $this->posted = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1208,6 +1711,10 @@ abstract class Comments implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
+        // nested_set behavior
+        $this->collNestedSetChildren = null;
+        $this->aNestedSetParent = null;
+        $this->aArticles = null;
     }
 
     /**
@@ -1218,6 +1725,920 @@ abstract class Comments implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(CommentsTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+    
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildComments The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[CommentsTableMap::COL_EDITED] = true;
+    
+        return $this;
+    }
+
+    // nested_set behavior
+    
+    /**
+     * Execute queries that were saved to be run inside the save transaction
+     *
+     * @param  ConnectionInterface $con Connection to use.
+     */
+    protected function processNestedSetQueries(ConnectionInterface $con)
+    {
+        foreach ($this->nestedSetQueries as $query) {
+            $query['arguments'][] = $con;
+            call_user_func_array($query['callable'], $query['arguments']);
+        }
+        $this->nestedSetQueries = array();
+    }
+    
+    /**
+     * Proxy getter method for the left value of the nested set model.
+     * It provides a generic way to get the value, whatever the actual column name is.
+     *
+     * @return     int The nested set left value
+     */
+    public function getLeftValue()
+    {
+        return $this->lft;
+    }
+    
+    /**
+     * Proxy getter method for the right value of the nested set model.
+     * It provides a generic way to get the value, whatever the actual column name is.
+     *
+     * @return     int The nested set right value
+     */
+    public function getRightValue()
+    {
+        return $this->rgt;
+    }
+    
+    /**
+     * Proxy getter method for the level value of the nested set model.
+     * It provides a generic way to get the value, whatever the actual column name is.
+     *
+     * @return     int The nested set level value
+     */
+    public function getLevel()
+    {
+        return $this->lvl;
+    }
+    
+    /**
+     * Proxy getter method for the scope value of the nested set model.
+     * It provides a generic way to get the value, whatever the actual column name is.
+     *
+     * @return     int The nested set scope value
+     */
+    public function getScopeValue()
+    {
+        return $this->article_id;
+    }
+    
+    /**
+     * Proxy setter method for the left value of the nested set model.
+     * It provides a generic way to set the value, whatever the actual column name is.
+     *
+     * @param  int $v The nested set left value
+     * @return $this|ChildComments The current object (for fluent API support)
+     */
+    public function setLeftValue($v)
+    {
+        return $this->setLft($v);
+    }
+    
+    /**
+     * Proxy setter method for the right value of the nested set model.
+     * It provides a generic way to set the value, whatever the actual column name is.
+     *
+     * @param      int $v The nested set right value
+     * @return     $this|ChildComments The current object (for fluent API support)
+     */
+    public function setRightValue($v)
+    {
+        return $this->setRgt($v);
+    }
+    
+    /**
+     * Proxy setter method for the level value of the nested set model.
+     * It provides a generic way to set the value, whatever the actual column name is.
+     *
+     * @param      int $v The nested set level value
+     * @return     $this|ChildComments The current object (for fluent API support)
+     */
+    public function setLevel($v)
+    {
+        return $this->setLvl($v);
+    }
+    
+    /**
+     * Proxy setter method for the scope value of the nested set model.
+     * It provides a generic way to set the value, whatever the actual column name is.
+     *
+     * @param      int $v The nested set scope value
+     * @return     $this|ChildComments The current object (for fluent API support)
+     */
+    public function setScopeValue($v)
+    {
+        return $this->setArticleId($v);
+    }
+    
+    /**
+     * Creates the supplied node as the root node.
+     *
+     * @return     $this|ChildComments The current object (for fluent API support)
+     * @throws     PropelException
+     */
+    public function makeRoot()
+    {
+        if ($this->getLeftValue() || $this->getRightValue()) {
+            throw new PropelException('Cannot turn an existing node into a root node.');
+        }
+    
+        $this->setLeftValue(1);
+        $this->setRightValue(2);
+        $this->setLevel(0);
+    
+        return $this;
+    }
+    
+    /**
+     * Tests if object is a node, i.e. if it is inserted in the tree
+     *
+     * @return     bool
+     */
+    public function isInTree()
+    {
+        return $this->getLeftValue() > 0 && $this->getRightValue() > $this->getLeftValue();
+    }
+    
+    /**
+     * Tests if node is a root
+     *
+     * @return     bool
+     */
+    public function isRoot()
+    {
+        return $this->isInTree() && $this->getLeftValue() == 1;
+    }
+    
+    /**
+     * Tests if node is a leaf
+     *
+     * @return     bool
+     */
+    public function isLeaf()
+    {
+        return $this->isInTree() &&  ($this->getRightValue() - $this->getLeftValue()) == 1;
+    }
+    
+    /**
+     * Tests if node is a descendant of another node
+     *
+     * @param      ChildComments $parent Propel node object
+     * @return     bool
+     */
+    public function isDescendantOf(ChildComments $parent)
+    {
+        if ($this->getScopeValue() !== $parent->getScopeValue()) {
+            return false; //since the `this` and $parent are in different scopes, there's no way that `this` is be a descendant of $parent.
+        }
+    
+        return $this->isInTree() && $this->getLeftValue() > $parent->getLeftValue() && $this->getRightValue() < $parent->getRightValue();
+    }
+    
+    /**
+     * Tests if node is a ancestor of another node
+     *
+     * @param      ChildComments $child Propel node object
+     * @return     bool
+     */
+    public function isAncestorOf(ChildComments $child)
+    {
+        return $child->isDescendantOf($this);
+    }
+    
+    /**
+     * Tests if object has an ancestor
+     *
+     * @return boolean
+     */
+    public function hasParent()
+    {
+        return $this->getLevel() > 0;
+    }
+    
+    /**
+     * Sets the cache for parent node of the current object.
+     * Warning: this does not move the current object in the tree.
+     * Use moveTofirstChildOf() or moveToLastChildOf() for that purpose
+     *
+     * @param      ChildComments $parent
+     * @return     $this|ChildComments The current object, for fluid interface
+     */
+    public function setParent(ChildComments $parent = null)
+    {
+        $this->aNestedSetParent = $parent;
+    
+        return $this;
+    }
+    
+    /**
+     * Gets parent node for the current object if it exists
+     * The result is cached so further calls to the same method don't issue any queries
+     *
+     * @param  ConnectionInterface $con Connection to use.
+     * @return ChildComments|null Propel object if exists else null
+     */
+    public function getParent(ConnectionInterface $con = null)
+    {
+        if (null === $this->aNestedSetParent && $this->hasParent()) {
+            $this->aNestedSetParent = ChildCommentsQuery::create()
+                ->ancestorsOf($this)
+                ->orderByLevel(true)
+                ->findOne($con);
+        }
+    
+        return $this->aNestedSetParent;
+    }
+    
+    /**
+     * Determines if the node has previous sibling
+     *
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     bool
+     */
+    public function hasPrevSibling(ConnectionInterface $con = null)
+    {
+        if (!ChildCommentsQuery::isValid($this)) {
+            return false;
+        }
+    
+        return ChildCommentsQuery::create()
+            ->filterByRgt($this->getLeftValue() - 1)
+            ->inTree($this->getScopeValue())
+            ->exists($con);
+    }
+    
+    /**
+     * Gets previous sibling for the given node if it exists
+     *
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ChildComments|null         Propel object if exists else null
+     */
+    public function getPrevSibling(ConnectionInterface $con = null)
+    {
+        return ChildCommentsQuery::create()
+            ->filterByRgt($this->getLeftValue() - 1)
+            ->inTree($this->getScopeValue())
+            ->findOne($con);
+    }
+    
+    /**
+     * Determines if the node has next sibling
+     *
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     bool
+     */
+    public function hasNextSibling(ConnectionInterface $con = null)
+    {
+        if (!ChildCommentsQuery::isValid($this)) {
+            return false;
+        }
+    
+        return ChildCommentsQuery::create()
+            ->filterByLft($this->getRightValue() + 1)
+            ->inTree($this->getScopeValue())
+            ->exists($con);
+    }
+    
+    /**
+     * Gets next sibling for the given node if it exists
+     *
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ChildComments|null         Propel object if exists else null
+     */
+    public function getNextSibling(ConnectionInterface $con = null)
+    {
+        return ChildCommentsQuery::create()
+            ->filterByLft($this->getRightValue() + 1)
+            ->inTree($this->getScopeValue())
+            ->findOne($con);
+    }
+    
+    /**
+     * Clears out the $collNestedSetChildren collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return     void
+     */
+    public function clearNestedSetChildren()
+    {
+        $this->collNestedSetChildren = null;
+    }
+    
+    /**
+     * Initializes the $collNestedSetChildren collection.
+     *
+     * @return     void
+     */
+    public function initNestedSetChildren()
+    {
+        $collectionClassName = \Map\CommentsTableMap::getTableMap()->getCollectionClassName();
+    
+        $this->collNestedSetChildren = new $collectionClassName;
+        $this->collNestedSetChildren->setModel('\Comments');
+    }
+    
+    /**
+     * Adds an element to the internal $collNestedSetChildren collection.
+     * Beware that this doesn't insert a node in the tree.
+     * This method is only used to facilitate children hydration.
+     *
+     * @param      ChildComments $comments
+     *
+     * @return     void
+     */
+    public function addNestedSetChild(ChildComments $comments)
+    {
+        if (null === $this->collNestedSetChildren) {
+            $this->initNestedSetChildren();
+        }
+        if (!in_array($comments, $this->collNestedSetChildren->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->collNestedSetChildren[]= $comments;
+            $comments->setParent($this);
+        }
+    }
+    
+    /**
+     * Tests if node has children
+     *
+     * @return     bool
+     */
+    public function hasChildren()
+    {
+        return ($this->getRightValue() - $this->getLeftValue()) > 1;
+    }
+    
+    /**
+     * Gets the children of the given node
+     *
+     * @param      Criteria  $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ObjectCollection|ChildComments[] List of ChildComments objects
+     */
+    public function getChildren(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if (null === $this->collNestedSetChildren || null !== $criteria) {
+            if ($this->isLeaf() || ($this->isNew() && null === $this->collNestedSetChildren)) {
+                // return empty collection
+                $this->initNestedSetChildren();
+            } else {
+                $collNestedSetChildren = ChildCommentsQuery::create(null, $criteria)
+                    ->childrenOf($this)
+                    ->orderByBranch()
+                    ->find($con);
+                if (null !== $criteria) {
+                    return $collNestedSetChildren;
+                }
+                $this->collNestedSetChildren = $collNestedSetChildren;
+            }
+        }
+    
+        return $this->collNestedSetChildren;
+    }
+    
+    /**
+     * Gets number of children for the given node
+     *
+     * @param      Criteria  $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     int       Number of children
+     */
+    public function countChildren(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if (null === $this->collNestedSetChildren || null !== $criteria) {
+            if ($this->isLeaf() || ($this->isNew() && null === $this->collNestedSetChildren)) {
+                return 0;
+            } else {
+                return ChildCommentsQuery::create(null, $criteria)
+                    ->childrenOf($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collNestedSetChildren);
+        }
+    }
+    
+    /**
+     * Gets the first child of the given node
+     *
+     * @param      Criteria $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ChildComments|null First child or null if this is a leaf
+     */
+    public function getFirstChild(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if ($this->isLeaf()) {
+            return null;
+        } else {
+            return ChildCommentsQuery::create(null, $criteria)
+                ->childrenOf($this)
+                ->orderByBranch()
+                ->findOne($con);
+        }
+    }
+    
+    /**
+     * Gets the last child of the given node
+     *
+     * @param      Criteria $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ChildComments|null Last child or null if this is a leaf
+     */
+    public function getLastChild(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if ($this->isLeaf()) {
+            return null;
+        } else {
+            return ChildCommentsQuery::create(null, $criteria)
+                ->childrenOf($this)
+                ->orderByBranch(true)
+                ->findOne($con);
+        }
+    }
+    
+    /**
+     * Gets the siblings of the given node
+     *
+     * @param boolean             $includeNode Whether to include the current node or not
+     * @param Criteria            $criteria Criteria to filter results.
+     * @param ConnectionInterface $con Connection to use.
+     *
+     * @return ObjectCollection|ChildComments[] List of ChildComments objects
+     */
+    public function getSiblings($includeNode = false, Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if ($this->isRoot()) {
+            return array();
+        } else {
+            $query = ChildCommentsQuery::create(null, $criteria)
+                ->childrenOf($this->getParent($con))
+                ->orderByBranch();
+            if (!$includeNode) {
+                $query->prune($this);
+            }
+    
+            return $query->find($con);
+        }
+    }
+    
+    /**
+     * Gets descendants for the given node
+     *
+     * @param      Criteria $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ObjectCollection|ChildComments[] List of ChildComments objects
+     */
+    public function getDescendants(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if ($this->isLeaf()) {
+            return array();
+        } else {
+            return ChildCommentsQuery::create(null, $criteria)
+                ->descendantsOf($this)
+                ->orderByBranch()
+                ->find($con);
+        }
+    }
+    
+    /**
+     * Gets number of descendants for the given node
+     *
+     * @param      Criteria $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     int         Number of descendants
+     */
+    public function countDescendants(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if ($this->isLeaf()) {
+            // save one query
+            return 0;
+        } else {
+            return ChildCommentsQuery::create(null, $criteria)
+                ->descendantsOf($this)
+                ->count($con);
+        }
+    }
+    
+    /**
+     * Gets descendants for the given node, plus the current node
+     *
+     * @param      Criteria $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ObjectCollection|ChildComments[] List of ChildComments objects
+     */
+    public function getBranch(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        return ChildCommentsQuery::create(null, $criteria)
+            ->branchOf($this)
+            ->orderByBranch()
+            ->find($con);
+    }
+    
+    /**
+     * Gets ancestors for the given node, starting with the root node
+     * Use it for breadcrumb paths for instance
+     *
+     * @param      Criteria $criteria Criteria to filter results.
+     * @param      ConnectionInterface $con Connection to use.
+     * @return     ObjectCollection|ChildComments[] List of ChildComments objects
+     */
+    public function getAncestors(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        if ($this->isRoot()) {
+            // save one query
+            return array();
+        } else {
+            return ChildCommentsQuery::create(null, $criteria)
+                ->ancestorsOf($this)
+                ->orderByBranch()
+                ->find($con);
+        }
+    }
+    
+    /**
+     * Inserts the given $child node as first child of current
+     * The modifications in the current object and the tree
+     * are not persisted until the child object is saved.
+     *
+     * @param      ChildComments $child    Propel object for child node
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function addChild(ChildComments $child)
+    {
+        if ($this->isNew()) {
+            throw new PropelException('A ChildComments object must not be new to accept children.');
+        }
+        $child->insertAsFirstChildOf($this);
+    
+        return $this;
+    }
+    
+    /**
+     * Inserts the current node as first child of given $parent node
+     * The modifications in the current object and the tree
+     * are not persisted until the current object is saved.
+     *
+     * @param      ChildComments $parent    Propel object for parent node
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function insertAsFirstChildOf(ChildComments $parent)
+    {
+        if ($this->isInTree()) {
+            throw new PropelException('A ChildComments object must not already be in the tree to be inserted. Use the moveToFirstChildOf() instead.');
+        }
+        $left = $parent->getLeftValue() + 1;
+        // Update node properties
+        $this->setLeftValue($left);
+        $this->setRightValue($left + 1);
+        $this->setLevel($parent->getLevel() + 1);
+        $scope = $parent->getScopeValue();
+        $this->setScopeValue($scope);
+        // update the children collection of the parent
+        $parent->addNestedSetChild($this);
+    
+        // Keep the tree modification query for the save() transaction
+        $this->nestedSetQueries[] = array(
+            'callable'  => array('\CommentsQuery', 'makeRoomForLeaf'),
+            'arguments' => array($left, $scope, $this->isNew() ? null : $this)
+        );
+    
+        return $this;
+    }
+    
+    /**
+     * Inserts the current node as last child of given $parent node
+     * The modifications in the current object and the tree
+     * are not persisted until the current object is saved.
+     *
+     * @param  ChildComments $parent Propel object for parent node
+     * @return $this|ChildComments The current Propel object
+     */
+    public function insertAsLastChildOf(ChildComments $parent)
+    {
+        if ($this->isInTree()) {
+            throw new PropelException(
+                'A ChildComments object must not already be in the tree to be inserted. Use the moveToLastChildOf() instead.'
+            );
+        }
+    
+        $left = $parent->getRightValue();
+        // Update node properties
+        $this->setLeftValue($left);
+        $this->setRightValue($left + 1);
+        $this->setLevel($parent->getLevel() + 1);
+    
+        $scope = $parent->getScopeValue();
+        $this->setScopeValue($scope);
+    
+        // update the children collection of the parent
+        $parent->addNestedSetChild($this);
+    
+        // Keep the tree modification query for the save() transaction
+        $this->nestedSetQueries []= array(
+            'callable'  => array('\CommentsQuery', 'makeRoomForLeaf'),
+            'arguments' => array($left, $scope, $this->isNew() ? null : $this)
+        );
+    
+        return $this;
+    }
+    
+    /**
+     * Inserts the current node as prev sibling given $sibling node
+     * The modifications in the current object and the tree
+     * are not persisted until the current object is saved.
+     *
+     * @param      ChildComments $sibling    Propel object for parent node
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function insertAsPrevSiblingOf(ChildComments $sibling)
+    {
+        if ($this->isInTree()) {
+            throw new PropelException('A ChildComments object must not already be in the tree to be inserted. Use the moveToPrevSiblingOf() instead.');
+        }
+        $left = $sibling->getLeftValue();
+        // Update node properties
+        $this->setLeftValue($left);
+        $this->setRightValue($left + 1);
+        $this->setLevel($sibling->getLevel());
+        $scope = $sibling->getScopeValue();
+        $this->setScopeValue($scope);
+        // Keep the tree modification query for the save() transaction
+        $this->nestedSetQueries []= array(
+            'callable'  => array('\CommentsQuery', 'makeRoomForLeaf'),
+            'arguments' => array($left, $scope, $this->isNew() ? null : $this)
+        );
+    
+        return $this;
+    }
+    
+    /**
+     * Inserts the current node as next sibling given $sibling node
+     * The modifications in the current object and the tree
+     * are not persisted until the current object is saved.
+     *
+     * @param      ChildComments $sibling    Propel object for parent node
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function insertAsNextSiblingOf(ChildComments $sibling)
+    {
+        if ($this->isInTree()) {
+            throw new PropelException('A ChildComments object must not already be in the tree to be inserted. Use the moveToNextSiblingOf() instead.');
+        }
+        $left = $sibling->getRightValue() + 1;
+        // Update node properties
+        $this->setLeftValue($left);
+        $this->setRightValue($left + 1);
+        $this->setLevel($sibling->getLevel());
+        $scope = $sibling->getScopeValue();
+        $this->setScopeValue($scope);
+        // Keep the tree modification query for the save() transaction
+        $this->nestedSetQueries []= array(
+            'callable'  => array('\CommentsQuery', 'makeRoomForLeaf'),
+            'arguments' => array($left, $scope, $this->isNew() ? null : $this)
+        );
+    
+        return $this;
+    }
+    
+    /**
+     * Moves current node and its subtree to be the first child of $parent
+     * The modifications in the current object and the tree are immediate
+     *
+     * @param      ChildComments $parent    Propel object for parent node
+     * @param      ConnectionInterface $con    Connection to use.
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function moveToFirstChildOf(ChildComments $parent, ConnectionInterface $con = null)
+    {
+        if (!$this->isInTree()) {
+            throw new PropelException('A ChildComments object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
+        }
+        if ($parent->isDescendantOf($this)) {
+            throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
+        }
+    
+        $this->moveSubtreeTo($parent->getLeftValue() + 1, $parent->getLevel() - $this->getLevel() + 1, $parent->getScopeValue(), $con);
+    
+        return $this;
+    }
+    
+    /**
+     * Moves current node and its subtree to be the last child of $parent
+     * The modifications in the current object and the tree are immediate
+     *
+     * @param      ChildComments $parent    Propel object for parent node
+     * @param      ConnectionInterface $con    Connection to use.
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function moveToLastChildOf(ChildComments $parent, ConnectionInterface $con = null)
+    {
+        if (!$this->isInTree()) {
+            throw new PropelException('A ChildComments object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
+        }
+        if ($parent->isDescendantOf($this)) {
+            throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
+        }
+    
+        $this->moveSubtreeTo($parent->getRightValue(), $parent->getLevel() - $this->getLevel() + 1, $parent->getScopeValue(), $con);
+    
+        return $this;
+    }
+    
+    /**
+     * Moves current node and its subtree to be the previous sibling of $sibling
+     * The modifications in the current object and the tree are immediate
+     *
+     * @param      ChildComments $sibling    Propel object for sibling node
+     * @param      ConnectionInterface $con    Connection to use.
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function moveToPrevSiblingOf(ChildComments $sibling, ConnectionInterface $con = null)
+    {
+        if (!$this->isInTree()) {
+            throw new PropelException('A ChildComments object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
+        }
+        if ($sibling->isRoot()) {
+            throw new PropelException('Cannot move to previous sibling of a root node.');
+        }
+        if ($sibling->isDescendantOf($this)) {
+            throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
+        }
+    
+        $this->moveSubtreeTo($sibling->getLeftValue(), $sibling->getLevel() - $this->getLevel(), $sibling->getScopeValue(), $con);
+    
+        return $this;
+    }
+    
+    /**
+     * Moves current node and its subtree to be the next sibling of $sibling
+     * The modifications in the current object and the tree are immediate
+     *
+     * @param      ChildComments $sibling    Propel object for sibling node
+     * @param      ConnectionInterface $con    Connection to use.
+     *
+     * @return     $this|ChildComments The current Propel object
+     */
+    public function moveToNextSiblingOf(ChildComments $sibling, ConnectionInterface $con = null)
+    {
+        if (!$this->isInTree()) {
+            throw new PropelException('A ChildComments object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
+        }
+        if ($sibling->isRoot()) {
+            throw new PropelException('Cannot move to next sibling of a root node.');
+        }
+        if ($sibling->isDescendantOf($this)) {
+            throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
+        }
+    
+        $this->moveSubtreeTo($sibling->getRightValue() + 1, $sibling->getLevel() - $this->getLevel(), $sibling->getScopeValue(), $con);
+    
+        return $this;
+    }
+    
+    /**
+     * Move current node and its children to location $destLeft and updates rest of tree
+     *
+     * @param      int    $destLeft Destination left value
+     * @param      int    $levelDelta Delta to add to the levels
+     * @param      ConnectionInterface $con        Connection to use.
+     */
+    protected function moveSubtreeTo($destLeft, $levelDelta, $targetScope = null, ConnectionInterface $con = null)
+    {
+        $left  = $this->getLeftValue();
+        $right = $this->getRightValue();
+        $scope = $this->getScopeValue();
+    
+        if ($targetScope === null) {
+            $targetScope = $scope;
+        }
+    
+        $treeSize = $right - $left +1;
+    
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getWriteConnection(CommentsTableMap::DATABASE_NAME);
+        }
+    
+        $con->transaction(function () use ($con, $treeSize, $destLeft, $left, $right, $levelDelta, $scope, $targetScope) {
+            $preventDefault = false;
+    
+            // make room next to the target for the subtree
+            ChildCommentsQuery::shiftRLValues($treeSize, $destLeft, null, $targetScope, $con);
+    
+            if ($targetScope != $scope) {
+    
+                //move subtree to < 0, so the items are out of scope.
+                ChildCommentsQuery::shiftRLValues(-$right, $left, $right, $scope, $con);
+    
+                //update scopes
+                ChildCommentsQuery::setNegativeScope($targetScope, $con);
+    
+                //update levels
+                ChildCommentsQuery::shiftLevel($levelDelta, $left - $right, 0, $targetScope, $con);
+    
+                //move the subtree to the target
+                ChildCommentsQuery::shiftRLValues(($right - $left) + $destLeft, $left - $right, 0, $targetScope, $con);
+    
+    
+                $preventDefault = true;
+            }
+    
+            if (!$preventDefault) {
+    
+                if ($left >= $destLeft) { // src was shifted too?
+                    $left += $treeSize;
+                    $right += $treeSize;
+                }
+    
+                if ($levelDelta) {
+                    // update the levels of the subtree
+                    ChildCommentsQuery::shiftLevel($levelDelta, $left, $right, $scope, $con);
+                }
+    
+                // move the subtree to the target
+                ChildCommentsQuery::shiftRLValues($destLeft - $left, $left, $right, $scope, $con);
+            }
+    
+            // remove the empty room at the previous location of the subtree
+            ChildCommentsQuery::shiftRLValues(-$treeSize, $right + 1, null, $scope, $con);
+    
+            // update all loaded nodes
+            ChildCommentsQuery::updateLoadedNodes(null, $con);
+        });
+    }
+    
+    /**
+     * Deletes all descendants for the given node
+     * Instance pooling is wiped out by this command,
+     * so existing ChildComments instances are probably invalid (except for the current one)
+     *
+     * @param      ConnectionInterface $con Connection to use.
+     *
+     * @return     int         number of deleted nodes
+     */
+    public function deleteDescendants(ConnectionInterface $con = null)
+    {
+        if ($this->isLeaf()) {
+            // save one query
+            return;
+        }
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection(CommentsTableMap::DATABASE_NAME);
+        }
+        $left = $this->getLeftValue();
+        $right = $this->getRightValue();
+        $scope = $this->getScopeValue();
+    
+        return $con->transaction(function () use ($con, $left, $right, $scope) {
+            // delete descendant nodes (will empty the instance pool)
+            $ret = ChildCommentsQuery::create()
+                ->descendantsOf($this)
+                ->delete($con);
+    
+            // fill up the room that was used by descendants
+            ChildCommentsQuery::shiftRLValues($left - $right + 1, $right, null, $scope, $con);
+    
+            // fix the right value for the current node, which is now a leaf
+            $this->setRightValue($left + 1);
+    
+            return $ret;
+        });
+    }
+    
+    /**
+     * Returns a pre-order iterator for this node and its children.
+     *
+     * @return NestedSetRecursiveIterator
+     */
+    public function getIterator()
+    {
+        return new NestedSetRecursiveIterator($this);
     }
 
     /**

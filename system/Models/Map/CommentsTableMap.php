@@ -59,7 +59,7 @@ class CommentsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CommentsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -82,6 +82,21 @@ class CommentsTableMap extends TableMap
     const COL_ARTICLE_ID = 'comments.article_id';
 
     /**
+     * the column name for the lft field
+     */
+    const COL_LFT = 'comments.lft';
+
+    /**
+     * the column name for the rgt field
+     */
+    const COL_RGT = 'comments.rgt';
+
+    /**
+     * the column name for the lvl field
+     */
+    const COL_LVL = 'comments.lvl';
+
+    /**
      * the column name for the user_id field
      */
     const COL_USER_ID = 'comments.user_id';
@@ -90,6 +105,16 @@ class CommentsTableMap extends TableMap
      * the column name for the content field
      */
     const COL_CONTENT = 'comments.content';
+
+    /**
+     * the column name for the flag field
+     */
+    const COL_FLAG = 'comments.flag';
+
+    /**
+     * the column name for the edited field
+     */
+    const COL_EDITED = 'comments.edited';
 
     /**
      * the column name for the posted field
@@ -108,11 +133,11 @@ class CommentsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'ArticleId', 'UserId', 'Content', 'Posted', ),
-        self::TYPE_CAMELNAME     => array('id', 'articleId', 'userId', 'content', 'posted', ),
-        self::TYPE_COLNAME       => array(CommentsTableMap::COL_ID, CommentsTableMap::COL_ARTICLE_ID, CommentsTableMap::COL_USER_ID, CommentsTableMap::COL_CONTENT, CommentsTableMap::COL_POSTED, ),
-        self::TYPE_FIELDNAME     => array('id', 'article_id', 'user_id', 'content', 'posted', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'ArticleId', 'Lft', 'Rgt', 'Lvl', 'UserId', 'Content', 'Flag', 'Edited', 'Posted', ),
+        self::TYPE_CAMELNAME     => array('id', 'articleId', 'lft', 'rgt', 'lvl', 'userId', 'content', 'flag', 'edited', 'posted', ),
+        self::TYPE_COLNAME       => array(CommentsTableMap::COL_ID, CommentsTableMap::COL_ARTICLE_ID, CommentsTableMap::COL_LFT, CommentsTableMap::COL_RGT, CommentsTableMap::COL_LVL, CommentsTableMap::COL_USER_ID, CommentsTableMap::COL_CONTENT, CommentsTableMap::COL_FLAG, CommentsTableMap::COL_EDITED, CommentsTableMap::COL_POSTED, ),
+        self::TYPE_FIELDNAME     => array('id', 'article_id', 'lft', 'rgt', 'lvl', 'user_id', 'content', 'flag', 'edited', 'posted', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -122,11 +147,11 @@ class CommentsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'ArticleId' => 1, 'UserId' => 2, 'Content' => 3, 'Posted' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'articleId' => 1, 'userId' => 2, 'content' => 3, 'posted' => 4, ),
-        self::TYPE_COLNAME       => array(CommentsTableMap::COL_ID => 0, CommentsTableMap::COL_ARTICLE_ID => 1, CommentsTableMap::COL_USER_ID => 2, CommentsTableMap::COL_CONTENT => 3, CommentsTableMap::COL_POSTED => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'article_id' => 1, 'user_id' => 2, 'content' => 3, 'posted' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ArticleId' => 1, 'Lft' => 2, 'Rgt' => 3, 'Lvl' => 4, 'UserId' => 5, 'Content' => 6, 'Flag' => 7, 'Edited' => 8, 'Posted' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'articleId' => 1, 'lft' => 2, 'rgt' => 3, 'lvl' => 4, 'userId' => 5, 'content' => 6, 'flag' => 7, 'edited' => 8, 'posted' => 9, ),
+        self::TYPE_COLNAME       => array(CommentsTableMap::COL_ID => 0, CommentsTableMap::COL_ARTICLE_ID => 1, CommentsTableMap::COL_LFT => 2, CommentsTableMap::COL_RGT => 3, CommentsTableMap::COL_LVL => 4, CommentsTableMap::COL_USER_ID => 5, CommentsTableMap::COL_CONTENT => 6, CommentsTableMap::COL_FLAG => 7, CommentsTableMap::COL_EDITED => 8, CommentsTableMap::COL_POSTED => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'article_id' => 1, 'lft' => 2, 'rgt' => 3, 'lvl' => 4, 'user_id' => 5, 'content' => 6, 'flag' => 7, 'edited' => 8, 'posted' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -147,9 +172,14 @@ class CommentsTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('article_id', 'ArticleId', 'INTEGER', false, null, null);
+        $this->addForeignKey('article_id', 'ArticleId', 'INTEGER', 'articles', 'id', false, null, null);
+        $this->addColumn('lft', 'Lft', 'INTEGER', false, null, null);
+        $this->addColumn('rgt', 'Rgt', 'INTEGER', false, null, null);
+        $this->addColumn('lvl', 'Lvl', 'INTEGER', false, null, null);
         $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
         $this->addColumn('content', 'Content', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('flag', 'Flag', 'SMALLINT', false, null, null);
+        $this->addColumn('edited', 'Edited', 'TIMESTAMP', false, null, null);
         $this->addColumn('posted', 'Posted', 'TIMESTAMP', false, null, null);
     } // initialize()
 
@@ -158,7 +188,28 @@ class CommentsTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Articles', '\\Articles', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':article_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, null, false);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'posted', 'update_column' => 'edited', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'nested_set' => array('left_column' => 'lft', 'right_column' => 'rgt', 'level_column' => 'lvl', 'use_scope' => 'true', 'scope_column' => 'article_id', 'method_proxies' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -303,14 +354,24 @@ class CommentsTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CommentsTableMap::COL_ID);
             $criteria->addSelectColumn(CommentsTableMap::COL_ARTICLE_ID);
+            $criteria->addSelectColumn(CommentsTableMap::COL_LFT);
+            $criteria->addSelectColumn(CommentsTableMap::COL_RGT);
+            $criteria->addSelectColumn(CommentsTableMap::COL_LVL);
             $criteria->addSelectColumn(CommentsTableMap::COL_USER_ID);
             $criteria->addSelectColumn(CommentsTableMap::COL_CONTENT);
+            $criteria->addSelectColumn(CommentsTableMap::COL_FLAG);
+            $criteria->addSelectColumn(CommentsTableMap::COL_EDITED);
             $criteria->addSelectColumn(CommentsTableMap::COL_POSTED);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.article_id');
+            $criteria->addSelectColumn($alias . '.lft');
+            $criteria->addSelectColumn($alias . '.rgt');
+            $criteria->addSelectColumn($alias . '.lvl');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.content');
+            $criteria->addSelectColumn($alias . '.flag');
+            $criteria->addSelectColumn($alias . '.edited');
             $criteria->addSelectColumn($alias . '.posted');
         }
     }

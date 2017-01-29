@@ -2,16 +2,23 @@
 
 namespace Base;
 
+use \Accounts as ChildAccounts;
+use \AccountsQuery as ChildAccountsQuery;
+use \Articles as ChildArticles;
 use \ArticlesQuery as ChildArticlesQuery;
+use \Comments as ChildComments;
+use \CommentsQuery as ChildCommentsQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
 use Map\ArticlesTableMap;
+use Map\CommentsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -83,11 +90,61 @@ abstract class Articles implements ActiveRecordInterface
     protected $title;
 
     /**
+     * The value for the url field.
+     * 
+     * @var        string
+     */
+    protected $url;
+
+    /**
      * The value for the content field.
      * 
      * @var        string
      */
     protected $content;
+
+    /**
+     * The value for the tags field.
+     * 
+     * @var        string
+     */
+    protected $tags;
+
+    /**
+     * The value for the likes field.
+     * 
+     * @var        int
+     */
+    protected $likes;
+
+    /**
+     * The value for the img_path field.
+     * 
+     * @var        string
+     */
+    protected $img_path;
+
+    /**
+     * The value for the img_frame field.
+     * 
+     * @var        string
+     */
+    protected $img_frame;
+
+    /**
+     * The value for the comments_allowed field.
+     * 
+     * @var        boolean
+     */
+    protected $comments_allowed;
+
+    /**
+     * The value for the modified field.
+     * 
+     * Note: this column has a database default value of: NULL
+     * @var        DateTime
+     */
+    protected $modified;
 
     /**
      * The value for the created field.
@@ -98,12 +155,29 @@ abstract class Articles implements ActiveRecordInterface
     protected $created;
 
     /**
+     * @var        ChildAccounts
+     */
+    protected $aAccounts;
+
+    /**
+     * @var        ObjectCollection|ChildComments[] Collection to store aggregation of ChildComments objects.
+     */
+    protected $collCommentss;
+    protected $collCommentssPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildComments[]
+     */
+    protected $commentssScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -113,6 +187,7 @@ abstract class Articles implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->modified = PropelDateTime::newInstance(NULL, null, 'DateTime');
         $this->created = PropelDateTime::newInstance(NULL, null, 'DateTime');
     }
 
@@ -374,6 +449,16 @@ abstract class Articles implements ActiveRecordInterface
     }
 
     /**
+     * Get the [url] column value.
+     * 
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
      * Get the [content] column value.
      * 
      * @return string
@@ -381,6 +466,86 @@ abstract class Articles implements ActiveRecordInterface
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Get the [tags] column value.
+     * 
+     * @return string
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Get the [likes] column value.
+     * 
+     * @return int
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
+     * Get the [img_path] column value.
+     * 
+     * @return string
+     */
+    public function getImgPath()
+    {
+        return $this->img_path;
+    }
+
+    /**
+     * Get the [img_frame] column value.
+     * 
+     * @return string
+     */
+    public function getImgFrame()
+    {
+        return $this->img_frame;
+    }
+
+    /**
+     * Get the [comments_allowed] column value.
+     * 
+     * @return boolean
+     */
+    public function getCommentsAllowed()
+    {
+        return $this->comments_allowed;
+    }
+
+    /**
+     * Get the [comments_allowed] column value.
+     * 
+     * @return boolean
+     */
+    public function isCommentsAllowed()
+    {
+        return $this->getCommentsAllowed();
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [modified] column value.
+     * 
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getModified($format = NULL)
+    {
+        if ($format === null) {
+            return $this->modified;
+        } else {
+            return $this->modified instanceof \DateTimeInterface ? $this->modified->format($format) : null;
+        }
     }
 
     /**
@@ -440,6 +605,10 @@ abstract class Articles implements ActiveRecordInterface
             $this->modifiedColumns[ArticlesTableMap::COL_USER_ID] = true;
         }
 
+        if ($this->aAccounts !== null && $this->aAccounts->getId() !== $v) {
+            $this->aAccounts = null;
+        }
+
         return $this;
     } // setUserId()
 
@@ -464,6 +633,26 @@ abstract class Articles implements ActiveRecordInterface
     } // setTitle()
 
     /**
+     * Set the value of [url] column.
+     * 
+     * @param string $v new value
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setUrl($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->url !== $v) {
+            $this->url = $v;
+            $this->modifiedColumns[ArticlesTableMap::COL_URL] = true;
+        }
+
+        return $this;
+    } // setUrl()
+
+    /**
      * Set the value of [content] column.
      * 
      * @param string $v new value
@@ -482,6 +671,136 @@ abstract class Articles implements ActiveRecordInterface
 
         return $this;
     } // setContent()
+
+    /**
+     * Set the value of [tags] column.
+     * 
+     * @param string $v new value
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setTags($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->tags !== $v) {
+            $this->tags = $v;
+            $this->modifiedColumns[ArticlesTableMap::COL_TAGS] = true;
+        }
+
+        return $this;
+    } // setTags()
+
+    /**
+     * Set the value of [likes] column.
+     * 
+     * @param int $v new value
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setLikes($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->likes !== $v) {
+            $this->likes = $v;
+            $this->modifiedColumns[ArticlesTableMap::COL_LIKES] = true;
+        }
+
+        return $this;
+    } // setLikes()
+
+    /**
+     * Set the value of [img_path] column.
+     * 
+     * @param string $v new value
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setImgPath($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->img_path !== $v) {
+            $this->img_path = $v;
+            $this->modifiedColumns[ArticlesTableMap::COL_IMG_PATH] = true;
+        }
+
+        return $this;
+    } // setImgPath()
+
+    /**
+     * Set the value of [img_frame] column.
+     * 
+     * @param string $v new value
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setImgFrame($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->img_frame !== $v) {
+            $this->img_frame = $v;
+            $this->modifiedColumns[ArticlesTableMap::COL_IMG_FRAME] = true;
+        }
+
+        return $this;
+    } // setImgFrame()
+
+    /**
+     * Sets the value of the [comments_allowed] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * 
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setCommentsAllowed($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->comments_allowed !== $v) {
+            $this->comments_allowed = $v;
+            $this->modifiedColumns[ArticlesTableMap::COL_COMMENTS_ALLOWED] = true;
+        }
+
+        return $this;
+    } // setCommentsAllowed()
+
+    /**
+     * Sets the value of [modified] column to a normalized version of the date/time value specified.
+     * 
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function setModified($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->modified !== null || $dt !== null) {
+            if ( ($dt != $this->modified) // normalized values don't match
+                || ($dt->format('Y-m-d H:i:s.u') === NULL) // or the entered value matches the default
+                 ) {
+                $this->modified = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ArticlesTableMap::COL_MODIFIED] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setModified()
 
     /**
      * Sets the value of [created] column to a normalized version of the date/time value specified.
@@ -515,6 +834,10 @@ abstract class Articles implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->modified && $this->modified->format('Y-m-d H:i:s.u') !== NULL) {
+                return false;
+            }
+
             if ($this->created && $this->created->format('Y-m-d H:i:s.u') !== NULL) {
                 return false;
             }
@@ -554,10 +877,34 @@ abstract class Articles implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ArticlesTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
             $this->title = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ArticlesTableMap::translateFieldName('Content', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ArticlesTableMap::translateFieldName('Url', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->url = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ArticlesTableMap::translateFieldName('Content', TableMap::TYPE_PHPNAME, $indexType)];
             $this->content = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ArticlesTableMap::translateFieldName('Created', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ArticlesTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tags = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ArticlesTableMap::translateFieldName('Likes', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->likes = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ArticlesTableMap::translateFieldName('ImgPath', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->img_path = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticlesTableMap::translateFieldName('ImgFrame', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->img_frame = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticlesTableMap::translateFieldName('CommentsAllowed', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->comments_allowed = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticlesTableMap::translateFieldName('Modified', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->modified = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : ArticlesTableMap::translateFieldName('Created', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -570,7 +917,7 @@ abstract class Articles implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ArticlesTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 12; // 12 = ArticlesTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Articles'), 0, $e);
@@ -592,6 +939,9 @@ abstract class Articles implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aAccounts !== null && $this->user_id !== $this->aAccounts->getId()) {
+            $this->aAccounts = null;
+        }
     } // ensureConsistency
 
     /**
@@ -630,6 +980,9 @@ abstract class Articles implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->aAccounts = null;
+            $this->collCommentss = null;
 
         } // if (deep)
     }
@@ -695,10 +1048,29 @@ abstract class Articles implements ActiveRecordInterface
         return $con->transaction(function () use ($con) {
             $ret = $this->preSave($con);
             $isInsert = $this->isNew();
+            // sluggable behavior
+            
+            if ($this->isColumnModified(ArticlesTableMap::COL_URL) && $this->getUrl()) {
+                $this->setUrl($this->makeSlugUnique($this->getUrl()));
+            } elseif (!$this->getUrl()) {
+                $this->setUrl($this->createSlug());
+            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                
+                if (!$this->isColumnModified(ArticlesTableMap::COL_CREATED)) {
+                    $this->setCreated(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
+                if (!$this->isColumnModified(ArticlesTableMap::COL_MODIFIED)) {
+                    $this->setModified(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(ArticlesTableMap::COL_MODIFIED)) {
+                    $this->setModified(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -734,6 +1106,18 @@ abstract class Articles implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aAccounts !== null) {
+                if ($this->aAccounts->isModified() || $this->aAccounts->isNew()) {
+                    $affectedRows += $this->aAccounts->save($con);
+                }
+                $this->setAccounts($this->aAccounts);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -743,6 +1127,23 @@ abstract class Articles implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->commentssScheduledForDeletion !== null) {
+                if (!$this->commentssScheduledForDeletion->isEmpty()) {
+                    \CommentsQuery::create()
+                        ->filterByPrimaryKeys($this->commentssScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->commentssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collCommentss !== null) {
+                foreach ($this->collCommentss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -780,8 +1181,29 @@ abstract class Articles implements ActiveRecordInterface
         if ($this->isColumnModified(ArticlesTableMap::COL_TITLE)) {
             $modifiedColumns[':p' . $index++]  = 'title';
         }
+        if ($this->isColumnModified(ArticlesTableMap::COL_URL)) {
+            $modifiedColumns[':p' . $index++]  = 'url';
+        }
         if ($this->isColumnModified(ArticlesTableMap::COL_CONTENT)) {
             $modifiedColumns[':p' . $index++]  = 'content';
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_TAGS)) {
+            $modifiedColumns[':p' . $index++]  = 'tags';
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_LIKES)) {
+            $modifiedColumns[':p' . $index++]  = 'likes';
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_IMG_PATH)) {
+            $modifiedColumns[':p' . $index++]  = 'img_path';
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_IMG_FRAME)) {
+            $modifiedColumns[':p' . $index++]  = 'img_frame';
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_COMMENTS_ALLOWED)) {
+            $modifiedColumns[':p' . $index++]  = 'comments_allowed';
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_MODIFIED)) {
+            $modifiedColumns[':p' . $index++]  = 'modified';
         }
         if ($this->isColumnModified(ArticlesTableMap::COL_CREATED)) {
             $modifiedColumns[':p' . $index++]  = 'created';
@@ -806,8 +1228,29 @@ abstract class Articles implements ActiveRecordInterface
                     case 'title':                        
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
                         break;
+                    case 'url':                        
+                        $stmt->bindValue($identifier, $this->url, PDO::PARAM_STR);
+                        break;
                     case 'content':                        
                         $stmt->bindValue($identifier, $this->content, PDO::PARAM_STR);
+                        break;
+                    case 'tags':                        
+                        $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
+                        break;
+                    case 'likes':                        
+                        $stmt->bindValue($identifier, $this->likes, PDO::PARAM_INT);
+                        break;
+                    case 'img_path':                        
+                        $stmt->bindValue($identifier, $this->img_path, PDO::PARAM_STR);
+                        break;
+                    case 'img_frame':                        
+                        $stmt->bindValue($identifier, $this->img_frame, PDO::PARAM_STR);
+                        break;
+                    case 'comments_allowed':
+                        $stmt->bindValue($identifier, (int) $this->comments_allowed, PDO::PARAM_INT);
+                        break;
+                    case 'modified':                        
+                        $stmt->bindValue($identifier, $this->modified ? $this->modified->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'created':                        
                         $stmt->bindValue($identifier, $this->created ? $this->created->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -884,9 +1327,30 @@ abstract class Articles implements ActiveRecordInterface
                 return $this->getTitle();
                 break;
             case 3:
-                return $this->getContent();
+                return $this->getUrl();
                 break;
             case 4:
+                return $this->getContent();
+                break;
+            case 5:
+                return $this->getTags();
+                break;
+            case 6:
+                return $this->getLikes();
+                break;
+            case 7:
+                return $this->getImgPath();
+                break;
+            case 8:
+                return $this->getImgFrame();
+                break;
+            case 9:
+                return $this->getCommentsAllowed();
+                break;
+            case 10:
+                return $this->getModified();
+                break;
+            case 11:
                 return $this->getCreated();
                 break;
             default:
@@ -906,10 +1370,11 @@ abstract class Articles implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
         if (isset($alreadyDumpedObjects['Articles'][$this->hashCode()])) {
@@ -921,11 +1386,22 @@ abstract class Articles implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
             $keys[2] => $this->getTitle(),
-            $keys[3] => $this->getContent(),
-            $keys[4] => $this->getCreated(),
+            $keys[3] => $this->getUrl(),
+            $keys[4] => $this->getContent(),
+            $keys[5] => $this->getTags(),
+            $keys[6] => $this->getLikes(),
+            $keys[7] => $this->getImgPath(),
+            $keys[8] => $this->getImgFrame(),
+            $keys[9] => $this->getCommentsAllowed(),
+            $keys[10] => $this->getModified(),
+            $keys[11] => $this->getCreated(),
         );
-        if ($result[$keys[4]] instanceof \DateTime) {
-            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        if ($result[$keys[10]] instanceof \DateTime) {
+            $result[$keys[10]] = $result[$keys[10]]->format('c');
+        }
+        
+        if ($result[$keys[11]] instanceof \DateTime) {
+            $result[$keys[11]] = $result[$keys[11]]->format('c');
         }
         
         $virtualColumns = $this->virtualColumns;
@@ -933,6 +1409,38 @@ abstract class Articles implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
         
+        if ($includeForeignObjects) {
+            if (null !== $this->aAccounts) {
+                
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'accounts';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'accounts';
+                        break;
+                    default:
+                        $key = 'Accounts';
+                }
+        
+                $result[$key] = $this->aAccounts->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collCommentss) {
+                
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'commentss';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'commentss';
+                        break;
+                    default:
+                        $key = 'Commentss';
+                }
+        
+                $result[$key] = $this->collCommentss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
 
         return $result;
     }
@@ -976,9 +1484,30 @@ abstract class Articles implements ActiveRecordInterface
                 $this->setTitle($value);
                 break;
             case 3:
-                $this->setContent($value);
+                $this->setUrl($value);
                 break;
             case 4:
+                $this->setContent($value);
+                break;
+            case 5:
+                $this->setTags($value);
+                break;
+            case 6:
+                $this->setLikes($value);
+                break;
+            case 7:
+                $this->setImgPath($value);
+                break;
+            case 8:
+                $this->setImgFrame($value);
+                break;
+            case 9:
+                $this->setCommentsAllowed($value);
+                break;
+            case 10:
+                $this->setModified($value);
+                break;
+            case 11:
                 $this->setCreated($value);
                 break;
         } // switch()
@@ -1017,10 +1546,31 @@ abstract class Articles implements ActiveRecordInterface
             $this->setTitle($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setContent($arr[$keys[3]]);
+            $this->setUrl($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setCreated($arr[$keys[4]]);
+            $this->setContent($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setTags($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setLikes($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setImgPath($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setImgFrame($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setCommentsAllowed($arr[$keys[9]]);
+        }
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setModified($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setCreated($arr[$keys[11]]);
         }
     }
 
@@ -1072,8 +1622,29 @@ abstract class Articles implements ActiveRecordInterface
         if ($this->isColumnModified(ArticlesTableMap::COL_TITLE)) {
             $criteria->add(ArticlesTableMap::COL_TITLE, $this->title);
         }
+        if ($this->isColumnModified(ArticlesTableMap::COL_URL)) {
+            $criteria->add(ArticlesTableMap::COL_URL, $this->url);
+        }
         if ($this->isColumnModified(ArticlesTableMap::COL_CONTENT)) {
             $criteria->add(ArticlesTableMap::COL_CONTENT, $this->content);
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_TAGS)) {
+            $criteria->add(ArticlesTableMap::COL_TAGS, $this->tags);
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_LIKES)) {
+            $criteria->add(ArticlesTableMap::COL_LIKES, $this->likes);
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_IMG_PATH)) {
+            $criteria->add(ArticlesTableMap::COL_IMG_PATH, $this->img_path);
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_IMG_FRAME)) {
+            $criteria->add(ArticlesTableMap::COL_IMG_FRAME, $this->img_frame);
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_COMMENTS_ALLOWED)) {
+            $criteria->add(ArticlesTableMap::COL_COMMENTS_ALLOWED, $this->comments_allowed);
+        }
+        if ($this->isColumnModified(ArticlesTableMap::COL_MODIFIED)) {
+            $criteria->add(ArticlesTableMap::COL_MODIFIED, $this->modified);
         }
         if ($this->isColumnModified(ArticlesTableMap::COL_CREATED)) {
             $criteria->add(ArticlesTableMap::COL_CREATED, $this->created);
@@ -1166,8 +1737,29 @@ abstract class Articles implements ActiveRecordInterface
     {
         $copyObj->setUserId($this->getUserId());
         $copyObj->setTitle($this->getTitle());
+        $copyObj->setUrl($this->getUrl());
         $copyObj->setContent($this->getContent());
+        $copyObj->setTags($this->getTags());
+        $copyObj->setLikes($this->getLikes());
+        $copyObj->setImgPath($this->getImgPath());
+        $copyObj->setImgFrame($this->getImgFrame());
+        $copyObj->setCommentsAllowed($this->getCommentsAllowed());
+        $copyObj->setModified($this->getModified());
         $copyObj->setCreated($this->getCreated());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getCommentss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addComments($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1197,16 +1789,318 @@ abstract class Articles implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a ChildAccounts object.
+     *
+     * @param  ChildAccounts $v
+     * @return $this|\Articles The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setAccounts(ChildAccounts $v = null)
+    {
+        if ($v === null) {
+            $this->setUserId(NULL);
+        } else {
+            $this->setUserId($v->getId());
+        }
+
+        $this->aAccounts = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildAccounts object, it will not be re-added.
+        if ($v !== null) {
+            $v->addArticles($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildAccounts object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildAccounts The associated ChildAccounts object.
+     * @throws PropelException
+     */
+    public function getAccounts(ConnectionInterface $con = null)
+    {
+        if ($this->aAccounts === null && ($this->user_id !== null)) {
+            $this->aAccounts = ChildAccountsQuery::create()->findPk($this->user_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aAccounts->addArticless($this);
+             */
+        }
+
+        return $this->aAccounts;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Comments' == $relationName) {
+            return $this->initCommentss();
+        }
+    }
+
+    /**
+     * Clears out the collCommentss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addCommentss()
+     */
+    public function clearCommentss()
+    {
+        $this->collCommentss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collCommentss collection loaded partially.
+     */
+    public function resetPartialCommentss($v = true)
+    {
+        $this->collCommentssPartial = $v;
+    }
+
+    /**
+     * Initializes the collCommentss collection.
+     *
+     * By default this just sets the collCommentss collection to an empty array (like clearcollCommentss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initCommentss($overrideExisting = true)
+    {
+        if (null !== $this->collCommentss && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = CommentsTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collCommentss = new $collectionClassName;
+        $this->collCommentss->setModel('\Comments');
+    }
+
+    /**
+     * Gets an array of ChildComments objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildArticles is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildComments[] List of ChildComments objects
+     * @throws PropelException
+     */
+    public function getCommentss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCommentssPartial && !$this->isNew();
+        if (null === $this->collCommentss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collCommentss) {
+                // return empty collection
+                $this->initCommentss();
+            } else {
+                $collCommentss = ChildCommentsQuery::create(null, $criteria)
+                    ->filterByArticles($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collCommentssPartial && count($collCommentss)) {
+                        $this->initCommentss(false);
+
+                        foreach ($collCommentss as $obj) {
+                            if (false == $this->collCommentss->contains($obj)) {
+                                $this->collCommentss->append($obj);
+                            }
+                        }
+
+                        $this->collCommentssPartial = true;
+                    }
+
+                    return $collCommentss;
+                }
+
+                if ($partial && $this->collCommentss) {
+                    foreach ($this->collCommentss as $obj) {
+                        if ($obj->isNew()) {
+                            $collCommentss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collCommentss = $collCommentss;
+                $this->collCommentssPartial = false;
+            }
+        }
+
+        return $this->collCommentss;
+    }
+
+    /**
+     * Sets a collection of ChildComments objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $commentss A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildArticles The current object (for fluent API support)
+     */
+    public function setCommentss(Collection $commentss, ConnectionInterface $con = null)
+    {
+        /** @var ChildComments[] $commentssToDelete */
+        $commentssToDelete = $this->getCommentss(new Criteria(), $con)->diff($commentss);
+
+        
+        $this->commentssScheduledForDeletion = $commentssToDelete;
+
+        foreach ($commentssToDelete as $commentsRemoved) {
+            $commentsRemoved->setArticles(null);
+        }
+
+        $this->collCommentss = null;
+        foreach ($commentss as $comments) {
+            $this->addComments($comments);
+        }
+
+        $this->collCommentss = $commentss;
+        $this->collCommentssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Comments objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Comments objects.
+     * @throws PropelException
+     */
+    public function countCommentss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCommentssPartial && !$this->isNew();
+        if (null === $this->collCommentss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collCommentss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getCommentss());
+            }
+
+            $query = ChildCommentsQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByArticles($this)
+                ->count($con);
+        }
+
+        return count($this->collCommentss);
+    }
+
+    /**
+     * Method called to associate a ChildComments object to this object
+     * through the ChildComments foreign key attribute.
+     *
+     * @param  ChildComments $l ChildComments
+     * @return $this|\Articles The current object (for fluent API support)
+     */
+    public function addComments(ChildComments $l)
+    {
+        if ($this->collCommentss === null) {
+            $this->initCommentss();
+            $this->collCommentssPartial = true;
+        }
+
+        if (!$this->collCommentss->contains($l)) {
+            $this->doAddComments($l);
+
+            if ($this->commentssScheduledForDeletion and $this->commentssScheduledForDeletion->contains($l)) {
+                $this->commentssScheduledForDeletion->remove($this->commentssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildComments $comments The ChildComments object to add.
+     */
+    protected function doAddComments(ChildComments $comments)
+    {
+        $this->collCommentss[]= $comments;
+        $comments->setArticles($this);
+    }
+
+    /**
+     * @param  ChildComments $comments The ChildComments object to remove.
+     * @return $this|ChildArticles The current object (for fluent API support)
+     */
+    public function removeComments(ChildComments $comments)
+    {
+        if ($this->getCommentss()->contains($comments)) {
+            $pos = $this->collCommentss->search($comments);
+            $this->collCommentss->remove($pos);
+            if (null === $this->commentssScheduledForDeletion) {
+                $this->commentssScheduledForDeletion = clone $this->collCommentss;
+                $this->commentssScheduledForDeletion->clear();
+            }
+            $this->commentssScheduledForDeletion[]= $comments;
+            $comments->setArticles(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
+        if (null !== $this->aAccounts) {
+            $this->aAccounts->removeArticles($this);
+        }
         $this->id = null;
         $this->user_id = null;
         $this->title = null;
+        $this->url = null;
         $this->content = null;
+        $this->tags = null;
+        $this->likes = null;
+        $this->img_path = null;
+        $this->img_frame = null;
+        $this->comments_allowed = null;
+        $this->modified = null;
         $this->created = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1227,8 +2121,15 @@ abstract class Articles implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collCommentss) {
+                foreach ($this->collCommentss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collCommentss = null;
+        $this->aAccounts = null;
     }
 
     /**
@@ -1239,6 +2140,178 @@ abstract class Articles implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(ArticlesTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+    
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildArticles The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[ArticlesTableMap::COL_MODIFIED] = true;
+    
+        return $this;
+    }
+
+    // sluggable behavior
+    
+    /**
+     * Wrap the setter for slug value
+     *
+     * @param   string
+     * @return  $this|Articles
+     */
+    public function setSlug($v)
+    {
+        return $this->setUrl($v);
+    }
+    
+    /**
+     * Wrap the getter for slug value
+     *
+     * @return  string
+     */
+    public function getSlug()
+    {
+        return $this->getUrl();
+    }
+    
+    /**
+     * Create a unique slug based on the object
+     *
+     * @return string The object slug
+     */
+    protected function createSlug()
+    {
+        $slug = $this->createRawSlug();
+        $slug = $this->limitSlugSize($slug);
+        $slug = $this->makeSlugUnique($slug);
+    
+        return $slug;
+    }
+    
+    /**
+     * Create the slug from the appropriate columns
+     *
+     * @return string
+     */
+    protected function createRawSlug()
+    {
+        return '/blog/' . $this->cleanupSlugPart($this->getTitle()) . '';
+    }
+    
+    /**
+     * Cleanup a string to make a slug of it
+     * Removes special characters, replaces blanks with a separator, and trim it
+     *
+     * @param     string $slug        the text to slugify
+     * @param     string $replacement the separator used by slug
+     * @return    string               the slugified text
+     */
+    protected static function cleanupSlugPart($slug, $replacement = '-')
+    {
+        // transliterate
+        if (function_exists('iconv')) {
+            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+        }
+    
+        // lowercase
+        if (function_exists('mb_strtolower')) {
+            $slug = mb_strtolower($slug);
+        } else {
+            $slug = strtolower($slug);
+        }
+    
+        // remove accents resulting from OSX's iconv
+        $slug = str_replace(array('\'', '`', '^'), '', $slug);
+    
+        // replace non letter or digits with separator
+        $slug = preg_replace('/[^\w]+/u', $replacement, $slug);
+    
+        // trim
+        $slug = trim($slug, $replacement);
+    
+        if (empty($slug)) {
+            return 'n-a';
+        }
+    
+        return $slug;
+    }
+    
+    
+    /**
+     * Make sure the slug is short enough to accommodate the column size
+     *
+     * @param    string $slug            the slug to check
+     *
+     * @return string                        the truncated slug
+     */
+    protected static function limitSlugSize($slug, $incrementReservedSpace = 3)
+    {
+        // check length, as suffix could put it over maximum
+        if (strlen($slug) > (255 - $incrementReservedSpace)) {
+            $slug = substr($slug, 0, 255 - $incrementReservedSpace);
+        }
+    
+        return $slug;
+    }
+    
+    
+    /**
+     * Get the slug, ensuring its uniqueness
+     *
+     * @param    string $slug            the slug to check
+     * @param    string $separator       the separator used by slug
+     * @param    int    $alreadyExists   false for the first try, true for the second, and take the high count + 1
+     * @return   string                   the unique slug
+     */
+    protected function makeSlugUnique($slug, $separator = '/', $alreadyExists = false)
+    {
+        if (!$alreadyExists) {
+            $slug2 = $slug;
+        } else {
+            $slug2 = $slug . $separator;
+        }
+    
+        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('default');
+        $col = 'q.Url';
+        $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
+    
+        $query = \ArticlesQuery::create('q')
+            ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
+            ->prune($this)
+        ;
+    
+        if (!$alreadyExists) {
+            $count = $query->count();
+            if ($count > 0) {
+                return $this->makeSlugUnique($slug, $separator, true);
+            }
+    
+            return $slug2;
+        }
+    
+        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('default');
+        // Already exists
+        $object = $query
+            ->addDescendingOrderByColumn($adapter->strLength('url'))
+            ->addDescendingOrderByColumn('url')
+        ->findOne();
+    
+        // First duplicate slug
+        if (null == $object) {
+            return $slug2 . '1';
+        }
+    
+        $slugNum = substr($object->getUrl(), strlen($slug) + 1);
+        if (0 == $slugNum[0]) {
+            $slugNum[0] = 1;
+        }
+    
+        return $slug2 . ($slugNum + 1);
     }
 
     /**

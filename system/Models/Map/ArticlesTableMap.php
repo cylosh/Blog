@@ -59,7 +59,7 @@ class ArticlesTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 12;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ArticlesTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 12;
 
     /**
      * the column name for the id field
@@ -87,9 +87,44 @@ class ArticlesTableMap extends TableMap
     const COL_TITLE = 'articles.title';
 
     /**
+     * the column name for the url field
+     */
+    const COL_URL = 'articles.url';
+
+    /**
      * the column name for the content field
      */
     const COL_CONTENT = 'articles.content';
+
+    /**
+     * the column name for the tags field
+     */
+    const COL_TAGS = 'articles.tags';
+
+    /**
+     * the column name for the likes field
+     */
+    const COL_LIKES = 'articles.likes';
+
+    /**
+     * the column name for the img_path field
+     */
+    const COL_IMG_PATH = 'articles.img_path';
+
+    /**
+     * the column name for the img_frame field
+     */
+    const COL_IMG_FRAME = 'articles.img_frame';
+
+    /**
+     * the column name for the comments_allowed field
+     */
+    const COL_COMMENTS_ALLOWED = 'articles.comments_allowed';
+
+    /**
+     * the column name for the modified field
+     */
+    const COL_MODIFIED = 'articles.modified';
 
     /**
      * the column name for the created field
@@ -108,11 +143,11 @@ class ArticlesTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Title', 'Content', 'Created', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'title', 'content', 'created', ),
-        self::TYPE_COLNAME       => array(ArticlesTableMap::COL_ID, ArticlesTableMap::COL_USER_ID, ArticlesTableMap::COL_TITLE, ArticlesTableMap::COL_CONTENT, ArticlesTableMap::COL_CREATED, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'title', 'content', 'created', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Title', 'Url', 'Content', 'Tags', 'Likes', 'ImgPath', 'ImgFrame', 'CommentsAllowed', 'Modified', 'Created', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'title', 'url', 'content', 'tags', 'likes', 'imgPath', 'imgFrame', 'commentsAllowed', 'modified', 'created', ),
+        self::TYPE_COLNAME       => array(ArticlesTableMap::COL_ID, ArticlesTableMap::COL_USER_ID, ArticlesTableMap::COL_TITLE, ArticlesTableMap::COL_URL, ArticlesTableMap::COL_CONTENT, ArticlesTableMap::COL_TAGS, ArticlesTableMap::COL_LIKES, ArticlesTableMap::COL_IMG_PATH, ArticlesTableMap::COL_IMG_FRAME, ArticlesTableMap::COL_COMMENTS_ALLOWED, ArticlesTableMap::COL_MODIFIED, ArticlesTableMap::COL_CREATED, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'title', 'url', 'content', 'tags', 'likes', 'img_path', 'img_frame', 'comments_allowed', 'modified', 'created', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
     /**
@@ -122,11 +157,11 @@ class ArticlesTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Title' => 2, 'Content' => 3, 'Created' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'title' => 2, 'content' => 3, 'created' => 4, ),
-        self::TYPE_COLNAME       => array(ArticlesTableMap::COL_ID => 0, ArticlesTableMap::COL_USER_ID => 1, ArticlesTableMap::COL_TITLE => 2, ArticlesTableMap::COL_CONTENT => 3, ArticlesTableMap::COL_CREATED => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'title' => 2, 'content' => 3, 'created' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Title' => 2, 'Url' => 3, 'Content' => 4, 'Tags' => 5, 'Likes' => 6, 'ImgPath' => 7, 'ImgFrame' => 8, 'CommentsAllowed' => 9, 'Modified' => 10, 'Created' => 11, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'title' => 2, 'url' => 3, 'content' => 4, 'tags' => 5, 'likes' => 6, 'imgPath' => 7, 'imgFrame' => 8, 'commentsAllowed' => 9, 'modified' => 10, 'created' => 11, ),
+        self::TYPE_COLNAME       => array(ArticlesTableMap::COL_ID => 0, ArticlesTableMap::COL_USER_ID => 1, ArticlesTableMap::COL_TITLE => 2, ArticlesTableMap::COL_URL => 3, ArticlesTableMap::COL_CONTENT => 4, ArticlesTableMap::COL_TAGS => 5, ArticlesTableMap::COL_LIKES => 6, ArticlesTableMap::COL_IMG_PATH => 7, ArticlesTableMap::COL_IMG_FRAME => 8, ArticlesTableMap::COL_COMMENTS_ALLOWED => 9, ArticlesTableMap::COL_MODIFIED => 10, ArticlesTableMap::COL_CREATED => 11, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'title' => 2, 'url' => 3, 'content' => 4, 'tags' => 5, 'likes' => 6, 'img_path' => 7, 'img_frame' => 8, 'comments_allowed' => 9, 'modified' => 10, 'created' => 11, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
     /**
@@ -147,9 +182,16 @@ class ArticlesTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'accounts', 'id', false, null, null);
         $this->addColumn('title', 'Title', 'VARCHAR', false, 255, null);
+        $this->addColumn('url', 'Url', 'VARCHAR', false, 255, null);
         $this->addColumn('content', 'Content', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('tags', 'Tags', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('likes', 'Likes', 'SMALLINT', false, null, null);
+        $this->addColumn('img_path', 'ImgPath', 'VARCHAR', false, 55, null);
+        $this->addColumn('img_frame', 'ImgFrame', 'VARCHAR', false, 25, null);
+        $this->addColumn('comments_allowed', 'CommentsAllowed', 'BOOLEAN', false, 1, null);
+        $this->addColumn('modified', 'Modified', 'TIMESTAMP', false, null, '0000-00-00 00:00:00');
         $this->addColumn('created', 'Created', 'TIMESTAMP', false, null, '0000-00-00 00:00:00');
     } // initialize()
 
@@ -158,7 +200,44 @@ class ArticlesTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Accounts', '\\Accounts', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, null, false);
+        $this->addRelation('Comments', '\\Comments', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':article_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'Commentss', false);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created', 'update_column' => 'modified', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'sluggable' => array('slug_column' => 'url', 'slug_pattern' => '/blog/{Title}', 'replace_pattern' => '/[^\w]+/u', 'replacement' => '-', 'separator' => '/', 'permanent' => 'true', 'scope_column' => '', 'unique_constraint' => 'true', ),
+        );
+    } // getBehaviors()
+    /**
+     * Method to invalidate the instance pool of all tables related to articles     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        CommentsTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -304,13 +383,27 @@ class ArticlesTableMap extends TableMap
             $criteria->addSelectColumn(ArticlesTableMap::COL_ID);
             $criteria->addSelectColumn(ArticlesTableMap::COL_USER_ID);
             $criteria->addSelectColumn(ArticlesTableMap::COL_TITLE);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_URL);
             $criteria->addSelectColumn(ArticlesTableMap::COL_CONTENT);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_TAGS);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_LIKES);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_IMG_PATH);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_IMG_FRAME);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_COMMENTS_ALLOWED);
+            $criteria->addSelectColumn(ArticlesTableMap::COL_MODIFIED);
             $criteria->addSelectColumn(ArticlesTableMap::COL_CREATED);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.title');
+            $criteria->addSelectColumn($alias . '.url');
             $criteria->addSelectColumn($alias . '.content');
+            $criteria->addSelectColumn($alias . '.tags');
+            $criteria->addSelectColumn($alias . '.likes');
+            $criteria->addSelectColumn($alias . '.img_path');
+            $criteria->addSelectColumn($alias . '.img_frame');
+            $criteria->addSelectColumn($alias . '.comments_allowed');
+            $criteria->addSelectColumn($alias . '.modified');
             $criteria->addSelectColumn($alias . '.created');
         }
     }

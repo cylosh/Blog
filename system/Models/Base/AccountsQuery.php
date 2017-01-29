@@ -10,6 +10,7 @@ use Map\AccountsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -20,22 +21,28 @@ use Propel\Runtime\Exception\PropelException;
  * 
  *
  * @method     ChildAccountsQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildAccountsQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildAccountsQuery orderByFname($order = Criteria::ASC) Order by the fname column
+ * @method     ChildAccountsQuery orderByLname($order = Criteria::ASC) Order by the lname column
+ * @method     ChildAccountsQuery orderByProfilePic($order = Criteria::ASC) Order by the profile_pic column
  * @method     ChildAccountsQuery orderByPassword($order = Criteria::ASC) Order by the password column
  * @method     ChildAccountsQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildAccountsQuery orderByAge($order = Criteria::ASC) Order by the age column
  * @method     ChildAccountsQuery orderByGender($order = Criteria::ASC) Order by the gender column
  * @method     ChildAccountsQuery orderByStatus($order = Criteria::ASC) Order by the status column
+ * @method     ChildAccountsQuery orderByNewsletter($order = Criteria::ASC) Order by the newsletter column
  * @method     ChildAccountsQuery orderByCreated($order = Criteria::ASC) Order by the created column
  * @method     ChildAccountsQuery orderByModified($order = Criteria::ASC) Order by the modified column
  *
  * @method     ChildAccountsQuery groupById() Group by the id column
- * @method     ChildAccountsQuery groupByName() Group by the name column
+ * @method     ChildAccountsQuery groupByFname() Group by the fname column
+ * @method     ChildAccountsQuery groupByLname() Group by the lname column
+ * @method     ChildAccountsQuery groupByProfilePic() Group by the profile_pic column
  * @method     ChildAccountsQuery groupByPassword() Group by the password column
  * @method     ChildAccountsQuery groupByEmail() Group by the email column
  * @method     ChildAccountsQuery groupByAge() Group by the age column
  * @method     ChildAccountsQuery groupByGender() Group by the gender column
  * @method     ChildAccountsQuery groupByStatus() Group by the status column
+ * @method     ChildAccountsQuery groupByNewsletter() Group by the newsletter column
  * @method     ChildAccountsQuery groupByCreated() Group by the created column
  * @method     ChildAccountsQuery groupByModified() Group by the modified column
  *
@@ -47,16 +54,31 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccountsQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildAccountsQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildAccountsQuery leftJoinArticles($relationAlias = null) Adds a LEFT JOIN clause to the query using the Articles relation
+ * @method     ChildAccountsQuery rightJoinArticles($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Articles relation
+ * @method     ChildAccountsQuery innerJoinArticles($relationAlias = null) Adds a INNER JOIN clause to the query using the Articles relation
+ *
+ * @method     ChildAccountsQuery joinWithArticles($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Articles relation
+ *
+ * @method     ChildAccountsQuery leftJoinWithArticles() Adds a LEFT JOIN clause and with to the query using the Articles relation
+ * @method     ChildAccountsQuery rightJoinWithArticles() Adds a RIGHT JOIN clause and with to the query using the Articles relation
+ * @method     ChildAccountsQuery innerJoinWithArticles() Adds a INNER JOIN clause and with to the query using the Articles relation
+ *
+ * @method     \ArticlesQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildAccounts findOne(ConnectionInterface $con = null) Return the first ChildAccounts matching the query
  * @method     ChildAccounts findOneOrCreate(ConnectionInterface $con = null) Return the first ChildAccounts matching the query, or a new ChildAccounts object populated from the query conditions when no match is found
  *
  * @method     ChildAccounts findOneById(int $id) Return the first ChildAccounts filtered by the id column
- * @method     ChildAccounts findOneByName(string $name) Return the first ChildAccounts filtered by the name column
+ * @method     ChildAccounts findOneByFname(string $fname) Return the first ChildAccounts filtered by the fname column
+ * @method     ChildAccounts findOneByLname(string $lname) Return the first ChildAccounts filtered by the lname column
+ * @method     ChildAccounts findOneByProfilePic(string $profile_pic) Return the first ChildAccounts filtered by the profile_pic column
  * @method     ChildAccounts findOneByPassword(string $password) Return the first ChildAccounts filtered by the password column
  * @method     ChildAccounts findOneByEmail(string $email) Return the first ChildAccounts filtered by the email column
  * @method     ChildAccounts findOneByAge(int $age) Return the first ChildAccounts filtered by the age column
  * @method     ChildAccounts findOneByGender(string $gender) Return the first ChildAccounts filtered by the gender column
  * @method     ChildAccounts findOneByStatus(int $status) Return the first ChildAccounts filtered by the status column
+ * @method     ChildAccounts findOneByNewsletter(boolean $newsletter) Return the first ChildAccounts filtered by the newsletter column
  * @method     ChildAccounts findOneByCreated(string $created) Return the first ChildAccounts filtered by the created column
  * @method     ChildAccounts findOneByModified(string $modified) Return the first ChildAccounts filtered by the modified column *
 
@@ -64,23 +86,29 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccounts requireOne(ConnectionInterface $con = null) Return the first ChildAccounts matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildAccounts requireOneById(int $id) Return the first ChildAccounts filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAccounts requireOneByName(string $name) Return the first ChildAccounts filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAccounts requireOneByFname(string $fname) Return the first ChildAccounts filtered by the fname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAccounts requireOneByLname(string $lname) Return the first ChildAccounts filtered by the lname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAccounts requireOneByProfilePic(string $profile_pic) Return the first ChildAccounts filtered by the profile_pic column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByPassword(string $password) Return the first ChildAccounts filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByEmail(string $email) Return the first ChildAccounts filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByAge(int $age) Return the first ChildAccounts filtered by the age column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByGender(string $gender) Return the first ChildAccounts filtered by the gender column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByStatus(int $status) Return the first ChildAccounts filtered by the status column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAccounts requireOneByNewsletter(boolean $newsletter) Return the first ChildAccounts filtered by the newsletter column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByCreated(string $created) Return the first ChildAccounts filtered by the created column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByModified(string $modified) Return the first ChildAccounts filtered by the modified column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildAccounts[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildAccounts objects based on current ModelCriteria
  * @method     ChildAccounts[]|ObjectCollection findById(int $id) Return ChildAccounts objects filtered by the id column
- * @method     ChildAccounts[]|ObjectCollection findByName(string $name) Return ChildAccounts objects filtered by the name column
+ * @method     ChildAccounts[]|ObjectCollection findByFname(string $fname) Return ChildAccounts objects filtered by the fname column
+ * @method     ChildAccounts[]|ObjectCollection findByLname(string $lname) Return ChildAccounts objects filtered by the lname column
+ * @method     ChildAccounts[]|ObjectCollection findByProfilePic(string $profile_pic) Return ChildAccounts objects filtered by the profile_pic column
  * @method     ChildAccounts[]|ObjectCollection findByPassword(string $password) Return ChildAccounts objects filtered by the password column
  * @method     ChildAccounts[]|ObjectCollection findByEmail(string $email) Return ChildAccounts objects filtered by the email column
  * @method     ChildAccounts[]|ObjectCollection findByAge(int $age) Return ChildAccounts objects filtered by the age column
  * @method     ChildAccounts[]|ObjectCollection findByGender(string $gender) Return ChildAccounts objects filtered by the gender column
  * @method     ChildAccounts[]|ObjectCollection findByStatus(int $status) Return ChildAccounts objects filtered by the status column
+ * @method     ChildAccounts[]|ObjectCollection findByNewsletter(boolean $newsletter) Return ChildAccounts objects filtered by the newsletter column
  * @method     ChildAccounts[]|ObjectCollection findByCreated(string $created) Return ChildAccounts objects filtered by the created column
  * @method     ChildAccounts[]|ObjectCollection findByModified(string $modified) Return ChildAccounts objects filtered by the modified column
  * @method     ChildAccounts[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -181,7 +209,7 @@ abstract class AccountsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, password, email, age, gender, status, created, modified FROM accounts WHERE id = :p0';
+        $sql = 'SELECT id, fname, lname, profile_pic, password, email, age, gender, status, newsletter, created, modified FROM accounts WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -313,28 +341,78 @@ abstract class AccountsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the name column
+     * Filter the query on the fname column
      *
      * Example usage:
      * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
+     * $query->filterByFname('fooValue');   // WHERE fname = 'fooValue'
+     * $query->filterByFname('%fooValue%', Criteria::LIKE); // WHERE fname LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $name The value to use as filter.
+     * @param     string $fname The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildAccountsQuery The current query, for fluid interface
      */
-    public function filterByName($name = null, $comparison = null)
+    public function filterByFname($fname = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($name)) {
+            if (is_array($fname)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(AccountsTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(AccountsTableMap::COL_FNAME, $fname, $comparison);
+    }
+
+    /**
+     * Filter the query on the lname column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLname('fooValue');   // WHERE lname = 'fooValue'
+     * $query->filterByLname('%fooValue%', Criteria::LIKE); // WHERE lname LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $lname The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function filterByLname($lname = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($lname)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AccountsTableMap::COL_LNAME, $lname, $comparison);
+    }
+
+    /**
+     * Filter the query on the profile_pic column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByProfilePic('fooValue');   // WHERE profile_pic = 'fooValue'
+     * $query->filterByProfilePic('%fooValue%', Criteria::LIKE); // WHERE profile_pic LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $profilePic The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function filterByProfilePic($profilePic = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($profilePic)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AccountsTableMap::COL_PROFILE_PIC, $profilePic, $comparison);
     }
 
     /**
@@ -495,6 +573,33 @@ abstract class AccountsQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the newsletter column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByNewsletter(true); // WHERE newsletter = true
+     * $query->filterByNewsletter('yes'); // WHERE newsletter = true
+     * </code>
+     *
+     * @param     boolean|string $newsletter The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function filterByNewsletter($newsletter = null, $comparison = null)
+    {
+        if (is_string($newsletter)) {
+            $newsletter = in_array(strtolower($newsletter), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(AccountsTableMap::COL_NEWSLETTER, $newsletter, $comparison);
+    }
+
+    /**
      * Filter the query on the created column
      *
      * Example usage:
@@ -581,6 +686,79 @@ abstract class AccountsQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \Articles object
+     *
+     * @param \Articles|ObjectCollection $articles the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildAccountsQuery The current query, for fluid interface
+     */
+    public function filterByArticles($articles, $comparison = null)
+    {
+        if ($articles instanceof \Articles) {
+            return $this
+                ->addUsingAlias(AccountsTableMap::COL_ID, $articles->getUserId(), $comparison);
+        } elseif ($articles instanceof ObjectCollection) {
+            return $this
+                ->useArticlesQuery()
+                ->filterByPrimaryKeys($articles->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByArticles() only accepts arguments of type \Articles or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Articles relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function joinArticles($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Articles');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Articles');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Articles relation Articles object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \ArticlesQuery A secondary query class using the current class as primary query
+     */
+    public function useArticlesQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinArticles($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Articles', '\ArticlesQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildAccounts $accounts Object to remove from the list of results
@@ -655,6 +833,72 @@ abstract class AccountsQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+    
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(AccountsTableMap::COL_MODIFIED, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+    
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(AccountsTableMap::COL_MODIFIED);
+    }
+    
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(AccountsTableMap::COL_MODIFIED);
+    }
+    
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(AccountsTableMap::COL_CREATED);
+    }
+    
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(AccountsTableMap::COL_CREATED, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+    
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(AccountsTableMap::COL_CREATED);
     }
 
 } // AccountsQuery

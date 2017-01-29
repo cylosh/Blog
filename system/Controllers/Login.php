@@ -6,6 +6,8 @@ use system\Models\Accounts;
 
 defined("SITE_URI") OR die(header("Location: error/403"));
 
+require_once 'vendor/propel/config.php';
+
 class Login extends Core{
     	
 	public static $defaultMethod = 'login';
@@ -17,15 +19,13 @@ class Login extends Core{
     }
 	
     public function check(){
-		$this->HtmlView(array("Users", "login"));
-		require_once 'vendor/propel/config.php';
+		
 		$class = new Accounts();
 
-		$class->setName("das");
+		$class->setFname("das");
 		$zeroDate = new \DateTime("NOW");
 		$zeroDate = $zeroDate->format('Y-m-d H:i:s');
 
-		$class->setCreated($zeroDate);
 		$class->save();
     }
     

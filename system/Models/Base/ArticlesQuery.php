@@ -10,6 +10,7 @@ use Map\ArticlesTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -22,13 +23,27 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticlesQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildArticlesQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildArticlesQuery orderByTitle($order = Criteria::ASC) Order by the title column
+ * @method     ChildArticlesQuery orderByUrl($order = Criteria::ASC) Order by the url column
  * @method     ChildArticlesQuery orderByContent($order = Criteria::ASC) Order by the content column
+ * @method     ChildArticlesQuery orderByTags($order = Criteria::ASC) Order by the tags column
+ * @method     ChildArticlesQuery orderByLikes($order = Criteria::ASC) Order by the likes column
+ * @method     ChildArticlesQuery orderByImgPath($order = Criteria::ASC) Order by the img_path column
+ * @method     ChildArticlesQuery orderByImgFrame($order = Criteria::ASC) Order by the img_frame column
+ * @method     ChildArticlesQuery orderByCommentsAllowed($order = Criteria::ASC) Order by the comments_allowed column
+ * @method     ChildArticlesQuery orderByModified($order = Criteria::ASC) Order by the modified column
  * @method     ChildArticlesQuery orderByCreated($order = Criteria::ASC) Order by the created column
  *
  * @method     ChildArticlesQuery groupById() Group by the id column
  * @method     ChildArticlesQuery groupByUserId() Group by the user_id column
  * @method     ChildArticlesQuery groupByTitle() Group by the title column
+ * @method     ChildArticlesQuery groupByUrl() Group by the url column
  * @method     ChildArticlesQuery groupByContent() Group by the content column
+ * @method     ChildArticlesQuery groupByTags() Group by the tags column
+ * @method     ChildArticlesQuery groupByLikes() Group by the likes column
+ * @method     ChildArticlesQuery groupByImgPath() Group by the img_path column
+ * @method     ChildArticlesQuery groupByImgFrame() Group by the img_frame column
+ * @method     ChildArticlesQuery groupByCommentsAllowed() Group by the comments_allowed column
+ * @method     ChildArticlesQuery groupByModified() Group by the modified column
  * @method     ChildArticlesQuery groupByCreated() Group by the created column
  *
  * @method     ChildArticlesQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -39,13 +54,42 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticlesQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildArticlesQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildArticlesQuery leftJoinAccounts($relationAlias = null) Adds a LEFT JOIN clause to the query using the Accounts relation
+ * @method     ChildArticlesQuery rightJoinAccounts($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Accounts relation
+ * @method     ChildArticlesQuery innerJoinAccounts($relationAlias = null) Adds a INNER JOIN clause to the query using the Accounts relation
+ *
+ * @method     ChildArticlesQuery joinWithAccounts($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Accounts relation
+ *
+ * @method     ChildArticlesQuery leftJoinWithAccounts() Adds a LEFT JOIN clause and with to the query using the Accounts relation
+ * @method     ChildArticlesQuery rightJoinWithAccounts() Adds a RIGHT JOIN clause and with to the query using the Accounts relation
+ * @method     ChildArticlesQuery innerJoinWithAccounts() Adds a INNER JOIN clause and with to the query using the Accounts relation
+ *
+ * @method     ChildArticlesQuery leftJoinComments($relationAlias = null) Adds a LEFT JOIN clause to the query using the Comments relation
+ * @method     ChildArticlesQuery rightJoinComments($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Comments relation
+ * @method     ChildArticlesQuery innerJoinComments($relationAlias = null) Adds a INNER JOIN clause to the query using the Comments relation
+ *
+ * @method     ChildArticlesQuery joinWithComments($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Comments relation
+ *
+ * @method     ChildArticlesQuery leftJoinWithComments() Adds a LEFT JOIN clause and with to the query using the Comments relation
+ * @method     ChildArticlesQuery rightJoinWithComments() Adds a RIGHT JOIN clause and with to the query using the Comments relation
+ * @method     ChildArticlesQuery innerJoinWithComments() Adds a INNER JOIN clause and with to the query using the Comments relation
+ *
+ * @method     \AccountsQuery|\CommentsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildArticles findOne(ConnectionInterface $con = null) Return the first ChildArticles matching the query
  * @method     ChildArticles findOneOrCreate(ConnectionInterface $con = null) Return the first ChildArticles matching the query, or a new ChildArticles object populated from the query conditions when no match is found
  *
  * @method     ChildArticles findOneById(int $id) Return the first ChildArticles filtered by the id column
  * @method     ChildArticles findOneByUserId(int $user_id) Return the first ChildArticles filtered by the user_id column
  * @method     ChildArticles findOneByTitle(string $title) Return the first ChildArticles filtered by the title column
+ * @method     ChildArticles findOneByUrl(string $url) Return the first ChildArticles filtered by the url column
  * @method     ChildArticles findOneByContent(string $content) Return the first ChildArticles filtered by the content column
+ * @method     ChildArticles findOneByTags(string $tags) Return the first ChildArticles filtered by the tags column
+ * @method     ChildArticles findOneByLikes(int $likes) Return the first ChildArticles filtered by the likes column
+ * @method     ChildArticles findOneByImgPath(string $img_path) Return the first ChildArticles filtered by the img_path column
+ * @method     ChildArticles findOneByImgFrame(string $img_frame) Return the first ChildArticles filtered by the img_frame column
+ * @method     ChildArticles findOneByCommentsAllowed(boolean $comments_allowed) Return the first ChildArticles filtered by the comments_allowed column
+ * @method     ChildArticles findOneByModified(string $modified) Return the first ChildArticles filtered by the modified column
  * @method     ChildArticles findOneByCreated(string $created) Return the first ChildArticles filtered by the created column *
 
  * @method     ChildArticles requirePk($key, ConnectionInterface $con = null) Return the ChildArticles by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -54,14 +98,28 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticles requireOneById(int $id) Return the first ChildArticles filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticles requireOneByUserId(int $user_id) Return the first ChildArticles filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticles requireOneByTitle(string $title) Return the first ChildArticles filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByUrl(string $url) Return the first ChildArticles filtered by the url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticles requireOneByContent(string $content) Return the first ChildArticles filtered by the content column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByTags(string $tags) Return the first ChildArticles filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByLikes(int $likes) Return the first ChildArticles filtered by the likes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByImgPath(string $img_path) Return the first ChildArticles filtered by the img_path column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByImgFrame(string $img_frame) Return the first ChildArticles filtered by the img_frame column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByCommentsAllowed(boolean $comments_allowed) Return the first ChildArticles filtered by the comments_allowed column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticles requireOneByModified(string $modified) Return the first ChildArticles filtered by the modified column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticles requireOneByCreated(string $created) Return the first ChildArticles filtered by the created column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildArticles[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildArticles objects based on current ModelCriteria
  * @method     ChildArticles[]|ObjectCollection findById(int $id) Return ChildArticles objects filtered by the id column
  * @method     ChildArticles[]|ObjectCollection findByUserId(int $user_id) Return ChildArticles objects filtered by the user_id column
  * @method     ChildArticles[]|ObjectCollection findByTitle(string $title) Return ChildArticles objects filtered by the title column
+ * @method     ChildArticles[]|ObjectCollection findByUrl(string $url) Return ChildArticles objects filtered by the url column
  * @method     ChildArticles[]|ObjectCollection findByContent(string $content) Return ChildArticles objects filtered by the content column
+ * @method     ChildArticles[]|ObjectCollection findByTags(string $tags) Return ChildArticles objects filtered by the tags column
+ * @method     ChildArticles[]|ObjectCollection findByLikes(int $likes) Return ChildArticles objects filtered by the likes column
+ * @method     ChildArticles[]|ObjectCollection findByImgPath(string $img_path) Return ChildArticles objects filtered by the img_path column
+ * @method     ChildArticles[]|ObjectCollection findByImgFrame(string $img_frame) Return ChildArticles objects filtered by the img_frame column
+ * @method     ChildArticles[]|ObjectCollection findByCommentsAllowed(boolean $comments_allowed) Return ChildArticles objects filtered by the comments_allowed column
+ * @method     ChildArticles[]|ObjectCollection findByModified(string $modified) Return ChildArticles objects filtered by the modified column
  * @method     ChildArticles[]|ObjectCollection findByCreated(string $created) Return ChildArticles objects filtered by the created column
  * @method     ChildArticles[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -161,7 +219,7 @@ abstract class ArticlesQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, title, content, created FROM articles WHERE id = :p0';
+        $sql = 'SELECT id, user_id, title, url, content, tags, likes, img_path, img_frame, comments_allowed, modified, created FROM articles WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -302,6 +360,8 @@ abstract class ArticlesQuery extends ModelCriteria
      * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
      *
+     * @see       filterByAccounts()
+     *
      * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -359,6 +419,31 @@ abstract class ArticlesQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the url column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUrl('fooValue');   // WHERE url = 'fooValue'
+     * $query->filterByUrl('%fooValue%', Criteria::LIKE); // WHERE url LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $url The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByUrl($url = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($url)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_URL, $url, $comparison);
+    }
+
+    /**
      * Filter the query on the content column
      *
      * Example usage:
@@ -381,6 +466,192 @@ abstract class ArticlesQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ArticlesTableMap::COL_CONTENT, $content, $comparison);
+    }
+
+    /**
+     * Filter the query on the tags column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTags('fooValue');   // WHERE tags = 'fooValue'
+     * $query->filterByTags('%fooValue%', Criteria::LIKE); // WHERE tags LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $tags The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByTags($tags = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($tags)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_TAGS, $tags, $comparison);
+    }
+
+    /**
+     * Filter the query on the likes column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLikes(1234); // WHERE likes = 1234
+     * $query->filterByLikes(array(12, 34)); // WHERE likes IN (12, 34)
+     * $query->filterByLikes(array('min' => 12)); // WHERE likes > 12
+     * </code>
+     *
+     * @param     mixed $likes The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByLikes($likes = null, $comparison = null)
+    {
+        if (is_array($likes)) {
+            $useMinMax = false;
+            if (isset($likes['min'])) {
+                $this->addUsingAlias(ArticlesTableMap::COL_LIKES, $likes['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($likes['max'])) {
+                $this->addUsingAlias(ArticlesTableMap::COL_LIKES, $likes['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_LIKES, $likes, $comparison);
+    }
+
+    /**
+     * Filter the query on the img_path column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByImgPath('fooValue');   // WHERE img_path = 'fooValue'
+     * $query->filterByImgPath('%fooValue%', Criteria::LIKE); // WHERE img_path LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $imgPath The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByImgPath($imgPath = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($imgPath)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_IMG_PATH, $imgPath, $comparison);
+    }
+
+    /**
+     * Filter the query on the img_frame column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByImgFrame('fooValue');   // WHERE img_frame = 'fooValue'
+     * $query->filterByImgFrame('%fooValue%', Criteria::LIKE); // WHERE img_frame LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $imgFrame The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByImgFrame($imgFrame = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($imgFrame)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_IMG_FRAME, $imgFrame, $comparison);
+    }
+
+    /**
+     * Filter the query on the comments_allowed column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCommentsAllowed(true); // WHERE comments_allowed = true
+     * $query->filterByCommentsAllowed('yes'); // WHERE comments_allowed = true
+     * </code>
+     *
+     * @param     boolean|string $commentsAllowed The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByCommentsAllowed($commentsAllowed = null, $comparison = null)
+    {
+        if (is_string($commentsAllowed)) {
+            $commentsAllowed = in_array(strtolower($commentsAllowed), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_COMMENTS_ALLOWED, $commentsAllowed, $comparison);
+    }
+
+    /**
+     * Filter the query on the modified column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByModified('2011-03-14'); // WHERE modified = '2011-03-14'
+     * $query->filterByModified('now'); // WHERE modified = '2011-03-14'
+     * $query->filterByModified(array('max' => 'yesterday')); // WHERE modified > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $modified The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByModified($modified = null, $comparison = null)
+    {
+        if (is_array($modified)) {
+            $useMinMax = false;
+            if (isset($modified['min'])) {
+                $this->addUsingAlias(ArticlesTableMap::COL_MODIFIED, $modified['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($modified['max'])) {
+                $this->addUsingAlias(ArticlesTableMap::COL_MODIFIED, $modified['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticlesTableMap::COL_MODIFIED, $modified, $comparison);
     }
 
     /**
@@ -424,6 +695,156 @@ abstract class ArticlesQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ArticlesTableMap::COL_CREATED, $created, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Accounts object
+     *
+     * @param \Accounts|ObjectCollection $accounts The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByAccounts($accounts, $comparison = null)
+    {
+        if ($accounts instanceof \Accounts) {
+            return $this
+                ->addUsingAlias(ArticlesTableMap::COL_USER_ID, $accounts->getId(), $comparison);
+        } elseif ($accounts instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ArticlesTableMap::COL_USER_ID, $accounts->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByAccounts() only accepts arguments of type \Accounts or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Accounts relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function joinAccounts($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Accounts');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Accounts');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Accounts relation Accounts object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \AccountsQuery A secondary query class using the current class as primary query
+     */
+    public function useAccountsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinAccounts($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Accounts', '\AccountsQuery');
+    }
+
+    /**
+     * Filter the query by a related \Comments object
+     *
+     * @param \Comments|ObjectCollection $comments the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterByComments($comments, $comparison = null)
+    {
+        if ($comments instanceof \Comments) {
+            return $this
+                ->addUsingAlias(ArticlesTableMap::COL_ID, $comments->getArticleId(), $comparison);
+        } elseif ($comments instanceof ObjectCollection) {
+            return $this
+                ->useCommentsQuery()
+                ->filterByPrimaryKeys($comments->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByComments() only accepts arguments of type \Comments or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Comments relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function joinComments($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Comments');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Comments');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Comments relation Comments object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \CommentsQuery A secondary query class using the current class as primary query
+     */
+    public function useCommentsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinComments($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Comments', '\CommentsQuery');
     }
 
     /**
@@ -501,6 +922,99 @@ abstract class ArticlesQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+    
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ArticlesTableMap::COL_MODIFIED, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+    
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ArticlesTableMap::COL_MODIFIED);
+    }
+    
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ArticlesTableMap::COL_MODIFIED);
+    }
+    
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ArticlesTableMap::COL_CREATED);
+    }
+    
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ArticlesTableMap::COL_CREATED, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+    
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ArticlesTableMap::COL_CREATED);
+    }
+
+    // sluggable behavior
+    
+    /**
+     * Filter the query on the slug column
+     *
+     * @param     string $slug The value to use as filter.
+     *
+     * @return    $this|ChildArticlesQuery The current query, for fluid interface
+     */
+    public function filterBySlug($slug)
+    {
+        return $this->addUsingAlias(ArticlesTableMap::COL_URL, $slug, Criteria::EQUAL);
+    }
+    
+    /**
+     * Find one object based on its slug
+     *
+     * @param     string $slug The value to use as filter.
+     * @param     ConnectionInterface $con The optional connection object
+     *
+     * @return    ChildArticles the result, formatted by the current formatter
+     */
+    public function findOneBySlug($slug, $con = null)
+    {
+        return $this->filterBySlug($slug)->findOne($con);
     }
 
 } // ArticlesQuery

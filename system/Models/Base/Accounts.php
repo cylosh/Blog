@@ -2,16 +2,21 @@
 
 namespace Base;
 
+use \Accounts as ChildAccounts;
 use \AccountsQuery as ChildAccountsQuery;
+use \Articles as ChildArticles;
+use \ArticlesQuery as ChildArticlesQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
 use Map\AccountsTableMap;
+use Map\ArticlesTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -69,11 +74,25 @@ abstract class Accounts implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the name field.
+     * The value for the fname field.
      * 
      * @var        string
      */
-    protected $name;
+    protected $fname;
+
+    /**
+     * The value for the lname field.
+     * 
+     * @var        string
+     */
+    protected $lname;
+
+    /**
+     * The value for the profile_pic field.
+     * 
+     * @var        string
+     */
+    protected $profile_pic;
 
     /**
      * The value for the password field.
@@ -111,6 +130,13 @@ abstract class Accounts implements ActiveRecordInterface
     protected $status;
 
     /**
+     * The value for the newsletter field.
+     * 
+     * @var        boolean
+     */
+    protected $newsletter;
+
+    /**
      * The value for the created field.
      * 
      * @var        DateTime
@@ -125,12 +151,24 @@ abstract class Accounts implements ActiveRecordInterface
     protected $modified;
 
     /**
+     * @var        ObjectCollection|ChildArticles[] Collection to store aggregation of ChildArticles objects.
+     */
+    protected $collArticless;
+    protected $collArticlessPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildArticles[]
+     */
+    protected $articlessScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Base\Accounts object.
@@ -368,13 +406,33 @@ abstract class Accounts implements ActiveRecordInterface
     }
 
     /**
-     * Get the [name] column value.
+     * Get the [fname] column value.
      * 
      * @return string
      */
-    public function getName()
+    public function getFname()
     {
-        return $this->name;
+        return $this->fname;
+    }
+
+    /**
+     * Get the [lname] column value.
+     * 
+     * @return string
+     */
+    public function getLname()
+    {
+        return $this->lname;
+    }
+
+    /**
+     * Get the [profile_pic] column value.
+     * 
+     * @return string
+     */
+    public function getProfilePic()
+    {
+        return $this->profile_pic;
     }
 
     /**
@@ -425,6 +483,26 @@ abstract class Accounts implements ActiveRecordInterface
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Get the [newsletter] column value.
+     * 
+     * @return boolean
+     */
+    public function getNewsletter()
+    {
+        return $this->newsletter;
+    }
+
+    /**
+     * Get the [newsletter] column value.
+     * 
+     * @return boolean
+     */
+    public function isNewsletter()
+    {
+        return $this->getNewsletter();
     }
 
     /**
@@ -488,24 +566,64 @@ abstract class Accounts implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [name] column.
+     * Set the value of [fname] column.
      * 
      * @param string $v new value
      * @return $this|\Accounts The current object (for fluent API support)
      */
-    public function setName($v)
+    public function setFname($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_NAME] = true;
+        if ($this->fname !== $v) {
+            $this->fname = $v;
+            $this->modifiedColumns[AccountsTableMap::COL_FNAME] = true;
         }
 
         return $this;
-    } // setName()
+    } // setFname()
+
+    /**
+     * Set the value of [lname] column.
+     * 
+     * @param string $v new value
+     * @return $this|\Accounts The current object (for fluent API support)
+     */
+    public function setLname($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->lname !== $v) {
+            $this->lname = $v;
+            $this->modifiedColumns[AccountsTableMap::COL_LNAME] = true;
+        }
+
+        return $this;
+    } // setLname()
+
+    /**
+     * Set the value of [profile_pic] column.
+     * 
+     * @param string $v new value
+     * @return $this|\Accounts The current object (for fluent API support)
+     */
+    public function setProfilePic($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->profile_pic !== $v) {
+            $this->profile_pic = $v;
+            $this->modifiedColumns[AccountsTableMap::COL_PROFILE_PIC] = true;
+        }
+
+        return $this;
+    } // setProfilePic()
 
     /**
      * Set the value of [password] column.
@@ -608,6 +726,34 @@ abstract class Accounts implements ActiveRecordInterface
     } // setStatus()
 
     /**
+     * Sets the value of the [newsletter] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * 
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Accounts The current object (for fluent API support)
+     */
+    public function setNewsletter($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->newsletter !== $v) {
+            $this->newsletter = $v;
+            $this->modifiedColumns[AccountsTableMap::COL_NEWSLETTER] = true;
+        }
+
+        return $this;
+    } // setNewsletter()
+
+    /**
      * Sets the value of [created] column to a normalized version of the date/time value specified.
      * 
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -686,31 +832,40 @@ abstract class Accounts implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : AccountsTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AccountsTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AccountsTableMap::translateFieldName('Fname', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->fname = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AccountsTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AccountsTableMap::translateFieldName('Lname', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->lname = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AccountsTableMap::translateFieldName('ProfilePic', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->profile_pic = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AccountsTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
             $this->password = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AccountsTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AccountsTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AccountsTableMap::translateFieldName('Age', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AccountsTableMap::translateFieldName('Age', TableMap::TYPE_PHPNAME, $indexType)];
             $this->age = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AccountsTableMap::translateFieldName('Gender', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : AccountsTableMap::translateFieldName('Gender', TableMap::TYPE_PHPNAME, $indexType)];
             $this->gender = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AccountsTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : AccountsTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
             $this->status = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : AccountsTableMap::translateFieldName('Created', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : AccountsTableMap::translateFieldName('Newsletter', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->newsletter = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : AccountsTableMap::translateFieldName('Created', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : AccountsTableMap::translateFieldName('Modified', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : AccountsTableMap::translateFieldName('Modified', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -723,7 +878,7 @@ abstract class Accounts implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = AccountsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 12; // 12 = AccountsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Accounts'), 0, $e);
@@ -783,6 +938,8 @@ abstract class Accounts implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->collArticless = null;
 
         } // if (deep)
     }
@@ -850,8 +1007,20 @@ abstract class Accounts implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                
+                if (!$this->isColumnModified(AccountsTableMap::COL_CREATED)) {
+                    $this->setCreated(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
+                if (!$this->isColumnModified(AccountsTableMap::COL_MODIFIED)) {
+                    $this->setModified(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(AccountsTableMap::COL_MODIFIED)) {
+                    $this->setModified(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -898,6 +1067,23 @@ abstract class Accounts implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->articlessScheduledForDeletion !== null) {
+                if (!$this->articlessScheduledForDeletion->isEmpty()) {
+                    \ArticlesQuery::create()
+                        ->filterByPrimaryKeys($this->articlessScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->articlessScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collArticless !== null) {
+                foreach ($this->collArticless as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -927,8 +1113,14 @@ abstract class Accounts implements ActiveRecordInterface
         if ($this->isColumnModified(AccountsTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'name';
+        if ($this->isColumnModified(AccountsTableMap::COL_FNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'fname';
+        }
+        if ($this->isColumnModified(AccountsTableMap::COL_LNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'lname';
+        }
+        if ($this->isColumnModified(AccountsTableMap::COL_PROFILE_PIC)) {
+            $modifiedColumns[':p' . $index++]  = 'profile_pic';
         }
         if ($this->isColumnModified(AccountsTableMap::COL_PASSWORD)) {
             $modifiedColumns[':p' . $index++]  = 'password';
@@ -944,6 +1136,9 @@ abstract class Accounts implements ActiveRecordInterface
         }
         if ($this->isColumnModified(AccountsTableMap::COL_STATUS)) {
             $modifiedColumns[':p' . $index++]  = 'status';
+        }
+        if ($this->isColumnModified(AccountsTableMap::COL_NEWSLETTER)) {
+            $modifiedColumns[':p' . $index++]  = 'newsletter';
         }
         if ($this->isColumnModified(AccountsTableMap::COL_CREATED)) {
             $modifiedColumns[':p' . $index++]  = 'created';
@@ -965,8 +1160,14 @@ abstract class Accounts implements ActiveRecordInterface
                     case 'id':                        
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'name':                        
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                    case 'fname':                        
+                        $stmt->bindValue($identifier, $this->fname, PDO::PARAM_STR);
+                        break;
+                    case 'lname':                        
+                        $stmt->bindValue($identifier, $this->lname, PDO::PARAM_STR);
+                        break;
+                    case 'profile_pic':                        
+                        $stmt->bindValue($identifier, $this->profile_pic, PDO::PARAM_STR);
                         break;
                     case 'password':                        
                         $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
@@ -982,6 +1183,9 @@ abstract class Accounts implements ActiveRecordInterface
                         break;
                     case 'status':                        
                         $stmt->bindValue($identifier, $this->status, PDO::PARAM_INT);
+                        break;
+                    case 'newsletter':
+                        $stmt->bindValue($identifier, (int) $this->newsletter, PDO::PARAM_INT);
                         break;
                     case 'created':                        
                         $stmt->bindValue($identifier, $this->created ? $this->created->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1055,27 +1259,36 @@ abstract class Accounts implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getName();
+                return $this->getFname();
                 break;
             case 2:
-                return $this->getPassword();
+                return $this->getLname();
                 break;
             case 3:
-                return $this->getEmail();
+                return $this->getProfilePic();
                 break;
             case 4:
-                return $this->getAge();
+                return $this->getPassword();
                 break;
             case 5:
-                return $this->getGender();
+                return $this->getEmail();
                 break;
             case 6:
-                return $this->getStatus();
+                return $this->getAge();
                 break;
             case 7:
-                return $this->getCreated();
+                return $this->getGender();
                 break;
             case 8:
+                return $this->getStatus();
+                break;
+            case 9:
+                return $this->getNewsletter();
+                break;
+            case 10:
+                return $this->getCreated();
+                break;
+            case 11:
                 return $this->getModified();
                 break;
             default:
@@ -1095,10 +1308,11 @@ abstract class Accounts implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
         if (isset($alreadyDumpedObjects['Accounts'][$this->hashCode()])) {
@@ -1108,21 +1322,24 @@ abstract class Accounts implements ActiveRecordInterface
         $keys = AccountsTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getName(),
-            $keys[2] => $this->getPassword(),
-            $keys[3] => $this->getEmail(),
-            $keys[4] => $this->getAge(),
-            $keys[5] => $this->getGender(),
-            $keys[6] => $this->getStatus(),
-            $keys[7] => $this->getCreated(),
-            $keys[8] => $this->getModified(),
+            $keys[1] => $this->getFname(),
+            $keys[2] => $this->getLname(),
+            $keys[3] => $this->getProfilePic(),
+            $keys[4] => $this->getPassword(),
+            $keys[5] => $this->getEmail(),
+            $keys[6] => $this->getAge(),
+            $keys[7] => $this->getGender(),
+            $keys[8] => $this->getStatus(),
+            $keys[9] => $this->getNewsletter(),
+            $keys[10] => $this->getCreated(),
+            $keys[11] => $this->getModified(),
         );
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
+        if ($result[$keys[10]] instanceof \DateTime) {
+            $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
         
-        if ($result[$keys[8]] instanceof \DateTime) {
-            $result[$keys[8]] = $result[$keys[8]]->format('c');
+        if ($result[$keys[11]] instanceof \DateTime) {
+            $result[$keys[11]] = $result[$keys[11]]->format('c');
         }
         
         $virtualColumns = $this->virtualColumns;
@@ -1130,6 +1347,23 @@ abstract class Accounts implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
         
+        if ($includeForeignObjects) {
+            if (null !== $this->collArticless) {
+                
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'articless';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'articless';
+                        break;
+                    default:
+                        $key = 'Articless';
+                }
+        
+                $result[$key] = $this->collArticless->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
 
         return $result;
     }
@@ -1167,27 +1401,36 @@ abstract class Accounts implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setName($value);
+                $this->setFname($value);
                 break;
             case 2:
-                $this->setPassword($value);
+                $this->setLname($value);
                 break;
             case 3:
-                $this->setEmail($value);
+                $this->setProfilePic($value);
                 break;
             case 4:
-                $this->setAge($value);
+                $this->setPassword($value);
                 break;
             case 5:
-                $this->setGender($value);
+                $this->setEmail($value);
                 break;
             case 6:
-                $this->setStatus($value);
+                $this->setAge($value);
                 break;
             case 7:
-                $this->setCreated($value);
+                $this->setGender($value);
                 break;
             case 8:
+                $this->setStatus($value);
+                break;
+            case 9:
+                $this->setNewsletter($value);
+                break;
+            case 10:
+                $this->setCreated($value);
+                break;
+            case 11:
                 $this->setModified($value);
                 break;
         } // switch()
@@ -1220,28 +1463,37 @@ abstract class Accounts implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setName($arr[$keys[1]]);
+            $this->setFname($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setPassword($arr[$keys[2]]);
+            $this->setLname($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setEmail($arr[$keys[3]]);
+            $this->setProfilePic($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setAge($arr[$keys[4]]);
+            $this->setPassword($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setGender($arr[$keys[5]]);
+            $this->setEmail($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setStatus($arr[$keys[6]]);
+            $this->setAge($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setCreated($arr[$keys[7]]);
+            $this->setGender($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setModified($arr[$keys[8]]);
+            $this->setStatus($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setNewsletter($arr[$keys[9]]);
+        }
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setCreated($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setModified($arr[$keys[11]]);
         }
     }
 
@@ -1287,8 +1539,14 @@ abstract class Accounts implements ActiveRecordInterface
         if ($this->isColumnModified(AccountsTableMap::COL_ID)) {
             $criteria->add(AccountsTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_NAME)) {
-            $criteria->add(AccountsTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(AccountsTableMap::COL_FNAME)) {
+            $criteria->add(AccountsTableMap::COL_FNAME, $this->fname);
+        }
+        if ($this->isColumnModified(AccountsTableMap::COL_LNAME)) {
+            $criteria->add(AccountsTableMap::COL_LNAME, $this->lname);
+        }
+        if ($this->isColumnModified(AccountsTableMap::COL_PROFILE_PIC)) {
+            $criteria->add(AccountsTableMap::COL_PROFILE_PIC, $this->profile_pic);
         }
         if ($this->isColumnModified(AccountsTableMap::COL_PASSWORD)) {
             $criteria->add(AccountsTableMap::COL_PASSWORD, $this->password);
@@ -1304,6 +1562,9 @@ abstract class Accounts implements ActiveRecordInterface
         }
         if ($this->isColumnModified(AccountsTableMap::COL_STATUS)) {
             $criteria->add(AccountsTableMap::COL_STATUS, $this->status);
+        }
+        if ($this->isColumnModified(AccountsTableMap::COL_NEWSLETTER)) {
+            $criteria->add(AccountsTableMap::COL_NEWSLETTER, $this->newsletter);
         }
         if ($this->isColumnModified(AccountsTableMap::COL_CREATED)) {
             $criteria->add(AccountsTableMap::COL_CREATED, $this->created);
@@ -1397,14 +1658,31 @@ abstract class Accounts implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setName($this->getName());
+        $copyObj->setFname($this->getFname());
+        $copyObj->setLname($this->getLname());
+        $copyObj->setProfilePic($this->getProfilePic());
         $copyObj->setPassword($this->getPassword());
         $copyObj->setEmail($this->getEmail());
         $copyObj->setAge($this->getAge());
         $copyObj->setGender($this->getGender());
         $copyObj->setStatus($this->getStatus());
+        $copyObj->setNewsletter($this->getNewsletter());
         $copyObj->setCreated($this->getCreated());
         $copyObj->setModified($this->getModified());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getArticless() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addArticles($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1433,6 +1711,247 @@ abstract class Accounts implements ActiveRecordInterface
         return $copyObj;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Articles' == $relationName) {
+            return $this->initArticless();
+        }
+    }
+
+    /**
+     * Clears out the collArticless collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addArticless()
+     */
+    public function clearArticless()
+    {
+        $this->collArticless = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collArticless collection loaded partially.
+     */
+    public function resetPartialArticless($v = true)
+    {
+        $this->collArticlessPartial = $v;
+    }
+
+    /**
+     * Initializes the collArticless collection.
+     *
+     * By default this just sets the collArticless collection to an empty array (like clearcollArticless());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initArticless($overrideExisting = true)
+    {
+        if (null !== $this->collArticless && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = ArticlesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collArticless = new $collectionClassName;
+        $this->collArticless->setModel('\Articles');
+    }
+
+    /**
+     * Gets an array of ChildArticles objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildAccounts is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildArticles[] List of ChildArticles objects
+     * @throws PropelException
+     */
+    public function getArticless(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collArticlessPartial && !$this->isNew();
+        if (null === $this->collArticless || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collArticless) {
+                // return empty collection
+                $this->initArticless();
+            } else {
+                $collArticless = ChildArticlesQuery::create(null, $criteria)
+                    ->filterByAccounts($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collArticlessPartial && count($collArticless)) {
+                        $this->initArticless(false);
+
+                        foreach ($collArticless as $obj) {
+                            if (false == $this->collArticless->contains($obj)) {
+                                $this->collArticless->append($obj);
+                            }
+                        }
+
+                        $this->collArticlessPartial = true;
+                    }
+
+                    return $collArticless;
+                }
+
+                if ($partial && $this->collArticless) {
+                    foreach ($this->collArticless as $obj) {
+                        if ($obj->isNew()) {
+                            $collArticless[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collArticless = $collArticless;
+                $this->collArticlessPartial = false;
+            }
+        }
+
+        return $this->collArticless;
+    }
+
+    /**
+     * Sets a collection of ChildArticles objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $articless A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildAccounts The current object (for fluent API support)
+     */
+    public function setArticless(Collection $articless, ConnectionInterface $con = null)
+    {
+        /** @var ChildArticles[] $articlessToDelete */
+        $articlessToDelete = $this->getArticless(new Criteria(), $con)->diff($articless);
+
+        
+        $this->articlessScheduledForDeletion = $articlessToDelete;
+
+        foreach ($articlessToDelete as $articlesRemoved) {
+            $articlesRemoved->setAccounts(null);
+        }
+
+        $this->collArticless = null;
+        foreach ($articless as $articles) {
+            $this->addArticles($articles);
+        }
+
+        $this->collArticless = $articless;
+        $this->collArticlessPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Articles objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Articles objects.
+     * @throws PropelException
+     */
+    public function countArticless(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collArticlessPartial && !$this->isNew();
+        if (null === $this->collArticless || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collArticless) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getArticless());
+            }
+
+            $query = ChildArticlesQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByAccounts($this)
+                ->count($con);
+        }
+
+        return count($this->collArticless);
+    }
+
+    /**
+     * Method called to associate a ChildArticles object to this object
+     * through the ChildArticles foreign key attribute.
+     *
+     * @param  ChildArticles $l ChildArticles
+     * @return $this|\Accounts The current object (for fluent API support)
+     */
+    public function addArticles(ChildArticles $l)
+    {
+        if ($this->collArticless === null) {
+            $this->initArticless();
+            $this->collArticlessPartial = true;
+        }
+
+        if (!$this->collArticless->contains($l)) {
+            $this->doAddArticles($l);
+
+            if ($this->articlessScheduledForDeletion and $this->articlessScheduledForDeletion->contains($l)) {
+                $this->articlessScheduledForDeletion->remove($this->articlessScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildArticles $articles The ChildArticles object to add.
+     */
+    protected function doAddArticles(ChildArticles $articles)
+    {
+        $this->collArticless[]= $articles;
+        $articles->setAccounts($this);
+    }
+
+    /**
+     * @param  ChildArticles $articles The ChildArticles object to remove.
+     * @return $this|ChildAccounts The current object (for fluent API support)
+     */
+    public function removeArticles(ChildArticles $articles)
+    {
+        if ($this->getArticless()->contains($articles)) {
+            $pos = $this->collArticless->search($articles);
+            $this->collArticless->remove($pos);
+            if (null === $this->articlessScheduledForDeletion) {
+                $this->articlessScheduledForDeletion = clone $this->collArticless;
+                $this->articlessScheduledForDeletion->clear();
+            }
+            $this->articlessScheduledForDeletion[]= $articles;
+            $articles->setAccounts(null);
+        }
+
+        return $this;
+    }
+
     /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
@@ -1441,12 +1960,15 @@ abstract class Accounts implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->name = null;
+        $this->fname = null;
+        $this->lname = null;
+        $this->profile_pic = null;
         $this->password = null;
         $this->email = null;
         $this->age = null;
         $this->gender = null;
         $this->status = null;
+        $this->newsletter = null;
         $this->created = null;
         $this->modified = null;
         $this->alreadyInSave = false;
@@ -1467,8 +1989,14 @@ abstract class Accounts implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collArticless) {
+                foreach ($this->collArticless as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collArticless = null;
     }
 
     /**
@@ -1479,6 +2007,20 @@ abstract class Accounts implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(AccountsTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+    
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildAccounts The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[AccountsTableMap::COL_MODIFIED] = true;
+    
+        return $this;
     }
 
     /**

@@ -2,11 +2,15 @@
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="accounts" idMethod="native" phpName="Accounts">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="name" phpName="Name" type="VARCHAR" size="50"/>
+    <column name="fname" phpName="Fname" type="VARCHAR" size="55"/>
+    <column name="lname" phpName="Lname" type="VARCHAR" size="55"/>
+    <column name="profile_pic" phpName="ProfilePic" type="VARCHAR" size="255"/>
     <column name="password" phpName="Password" type="VARCHAR" size="100"/>
     <column name="email" phpName="Email" type="VARCHAR" size="150"/>
     <column name="age" phpName="Age" type="INTEGER" size="3"/>
     <column name="gender" phpName="Gender" type="CHAR"/>
+    <column name="status" phpName="Status" type="TINYINT"/>
+    <column name="newsletter" phpName="Newsletter" type="BOOLEAN" size="1"/>
     <column name="created" phpName="Created" type="TIMESTAMP"/>
     <column name="modified" phpName="Modified" type="TIMESTAMP"/>
     <vendor type="mysql">
@@ -21,20 +25,61 @@
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="user_id" phpName="UserId" type="INTEGER"/>
     <column name="title" phpName="Title" type="VARCHAR" size="255"/>
+    <column name="url" phpName="Url" type="VARCHAR" size="255"/>
     <column name="content" phpName="Content" type="LONGVARCHAR"/>
+    <column name="tags" phpName="Tags" type="LONGVARCHAR"/>
+    <column name="likes" phpName="Likes" type="SMALLINT"/>
+    <column name="img_path" phpName="ImgPath" type="VARCHAR" size="55"/>
+    <column name="img_frame" phpName="ImgFrame" type="VARCHAR" size="25"/>
+    <column name="comments_allowed" phpName="CommentsAllowed" type="BOOLEAN" size="1"/>
+    <column name="modified" phpName="Modified" type="TIMESTAMP" defaultValue="0000-00-00 00:00:00"/>
     <column name="created" phpName="Created" type="TIMESTAMP" defaultValue="0000-00-00 00:00:00"/>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>
     </vendor>
+	<behavior name="timestampable">
+		<parameter name="create_column" value="created" />
+		<parameter name="update_column" value="modified" />
+	</behavior>
+	<behavior name="sluggable">
+		<parameter name="slug_column" value="url" />
+		<parameter name="slug_pattern" value="/blog/{Title}" />
+		<parameter name="replace_pattern" value="/[^\w]+/u" />
+		<parameter name="replacement" value="-" />
+		<parameter name="separator" value="/" />
+		<parameter name="permanent" value="true" />
+	</behavior>
+	<foreign-key foreignTable="accounts" onDelete="cascade">
+		<reference local="user_id" foreign="id" />
+	</foreign-key>
   </table>
   <table name="comments" idMethod="native" phpName="Comments">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="article_id" phpName="ArticleId" type="INTEGER"/>
+	<column name="lft" phpName="Lft" type="INTEGER"/>
+    <column name="rgt" phpName="Rgt" type="INTEGER"/>
+    <column name="lvl" phpName="Lvl" type="INTEGER"/>
     <column name="user_id" phpName="UserId" type="INTEGER"/>
     <column name="content" phpName="Content" type="LONGVARCHAR"/>
+    <column name="flag" phpName="Flag" type="SMALLINT"/>
+    <column name="edited" phpName="Edited" type="TIMESTAMP"/>
     <column name="posted" phpName="Posted" type="TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>
     </vendor>
+	<behavior name="timestampable">
+		<parameter name="create_column" value="posted" />
+		<parameter name="update_column" value="edited" />
+	</behavior>
+	<behavior name="nested_set">
+		<parameter name="left_column" value="lft" />
+		<parameter name="right_column" value="rgt" />
+		<parameter name="level_column" value="lvl" />
+		<parameter name="use_scope" value="true" />
+		<parameter name="scope_column" value="article_id" />
+	</behavior>
+	<foreign-key foreignTable="articles" onDelete="cascade">
+		<reference local="article_id" foreign="id" />
+	</foreign-key>
   </table>
 </database>
