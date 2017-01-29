@@ -49,9 +49,14 @@ abstract class Page(){
 class Core{
 	
 	/*
-	 *	View path
+	 *	Viewer path
 	 */
 	private $HTMLPath;
+	
+	/*
+	 *	Controller response
+	 */
+	private $Response = array();
 	
 	
 	// static debug = true; // if(debug) log/debug -> add
@@ -146,7 +151,7 @@ class Core{
 			exit;
 		}
 		
-		$this->HTMLPath = $path;
+		$this->HTMLPath = realpath($path);
 		
 		return true;
 	}
@@ -155,10 +160,7 @@ class Core{
 	/**
 	 * authorise: Grant Access manager
 	 * 
-	 * @param string $type
-	 *		default content to request
-	 *		
-	 * @return string $content
+	 * @return boolean
 	**/
     protected function authorise(){
         echo "content ".$this->var;
@@ -181,21 +183,44 @@ class Core{
 		
 		$content = '';
 		
-		// get content shipping method
-		if(isset($_GET['json']))
-			$_SESSION['shipment'] = 'json';
-		elseif(isset($_GET['xml']))
-			$_SESSION['shipment'] = 'xml';
-		elseif(!isset($_SESSION['shipment']) OR isset($_GET['html']))
-			$_SESSION['shipment'] = $type;
-		
-		if($_SESSION['shipment'] != 'html')
-			header("Content-Type: application/{$_SESSION['shipment']}; charset=utf-8");
-		
-		else{ // ENABLE COMPRESSION for HTML
+		// Treat as API request if no HTML template is set;
+		if(empty($this->HTMLPath)){
+			if(!isset($_GET['xml']))
+				$_GET['json'] = true;
+				
+			http_response_code(503);
+			$this->Response['error'] = 'Template path missing!';
+		}
+		if(!is_array($this->Response))
+			$this->Response = array();
 			
+		if(count($this->Response) < 1)
+			$this->Response['success'] = true;
+		
+		// get content shipping method
+		if(isset($_GET['json'])){
+		
+			$_SESSION['shipment'] = 'json';
+			header('Cache-Control: no-cache, must-revalidate');
+			header('Expires: Mon, 7 Aug 1989 05:00:00 GMT');
+			header('Content-type: application/json');
+
+			$content = json_encode($this->Response);
+		}
+		elseif(isset($_GET['xml'])){
+			include "Packages/Array2XML.php";
+			$_SESSION['shipment'] = 'xml';
+			header("Content-Type: application/xml;");
+			$xml = \Array2XML::createXML('response', $this->Response);
+			
+			$content = sanitizeXML($xml->saveXML());
+			
+		}else{ //default html
+			$_SESSION['shipment'] = 'html';
+			
+			 // ENABLE COMPRESSION for HTML
 			ob_start("ob_gzhandler");
-			include $this->HTMLPath;
+			include $this->HTMLPath; 
 			$content = $this->linkBridge(ob_get_clean());
 			
 			// Determine supported compression method
@@ -207,15 +232,16 @@ class Core{
 
 			if($encoding){
 				$content = gzencode(trim( preg_replace( '/\s+/', ' ', $content ) ), 9);
-				$offset = 60 * 60 * 24;
-				$expire = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
 				header('Content-Encoding: '.$encoding);
-				header("content-type: text/html; charset=UTF-8");
-				header( $expire );
-				header("Cache-Control: max-age=".$offset);
-				header('Content-Length: ' . strlen( $content ) );
 				header('Vary: Accept-Encoding');
 			}
+			$offset = 60 * 60 * 24;
+			$expire = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
+			header("content-type: text/html; charset=UTF-8");
+			header( $expire );
+			header("Cache-Control: max-age=".$offset);
+			header('Content-Length: ' . strlen( $content ) );
+
 		}
 		
 		print $content;

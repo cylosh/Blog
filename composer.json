@@ -1,0 +1,20 @@
+{
+    "name": "cylosh/blog",
+    "description": "Blog",
+    "type": "project",
+    "require": {
+        "propel/propel": "~2.0@dev"
+    },
+	
+	"autoload": { 
+        "classmap": ["system/Models/"] 
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AI Cylosh",
+            "email": "ionuthrive@yahoo.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}

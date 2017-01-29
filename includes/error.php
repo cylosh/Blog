@@ -2,9 +2,6 @@
 session_start();
 include("../config.php");
 
-if(!isset($_SESSION['shipment']))
-    $_SESSION['shipment'] = 'html';
-
 $error = preg_replace("/[^\d]/", "", $_GET['code']);
 $errorCode = 400;
 

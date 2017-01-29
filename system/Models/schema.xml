@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+  <table name="accounts" idMethod="native" phpName="Accounts">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="50"/>
+    <column name="password" phpName="Password" type="VARCHAR" size="100"/>
+    <column name="email" phpName="Email" type="VARCHAR" size="150"/>
+    <column name="age" phpName="Age" type="INTEGER" size="3"/>
+    <column name="gender" phpName="Gender" type="CHAR"/>
+    <column name="created" phpName="Created" type="TIMESTAMP"/>
+    <column name="modified" phpName="Modified" type="TIMESTAMP"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+	<behavior name="timestampable">
+		<parameter name="create_column" value="created" />
+		<parameter name="update_column" value="modified" />
+	</behavior>
+  </table>
+  <table name="articles" idMethod="native" phpName="Articles">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER"/>
+    <column name="title" phpName="Title" type="VARCHAR" size="255"/>
+    <column name="content" phpName="Content" type="LONGVARCHAR"/>
+    <column name="created" phpName="Created" type="TIMESTAMP" defaultValue="0000-00-00 00:00:00"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="comments" idMethod="native" phpName="Comments">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="article_id" phpName="ArticleId" type="INTEGER"/>
+    <column name="user_id" phpName="UserId" type="INTEGER"/>
+    <column name="content" phpName="Content" type="LONGVARCHAR"/>
+    <column name="posted" phpName="Posted" type="TIMESTAMP"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+</database>

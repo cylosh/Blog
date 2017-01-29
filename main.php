@@ -39,69 +39,81 @@ elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED
 session_start();
 
 require("config.php");
+require 'vendor/autoload.php';
 
 	/*
 	 * Exception & Error Handlers
 	 */
-	function default_exception_handler(Exception $e){
-		echo E_NOTICE;
-		switch($e->getSeverity()) 
-		{ 
-			case E_ERROR: // 1 // 
-				$severity = 'E_ERROR'; 
-				break;
-			case E_WARNING: // 2 // 
-				$severity = 'E_WARNING'; 
-				break;
-			case E_PARSE: // 4 // 
-				$severity = 'E_PARSE'; 
-				break;
-			case E_NOTICE: // 8 // 
-				$severity = 'E_NOTICE'; 
-				break;
-			case E_CORE_ERROR: // 16 // 
-				$severity = 'E_CORE_ERROR'; 
-				break;
-			case E_CORE_WARNING: // 32 // 
-				$severity = 'E_CORE_WARNING'; 
-				break;
-			case E_COMPILE_ERROR: // 64 // 
-				$severity = 'E_COMPILE_ERROR'; 
-				break;
-			case E_COMPILE_WARNING: // 128 // 
-				$severity = 'E_COMPILE_WARNING'; 
-				break;
-			case E_USER_ERROR: // 256 // 
-				$severity = 'E_USER_ERROR'; 
-				break;
-			case E_USER_WARNING: // 512 // 
-				$severity = 'E_USER_WARNING'; 
-				break;
-			case E_USER_NOTICE: // 1024 // 
-				$severity = 'E_USER_NOTICE'; 
-				break;
-			case E_STRICT: // 2048 // 
-				$severity = 'E_STRICT'; 
-				break;
-			case E_RECOVERABLE_ERROR: // 4096 // 
-				$severity = 'E_RECOVERABLE_ERROR'; 
-				break;
-			case E_DEPRECATED: // 8192 // 
-				$severity = 'E_DEPRECATED'; 
-				break;
-			case E_USER_DEPRECATED: // 16384 // 
-				$severity = 'E_USER_DEPRECATED';
-				break;
-			default:
-				$severity = ""; 
-		}
+	function default_exception_handler(\Exception $e){
 		
+		$severity = "";
+    
+		// Trace the error
+		$excp = $e->getTrace();
+		$fullTrace = array();
+		foreach($excp as $exp)
+			if(isset($exp['line']))
+				$fullTrace[$exp['line']] = $exp['file'];
+		$fullTrace = var_export($fullTrace, true);
+		
+		// Mark error down to custom name
+		if ($e instanceof ErrorException) {
+   
+			switch($e->getSeverity()) 
+			{ 
+				case E_ERROR: // 1 // 
+					$severity = 'E_ERROR'; 
+					break;
+				case E_WARNING: // 2 // 
+					$severity = 'E_WARNING'; 
+					break;
+				case E_PARSE: // 4 // 
+					$severity = 'E_PARSE'; 
+					break;
+				case E_NOTICE: // 8 // 
+					$severity = 'E_NOTICE'; 
+					break;
+				case E_CORE_ERROR: // 16 // 
+					$severity = 'E_CORE_ERROR'; 
+					break;
+				case E_CORE_WARNING: // 32 // 
+					$severity = 'E_CORE_WARNING'; 
+					break;
+				case E_COMPILE_ERROR: // 64 // 
+					$severity = 'E_COMPILE_ERROR'; 
+					break;
+				case E_COMPILE_WARNING: // 128 // 
+					$severity = 'E_COMPILE_WARNING'; 
+					break;
+				case E_USER_ERROR: // 256 // 
+					$severity = 'E_USER_ERROR'; 
+					break;
+				case E_USER_WARNING: // 512 // 
+					$severity = 'E_USER_WARNING'; 
+					break;
+				case E_USER_NOTICE: // 1024 // 
+					$severity = 'E_USER_NOTICE'; 
+					break;
+				case E_STRICT: // 2048 // 
+					$severity = 'E_STRICT'; 
+					break;
+				case E_RECOVERABLE_ERROR: // 4096 // 
+					$severity = 'E_RECOVERABLE_ERROR'; 
+					break;
+				case E_DEPRECATED: // 8192 // 
+					$severity = 'E_DEPRECATED'; 
+					break;
+				case E_USER_DEPRECATED: // 16384 // 
+					$severity = 'E_USER_DEPRECATED';
+					break;
+			}
+		}
 		error_log(
-			str_repeat("=", 10).PHP_EOL.date('Y-m-d H:i:s').PHP_EOL."\t".get_class($e).' ('.$e->getFile().') '.$severity.' thrown within the exception handler. Message: '.$e->getMessage()." on line ".$e->getLine().PHP_EOL,
+			str_repeat("=", 10).PHP_EOL.date('Y-m-d H:i:s').PHP_EOL."\t".$fullTrace.$severity.' thrown within the exception handler. Message: '.$e->getMessage()." on line ".$e->getLine().PHP_EOL,
 			3,
 			dirname(__FILE__).DIRECTORY_SEPARATOR."system".DIRECTORY_SEPARATOR."Logs".DIRECTORY_SEPARATOR."Exceptions-errors.log", 1
 		);
-		header('Location: error/500');
+		#header('Location: error/500');
 	}
 	function exceptions_error_handler($severity, $message, $filename, $lineno) {
 		if (error_reporting() == 0) {
@@ -109,7 +121,7 @@ require("config.php");
 		}
 		
 		if (error_reporting() & $severity) {
-			throw new ErrorException($message, 0, $severity, $filename, $lineno);
+			throw new \ErrorException($message, 0, $severity, $filename, $lineno);
 		}
 	}
 	set_error_handler("exceptions_error_handler");
@@ -188,7 +200,7 @@ require("config.php");
 				$fileName =  $matchParts['1'].ucfirst($matchParts['2']).$matchParts['3'];
 			}
 
-			$fullFileName = $includePath . DIRECTORY_SEPARATOR . $fileName;
+			$fullFileName = realpath($includePath . DIRECTORY_SEPARATOR . $fileName);
 			
 			if (file_exists($fullFileName)) {
 				require $fullFileName;
@@ -219,7 +231,7 @@ require("config.php");
 	
     if($method != '' && !in_array($method, $allowedCalls)
     ){
-        header("Location: ".SITE_URI."/error/405");
+        #header("Location: ".SITE_URI."/error/405");
         exit;
     }
 	
