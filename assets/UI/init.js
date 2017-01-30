@@ -6,7 +6,8 @@ $('i.fa').tooltip();
 
 $(document).ready(function() {
  
-  	$("#owl-header").owlCarousel({
+  	if ( $( "#owl-header" ).length ) {
+	$("#owl-header").owlCarousel({
  
       	navigation : false, // Show next and prev buttons
       	slideSpeed : 300,
@@ -23,11 +24,14 @@ $(document).ready(function() {
       	// itemsMobile : false
  
   	});
+	}
 	
+	if ( $( "#showdown" ).length ) {
 	$('#showdown').click(function(){
 		$('body').animate({
 			scrollTop: $(".navbar-header").offset().top},1200);});
-
+	}
+	
 	if ( $( "#scrolltojs" ).length ) {
 		$('body').animate({
 			scrollTop: $("#scrolltojs").offset().top},2000);
