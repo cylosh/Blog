@@ -428,6 +428,13 @@ class Core{
 			unset($this->Response['error-redirect']);
 		}
 		
+		if(isset($this->Response['redirect'])){
+			$redirect = $this->Response['redirect']['url'];
+			
+			$this->Response['message'] = $this->Response['redirect']['message'];
+			unset($this->Response['redirect']);
+		}
+		
 		// get content shipping method
 		if(isset($_GET['json'])){
 		
