@@ -2,8 +2,6 @@
 
 namespace Base;
 
-use \Articles as ChildArticles;
-use \ArticlesQuery as ChildArticlesQuery;
 use \Comments as ChildComments;
 use \CommentsQuery as ChildCommentsQuery;
 use \DateTime;
@@ -135,11 +133,6 @@ abstract class Comments implements ActiveRecordInterface
      * @var        DateTime
      */
     protected $posted;
-
-    /**
-     * @var        ChildArticles
-     */
-    protected $aArticles;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -571,10 +564,6 @@ abstract class Comments implements ActiveRecordInterface
             $this->modifiedColumns[CommentsTableMap::COL_ARTICLE_ID] = true;
         }
 
-        if ($this->aArticles !== null && $this->aArticles->getId() !== $v) {
-            $this->aArticles = null;
-        }
-
         return $this;
     } // setArticleId()
 
@@ -839,9 +828,6 @@ abstract class Comments implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aArticles !== null && $this->article_id !== $this->aArticles->getId()) {
-            $this->aArticles = null;
-        }
     } // ensureConsistency
 
     /**
@@ -881,7 +867,6 @@ abstract class Comments implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aArticles = null;
         } // if (deep)
     }
 
@@ -1023,18 +1008,6 @@ abstract class Comments implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
-
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aArticles !== null) {
-                if ($this->aArticles->isModified() || $this->aArticles->isNew()) {
-                    $affectedRows += $this->aArticles->save($con);
-                }
-                $this->setArticles($this->aArticles);
-            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -1253,11 +1226,10 @@ abstract class Comments implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
         if (isset($alreadyDumpedObjects['Comments'][$this->hashCode()])) {
@@ -1290,23 +1262,6 @@ abstract class Comments implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
         
-        if ($includeForeignObjects) {
-            if (null !== $this->aArticles) {
-                
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'articles';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'articles';
-                        break;
-                    default:
-                        $key = 'Articles';
-                }
-        
-                $result[$key] = $this->aArticles->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -1621,66 +1576,12 @@ abstract class Comments implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildArticles object.
-     *
-     * @param  ChildArticles $v
-     * @return $this|\Comments The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setArticles(ChildArticles $v = null)
-    {
-        if ($v === null) {
-            $this->setArticleId(NULL);
-        } else {
-            $this->setArticleId($v->getId());
-        }
-
-        $this->aArticles = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildArticles object, it will not be re-added.
-        if ($v !== null) {
-            $v->addComments($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildArticles object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildArticles The associated ChildArticles object.
-     * @throws PropelException
-     */
-    public function getArticles(ConnectionInterface $con = null)
-    {
-        if ($this->aArticles === null && ($this->article_id !== null)) {
-            $this->aArticles = ChildArticlesQuery::create()->findPk($this->article_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aArticles->addCommentss($this);
-             */
-        }
-
-        return $this->aArticles;
-    }
-
-    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
-        if (null !== $this->aArticles) {
-            $this->aArticles->removeComments($this);
-        }
         $this->id = null;
         $this->article_id = null;
         $this->lft = null;
@@ -1714,7 +1615,6 @@ abstract class Comments implements ActiveRecordInterface
         // nested_set behavior
         $this->collNestedSetChildren = null;
         $this->aNestedSetParent = null;
-        $this->aArticles = null;
     }
 
     /**

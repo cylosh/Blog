@@ -4,19 +4,15 @@ namespace Base;
 
 use \Accounts as ChildAccounts;
 use \AccountsQuery as ChildAccountsQuery;
-use \Articles as ChildArticles;
-use \ArticlesQuery as ChildArticlesQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
 use Map\AccountsTableMap;
-use Map\ArticlesTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -151,24 +147,12 @@ abstract class Accounts implements ActiveRecordInterface
     protected $modified;
 
     /**
-     * @var        ObjectCollection|ChildArticles[] Collection to store aggregation of ChildArticles objects.
-     */
-    protected $collArticless;
-    protected $collArticlessPartial;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildArticles[]
-     */
-    protected $articlessScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Base\Accounts object.
@@ -939,8 +923,6 @@ abstract class Accounts implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collArticless = null;
-
         } // if (deep)
     }
 
@@ -1065,23 +1047,6 @@ abstract class Accounts implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
-            }
-
-            if ($this->articlessScheduledForDeletion !== null) {
-                if (!$this->articlessScheduledForDeletion->isEmpty()) {
-                    \ArticlesQuery::create()
-                        ->filterByPrimaryKeys($this->articlessScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->articlessScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collArticless !== null) {
-                foreach ($this->collArticless as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -1308,11 +1273,10 @@ abstract class Accounts implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
         if (isset($alreadyDumpedObjects['Accounts'][$this->hashCode()])) {
@@ -1347,23 +1311,6 @@ abstract class Accounts implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
         
-        if ($includeForeignObjects) {
-            if (null !== $this->collArticless) {
-                
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'articless';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'articless';
-                        break;
-                    default:
-                        $key = 'Articless';
-                }
-        
-                $result[$key] = $this->collArticless->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-        }
 
         return $result;
     }
@@ -1669,20 +1616,6 @@ abstract class Accounts implements ActiveRecordInterface
         $copyObj->setNewsletter($this->getNewsletter());
         $copyObj->setCreated($this->getCreated());
         $copyObj->setModified($this->getModified());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getArticless() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addArticles($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1709,247 +1642,6 @@ abstract class Accounts implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
-    }
-
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('Articles' == $relationName) {
-            return $this->initArticless();
-        }
-    }
-
-    /**
-     * Clears out the collArticless collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addArticless()
-     */
-    public function clearArticless()
-    {
-        $this->collArticless = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collArticless collection loaded partially.
-     */
-    public function resetPartialArticless($v = true)
-    {
-        $this->collArticlessPartial = $v;
-    }
-
-    /**
-     * Initializes the collArticless collection.
-     *
-     * By default this just sets the collArticless collection to an empty array (like clearcollArticless());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initArticless($overrideExisting = true)
-    {
-        if (null !== $this->collArticless && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = ArticlesTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collArticless = new $collectionClassName;
-        $this->collArticless->setModel('\Articles');
-    }
-
-    /**
-     * Gets an array of ChildArticles objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildAccounts is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildArticles[] List of ChildArticles objects
-     * @throws PropelException
-     */
-    public function getArticless(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collArticlessPartial && !$this->isNew();
-        if (null === $this->collArticless || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collArticless) {
-                // return empty collection
-                $this->initArticless();
-            } else {
-                $collArticless = ChildArticlesQuery::create(null, $criteria)
-                    ->filterByAccounts($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collArticlessPartial && count($collArticless)) {
-                        $this->initArticless(false);
-
-                        foreach ($collArticless as $obj) {
-                            if (false == $this->collArticless->contains($obj)) {
-                                $this->collArticless->append($obj);
-                            }
-                        }
-
-                        $this->collArticlessPartial = true;
-                    }
-
-                    return $collArticless;
-                }
-
-                if ($partial && $this->collArticless) {
-                    foreach ($this->collArticless as $obj) {
-                        if ($obj->isNew()) {
-                            $collArticless[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collArticless = $collArticless;
-                $this->collArticlessPartial = false;
-            }
-        }
-
-        return $this->collArticless;
-    }
-
-    /**
-     * Sets a collection of ChildArticles objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $articless A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildAccounts The current object (for fluent API support)
-     */
-    public function setArticless(Collection $articless, ConnectionInterface $con = null)
-    {
-        /** @var ChildArticles[] $articlessToDelete */
-        $articlessToDelete = $this->getArticless(new Criteria(), $con)->diff($articless);
-
-        
-        $this->articlessScheduledForDeletion = $articlessToDelete;
-
-        foreach ($articlessToDelete as $articlesRemoved) {
-            $articlesRemoved->setAccounts(null);
-        }
-
-        $this->collArticless = null;
-        foreach ($articless as $articles) {
-            $this->addArticles($articles);
-        }
-
-        $this->collArticless = $articless;
-        $this->collArticlessPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Articles objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Articles objects.
-     * @throws PropelException
-     */
-    public function countArticless(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collArticlessPartial && !$this->isNew();
-        if (null === $this->collArticless || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collArticless) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getArticless());
-            }
-
-            $query = ChildArticlesQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByAccounts($this)
-                ->count($con);
-        }
-
-        return count($this->collArticless);
-    }
-
-    /**
-     * Method called to associate a ChildArticles object to this object
-     * through the ChildArticles foreign key attribute.
-     *
-     * @param  ChildArticles $l ChildArticles
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function addArticles(ChildArticles $l)
-    {
-        if ($this->collArticless === null) {
-            $this->initArticless();
-            $this->collArticlessPartial = true;
-        }
-
-        if (!$this->collArticless->contains($l)) {
-            $this->doAddArticles($l);
-
-            if ($this->articlessScheduledForDeletion and $this->articlessScheduledForDeletion->contains($l)) {
-                $this->articlessScheduledForDeletion->remove($this->articlessScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildArticles $articles The ChildArticles object to add.
-     */
-    protected function doAddArticles(ChildArticles $articles)
-    {
-        $this->collArticless[]= $articles;
-        $articles->setAccounts($this);
-    }
-
-    /**
-     * @param  ChildArticles $articles The ChildArticles object to remove.
-     * @return $this|ChildAccounts The current object (for fluent API support)
-     */
-    public function removeArticles(ChildArticles $articles)
-    {
-        if ($this->getArticless()->contains($articles)) {
-            $pos = $this->collArticless->search($articles);
-            $this->collArticless->remove($pos);
-            if (null === $this->articlessScheduledForDeletion) {
-                $this->articlessScheduledForDeletion = clone $this->collArticless;
-                $this->articlessScheduledForDeletion->clear();
-            }
-            $this->articlessScheduledForDeletion[]= $articles;
-            $articles->setAccounts(null);
-        }
-
-        return $this;
     }
 
     /**
@@ -1989,14 +1681,8 @@ abstract class Accounts implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collArticless) {
-                foreach ($this->collArticless as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        $this->collArticless = null;
     }
 
     /**

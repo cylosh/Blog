@@ -10,11 +10,9 @@ use Map\CommentsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Map\TableMap;
 
 /**
  * Base class that represents a query for the 'comments' table.
@@ -50,18 +48,6 @@ use Propel\Runtime\Map\TableMap;
  * @method     ChildCommentsQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
  * @method     ChildCommentsQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildCommentsQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
- *
- * @method     ChildCommentsQuery leftJoinArticles($relationAlias = null) Adds a LEFT JOIN clause to the query using the Articles relation
- * @method     ChildCommentsQuery rightJoinArticles($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Articles relation
- * @method     ChildCommentsQuery innerJoinArticles($relationAlias = null) Adds a INNER JOIN clause to the query using the Articles relation
- *
- * @method     ChildCommentsQuery joinWithArticles($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Articles relation
- *
- * @method     ChildCommentsQuery leftJoinWithArticles() Adds a LEFT JOIN clause and with to the query using the Articles relation
- * @method     ChildCommentsQuery rightJoinWithArticles() Adds a RIGHT JOIN clause and with to the query using the Articles relation
- * @method     ChildCommentsQuery innerJoinWithArticles() Adds a INNER JOIN clause and with to the query using the Articles relation
- *
- * @method     \ArticlesQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildComments findOne(ConnectionInterface $con = null) Return the first ChildComments matching the query
  * @method     ChildComments findOneOrCreate(ConnectionInterface $con = null) Return the first ChildComments matching the query, or a new ChildComments object populated from the query conditions when no match is found
@@ -340,8 +326,6 @@ abstract class CommentsQuery extends ModelCriteria
      * $query->filterByArticleId(array(12, 34)); // WHERE article_id IN (12, 34)
      * $query->filterByArticleId(array('min' => 12)); // WHERE article_id > 12
      * </code>
-     *
-     * @see       filterByArticles()
      *
      * @param     mixed $articleId The value to use as filter.
      *              Use scalar values for equality.
@@ -688,83 +672,6 @@ abstract class CommentsQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(CommentsTableMap::COL_POSTED, $posted, $comparison);
-    }
-
-    /**
-     * Filter the query by a related \Articles object
-     *
-     * @param \Articles|ObjectCollection $articles The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildCommentsQuery The current query, for fluid interface
-     */
-    public function filterByArticles($articles, $comparison = null)
-    {
-        if ($articles instanceof \Articles) {
-            return $this
-                ->addUsingAlias(CommentsTableMap::COL_ARTICLE_ID, $articles->getId(), $comparison);
-        } elseif ($articles instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(CommentsTableMap::COL_ARTICLE_ID, $articles->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByArticles() only accepts arguments of type \Articles or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Articles relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildCommentsQuery The current query, for fluid interface
-     */
-    public function joinArticles($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Articles');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Articles');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Articles relation Articles object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \ArticlesQuery A secondary query class using the current class as primary query
-     */
-    public function useArticlesQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinArticles($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Articles', '\ArticlesQuery');
     }
 
     /**

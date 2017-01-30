@@ -13,13 +13,13 @@
     <column name="newsletter" phpName="Newsletter" type="BOOLEAN" size="1"/>
     <column name="created" phpName="Created" type="TIMESTAMP"/>
     <column name="modified" phpName="Modified" type="TIMESTAMP"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
 	<behavior name="timestampable">
 		<parameter name="create_column" value="created" />
 		<parameter name="update_column" value="modified" />
 	</behavior>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
   </table>
   <table name="articles" idMethod="native" phpName="Articles">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
@@ -34,9 +34,9 @@
     <column name="comments_allowed" phpName="CommentsAllowed" type="BOOLEAN" size="1"/>
     <column name="modified" phpName="Modified" type="TIMESTAMP" defaultValue="0000-00-00 00:00:00"/>
     <column name="created" phpName="Created" type="TIMESTAMP" defaultValue="0000-00-00 00:00:00"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="MyISAM"/>
-    </vendor>
+    <index name="articles_fi_621a75">
+      <index-column name="user_id"/>
+    </index>
 	<behavior name="timestampable">
 		<parameter name="create_column" value="created" />
 		<parameter name="update_column" value="modified" />
@@ -49,14 +49,14 @@
 		<parameter name="separator" value="/" />
 		<parameter name="permanent" value="true" />
 	</behavior>
-	<foreign-key foreignTable="accounts" onDelete="cascade">
-		<reference local="user_id" foreign="id" />
-	</foreign-key>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
   </table>
   <table name="comments" idMethod="native" phpName="Comments">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="article_id" phpName="ArticleId" type="INTEGER"/>
-	<column name="lft" phpName="Lft" type="INTEGER"/>
+    <column name="lft" phpName="Lft" type="INTEGER"/>
     <column name="rgt" phpName="Rgt" type="INTEGER"/>
     <column name="lvl" phpName="Lvl" type="INTEGER"/>
     <column name="user_id" phpName="UserId" type="INTEGER"/>
@@ -64,9 +64,9 @@
     <column name="flag" phpName="Flag" type="SMALLINT"/>
     <column name="edited" phpName="Edited" type="TIMESTAMP"/>
     <column name="posted" phpName="Posted" type="TIMESTAMP"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="MyISAM"/>
-    </vendor>
+    <index name="comments_fi_0ff210">
+      <index-column name="article_id"/>
+    </index>
 	<behavior name="timestampable">
 		<parameter name="create_column" value="posted" />
 		<parameter name="update_column" value="edited" />
@@ -78,8 +78,8 @@
 		<parameter name="use_scope" value="true" />
 		<parameter name="scope_column" value="article_id" />
 	</behavior>
-	<foreign-key foreignTable="articles" onDelete="cascade">
-		<reference local="article_id" foreign="id" />
-	</foreign-key>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
   </table>
 </database>

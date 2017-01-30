@@ -172,7 +172,7 @@ class CommentsTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('article_id', 'ArticleId', 'INTEGER', 'articles', 'id', false, null, null);
+        $this->addColumn('article_id', 'ArticleId', 'INTEGER', false, null, null);
         $this->addColumn('lft', 'Lft', 'INTEGER', false, null, null);
         $this->addColumn('rgt', 'Rgt', 'INTEGER', false, null, null);
         $this->addColumn('lvl', 'Lvl', 'INTEGER', false, null, null);
@@ -188,13 +188,6 @@ class CommentsTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Articles', '\\Articles', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':article_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

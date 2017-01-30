@@ -10,7 +10,6 @@ use Map\ArticlesTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -53,28 +52,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticlesQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
  * @method     ChildArticlesQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildArticlesQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
- *
- * @method     ChildArticlesQuery leftJoinAccounts($relationAlias = null) Adds a LEFT JOIN clause to the query using the Accounts relation
- * @method     ChildArticlesQuery rightJoinAccounts($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Accounts relation
- * @method     ChildArticlesQuery innerJoinAccounts($relationAlias = null) Adds a INNER JOIN clause to the query using the Accounts relation
- *
- * @method     ChildArticlesQuery joinWithAccounts($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Accounts relation
- *
- * @method     ChildArticlesQuery leftJoinWithAccounts() Adds a LEFT JOIN clause and with to the query using the Accounts relation
- * @method     ChildArticlesQuery rightJoinWithAccounts() Adds a RIGHT JOIN clause and with to the query using the Accounts relation
- * @method     ChildArticlesQuery innerJoinWithAccounts() Adds a INNER JOIN clause and with to the query using the Accounts relation
- *
- * @method     ChildArticlesQuery leftJoinComments($relationAlias = null) Adds a LEFT JOIN clause to the query using the Comments relation
- * @method     ChildArticlesQuery rightJoinComments($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Comments relation
- * @method     ChildArticlesQuery innerJoinComments($relationAlias = null) Adds a INNER JOIN clause to the query using the Comments relation
- *
- * @method     ChildArticlesQuery joinWithComments($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Comments relation
- *
- * @method     ChildArticlesQuery leftJoinWithComments() Adds a LEFT JOIN clause and with to the query using the Comments relation
- * @method     ChildArticlesQuery rightJoinWithComments() Adds a RIGHT JOIN clause and with to the query using the Comments relation
- * @method     ChildArticlesQuery innerJoinWithComments() Adds a INNER JOIN clause and with to the query using the Comments relation
- *
- * @method     \AccountsQuery|\CommentsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildArticles findOne(ConnectionInterface $con = null) Return the first ChildArticles matching the query
  * @method     ChildArticles findOneOrCreate(ConnectionInterface $con = null) Return the first ChildArticles matching the query, or a new ChildArticles object populated from the query conditions when no match is found
@@ -359,8 +336,6 @@ abstract class ArticlesQuery extends ModelCriteria
      * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
      * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
-     *
-     * @see       filterByAccounts()
      *
      * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
@@ -695,156 +670,6 @@ abstract class ArticlesQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ArticlesTableMap::COL_CREATED, $created, $comparison);
-    }
-
-    /**
-     * Filter the query by a related \Accounts object
-     *
-     * @param \Accounts|ObjectCollection $accounts The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildArticlesQuery The current query, for fluid interface
-     */
-    public function filterByAccounts($accounts, $comparison = null)
-    {
-        if ($accounts instanceof \Accounts) {
-            return $this
-                ->addUsingAlias(ArticlesTableMap::COL_USER_ID, $accounts->getId(), $comparison);
-        } elseif ($accounts instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ArticlesTableMap::COL_USER_ID, $accounts->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByAccounts() only accepts arguments of type \Accounts or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Accounts relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildArticlesQuery The current query, for fluid interface
-     */
-    public function joinAccounts($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Accounts');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Accounts');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Accounts relation Accounts object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \AccountsQuery A secondary query class using the current class as primary query
-     */
-    public function useAccountsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinAccounts($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Accounts', '\AccountsQuery');
-    }
-
-    /**
-     * Filter the query by a related \Comments object
-     *
-     * @param \Comments|ObjectCollection $comments the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildArticlesQuery The current query, for fluid interface
-     */
-    public function filterByComments($comments, $comparison = null)
-    {
-        if ($comments instanceof \Comments) {
-            return $this
-                ->addUsingAlias(ArticlesTableMap::COL_ID, $comments->getArticleId(), $comparison);
-        } elseif ($comments instanceof ObjectCollection) {
-            return $this
-                ->useCommentsQuery()
-                ->filterByPrimaryKeys($comments->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByComments() only accepts arguments of type \Comments or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Comments relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildArticlesQuery The current query, for fluid interface
-     */
-    public function joinComments($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Comments');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Comments');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Comments relation Comments object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \CommentsQuery A secondary query class using the current class as primary query
-     */
-    public function useCommentsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinComments($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Comments', '\CommentsQuery');
     }
 
     /**

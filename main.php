@@ -41,6 +41,7 @@ session_start();
 
 require("config.php");
 require 'vendor/autoload.php';
+require_once 'vendor/propel/config.php';
 
 	/**
 	 * Exception & Error Handlers
@@ -207,47 +208,42 @@ require 'vendor/autoload.php';
 		} 
 		
 		return new $class; 
-	} 
-	spl_autoload_register(
-		function ($className) {
-			$fileName = '';
-			$namespace = '';
-
-			// Sets the include path as the "src" directory
-			$includePath = dirname(__FILE__);
-
-			if (false !== ($lastNsPos = strripos($className, '\\'))) {
-				$namespace = substr($className, 0, $lastNsPos);
-				$className = substr($className, $lastNsPos + 1);
-				$fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
-				
-			}
-			$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+	}
+	function autoLoader ($className) {
+		$fileName = '';
+		$namespace = '';
+	
+		// Sets the include path as the "src" directory
+		$includePath = dirname(__FILE__);
+	
+		if (false !== ($lastNsPos = strripos($className, '\\'))) {
+			$namespace = substr($className, 0, $lastNsPos);
+			$className = substr($className, $lastNsPos + 1);
+			$fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
 			
-			// bypass unix case sensitive file system
-			if (preg_match('%(.*?/Controllers/)([a-z])(.*)%', $fileName, $matchParts)) {
-				$fileName =  $matchParts['1'].ucfirst($matchParts['2']).$matchParts['3'];
-			}
-
-			$fullFileName = realpath($includePath . DIRECTORY_SEPARATOR . $fileName);
+		}
+		$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+		
+		// bypass unix case sensitive file system
+		if (preg_match('%(.*?/Controllers/)([a-z])(.*)%', $fileName, $matchParts)) {
+			$fileName =  $matchParts['1'].ucfirst($matchParts['2']).$matchParts['3'];
+		}
+	
+		$fullFileName = realpath($includePath . DIRECTORY_SEPARATOR . $fileName);
+		file_put_contents('textroute.txt', $fullFileName.PHP_EOL, FILE_APPEND);
+		
+		if (file_exists($fullFileName)) {
+			require $fullFileName;
 			
-			if (file_exists($fullFileName)) {
-				require $fullFileName;
-				
-				// Check to see whether the include declared the class
-				if (!class_exists($className, false) AND !class_exists($namespace.'\\'.$className, false)) {
-					http_response_code(400);
-					header("Location: ".SITE_URI."/error/400");
-					exit;
-				}
-			} else {
-				http_response_code(501);
-				header("Location: ".SITE_URI."/error/501");
+			// Check to see whether the include declared the class
+			if (!class_exists($className, false) AND !class_exists($namespace.'\\'.$className, false)) {
+				http_response_code(400);
+				header("Location: ".SITE_URI."/error/400");
 				exit;
 			}
 		}
-
-	);
+	}
+	spl_autoload_register('autoLoader');
 	
 	/**
 	 * Routing 

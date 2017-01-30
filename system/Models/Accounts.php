@@ -1,5 +1,4 @@
 <?php
-namespace system\Models;
 
 use Base\Accounts as BaseAccounts;
 

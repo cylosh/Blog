@@ -200,13 +200,6 @@ class AccountsTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Articles', '\\Articles', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, 'Articless', false);
     } // buildRelations()
 
     /**
@@ -221,15 +214,6 @@ class AccountsTableMap extends TableMap
             'timestampable' => array('create_column' => 'created', 'update_column' => 'modified', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
         );
     } // getBehaviors()
-    /**
-     * Method to invalidate the instance pool of all tables related to accounts     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool()
-    {
-        // Invalidate objects in related instance pools,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ArticlesTableMap::clearInstancePool();
-    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
