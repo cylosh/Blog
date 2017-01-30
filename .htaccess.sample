@@ -35,6 +35,9 @@ RewriteRule ^cached-assets/(.*)$ assets/$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^api/([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3&json" [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3" [L,QSA]
 </IfModule>
 # edit RewriteBase; don't modify unless 
