@@ -13,6 +13,7 @@
  * 		@version 1.2: 27 January 2017
  * 			added XSS prevention and Session protection
 */
+error_reporting(E_ALL & ~E_DEPRECATED);
 
 ini_set('zlib.output_compression_level', 1);
 
@@ -125,8 +126,35 @@ require 'vendor/autoload.php';
 			throw new \ErrorException($message, 0, $severity, $filename, $lineno);
 		}
 	}
+	function fatal_handler() {
+		$errfile = "unknown file";
+		$errstr  = "shutdown";
+		$errno   = E_CORE_ERROR;
+		$errline = 0;
+		
+		$error = error_get_last();
+		
+		if( $error !== NULL) {
+		$errno   = $error["type"];
+		$errfile = $error["file"];
+		$errline = $error["line"];
+		$errstr  = $error["message"];
+		
+			error_log(
+				str_repeat("=", 10).PHP_EOL.date('Y-m-d H:i:s').PHP_EOL."\t".$errfile.' '.$errno.' thrown within the exception handler. Message: '.$errstr." on line ".$errline.PHP_EOL,
+				3,
+				dirname(__FILE__).DIRECTORY_SEPARATOR."system".DIRECTORY_SEPARATOR."Logs".DIRECTORY_SEPARATOR."Fatal-errors.log", 1
+			);
+			
+			http_response_code(500);
+			header("Location: ".SITE_URI."/error/500");
+		}
+
+	}
+
 	set_error_handler("exceptions_error_handler");
 	set_exception_handler("default_exception_handler");
+	register_shutdown_function( "fatal_handler" );
 
 
 	/**

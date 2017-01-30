@@ -458,7 +458,7 @@ class Core{
 				$this->Alert = $this->HTMLAlerts($this->Response['error']);
 			
 			 // ENABLE COMPRESSION for HTML
-			ob_end_clean();
+			if (ob_get_length()) ob_clean();
 			ob_start("ob_gzhandler");
 			if(file_exists($this->HTMLPath)) include $this->HTMLPath; 
 			$content = $this->linkBridge(ob_get_clean());
