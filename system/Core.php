@@ -59,29 +59,25 @@ class Core{
 	protected $templatePath;
 	
 	
+	/*
+	 *	Parameters receieved from client
+	 */
+	protected $userInput;
+	/*
+	 *	$userInput secured data
+	 */
+	protected $safeOutput;
+	
+	/*
+	 *	Array containing user alerts
+	 */
+	public $Alert;
+	
+	
 	// static debug = true; // if(debug) log/debug -> add
 
 	function __construct(){
 		$this->Response = array();
-	}
-	
-	/**
-	 * userInput external input from POST, GET & others - DELETE, PUT
-	 *
-	 *
-	 *
-	 * returns array('type'=>,'data'=>)
- 	 */
-	private function userInput(){
-		$method = $_SERVER['REQUEST_METHOD'];
-		
-		switch(CRUD){
-		
-		default:
-			
-		}
-		
-		
 	}
 	
 	
@@ -153,6 +149,168 @@ class Core{
 		return true;
 	}
 	
+	
+	/**
+	 * HTMLAlerts: display alerts
+	 *
+	 * @param array $alerts
+	 *		error/notices in array
+	 *		
+	 *
+	 * returns $content
+ 	 */
+	public function HTMLAlerts($alerts)
+	{
+		$content = '';
+
+		if(is_array($alerts)){
+		
+			foreach($alerts as $type => $alert){
+				
+				if(!is_array($alert))
+					continue;
+					
+				foreach($alert as $message){
+					switch((string)$type){
+						
+						case "alert":
+							$content .= $this->BootstrapAlert($message, 'danger');
+
+							break;
+						
+						case "warn":
+							$content .= $this->BootstrapAlert($message, 'warning', true);
+							break;
+						
+						case "good":
+							$content .= $this->BootstrapAlert($message, 'success', true);
+							break;
+					
+						default:
+							$content .= $this->BootstrapAlert($message, 'info', true);
+					}
+				}
+				
+				if(!empty($content)) $content .= PHP_EOL;
+			}
+			
+		}
+		
+		return trim($content);
+	}
+	
+	public function BootstrapAlert($message, $type = 'info', $close = false){
+
+	//success, info, warning, danger
+		
+		$body = '<div class="alert alert-'.$type.' fade in" style="text-align:left;">';
+		if($close) $body .= '<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>';
+		switch($type){
+			case 'success': $body .= '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>'; break;
+			case 'info': $body .= '<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>'; break;
+			case 'warning': $body .= '<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>'; break;
+			case 'danger': $body .= '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'; break;
+		}
+		$body .= '&nbsp;<span style="font-size:120%">'.preg_replace(array('#&lt;(/?(?:pre|b|em|u|ul|br|a.*?))&gt;#', '#&amp;#'), array('<\1>', "&"), htmlspecialchars($message, ENT_NOQUOTES)).'</h6>';
+		$body .= '</div>';
+
+		return $body;
+	}
+	
+	/**
+	 * validateInput: manipulate external input from POST, GET, DELETE, PUT
+	 *
+	 * returns array('type'=>,'data'=>)
+ 	 */
+	public function validateInput(){
+	
+		$method = $_SERVER['REQUEST_METHOD'];
+
+		switch($method){
+			case "POST":
+				$this->userInput['type'] = 'C';
+				$data = file_get_contents("php://input");
+				
+				if(empty($data))	
+					$this->userInput['data'] = $_POST;
+				else{
+					$this->userInput['data'] = json_decode($data);
+
+					if (json_last_error() === JSON_ERROR_NONE) {
+						$this->userInput['data'] = (array)$this->userInput['data'];
+					}else{
+						parse_str($data, $this->userInput['data']);
+					}
+				}
+				break;
+				
+			case "PUT":
+			
+				$this->userInput['type'] = 'U';
+				
+				$data = file_get_contents("php://input");
+				$this->userInput['data'] = json_decode($data);
+
+				if (json_last_error() === JSON_ERROR_NONE) {
+					$this->userInput['data'] = (array)$this->userInput['data'];
+				}else{
+					parse_str($data, $this->userInput['data']);
+				}
+				
+				break;
+				
+			case "DELETE":
+			
+				$this->userInput['type'] = 'D';
+				
+				$data = file_get_contents("php://input");
+				$this->userInput['data'] = json_decode($data);
+
+				if (json_last_error() === JSON_ERROR_NONE) {
+					$this->userInput['data'] = (array)$this->userInput['data'];
+				}else{
+					parse_str($data, $this->userInput['data']);
+				}
+				break;
+			
+			default:
+				$this->userInput['type'] = 'R';
+				$this->userInput['data'] = $_GET;
+		}
+
+		// Sanitize Data
+		/**
+		 * Sanitize a multidimensional array
+		 *
+		 * @uses htmlspecialchars
+		 *
+		 * @param (array)
+		 * @return (array) the sanitized array
+		 */
+		$sanitize = function ($data, $type='high') use(&$sanitize) {
+			if (!is_array($data) || !count($data)) {
+				return array();
+			}
+			$data = array_filter($data);
+			foreach ($data as $k => $v) {
+				if (!is_array($v) && !is_object($v)) {
+					$data[$k] = trim($v);
+					
+					if($type=='high')
+						$data[$k] = htmlspecialchars($data[$k], ENT_QUOTES, 'utf-8');
+				}
+				if (is_array($v)) {
+					$data[$k] = $sanitize($v, $type);
+				}
+			}
+			return $data;
+		};
+		
+		$this->userInput = $sanitize($this->userInput, 'low');
+		$this->safeOutput = $sanitize($this->userInput);
+		
+		return $this->safeOutput;
+	}
 	
 	/**
 	 * authorise: Grant Access manager
@@ -235,7 +393,7 @@ class Core{
 	 */
 	public function registerCall($caller){
 		if(!empty($_SESSION['error']) && preg_match('%'.preg_quote($_SESSION['controller']).'%i',$caller))
-			$this->Response['error'] = $_SESSION['error'];
+			$this->Response['error']['warn'][] = $_SESSION['error'];
 			
 		unset($_SESSION['error']);
 		$_SESSION['controller'] = $caller;
@@ -264,7 +422,7 @@ class Core{
 		$redirect = false;
 		
 		if(isset($this->Response['error-redirect'])){
-			$this->Response['error'] = $_SESSION['error'] = $this->Response['error-redirect']['message'];
+			$this->Response['error']['alert'] = $_SESSION['error'] = $this->Response['error-redirect']['message'];
 			$_SESSION['controller'] = $this->Response['error-redirect']['toCall'];
 			$redirect = $this->Response['error-redirect']['redir'];
 			unset($this->Response['error-redirect']);
@@ -295,6 +453,9 @@ class Core{
 				header("Location: ".SITE_URI.$redirect);
 				exit;
 			}
+			
+			if(isset($this->Response['error']) && is_array($this->Response['error']))
+				$this->Alert = $this->HTMLAlerts($this->Response['error']);
 			
 			 // ENABLE COMPRESSION for HTML
 			ob_end_clean();
