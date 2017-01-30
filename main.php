@@ -230,7 +230,6 @@ require_once 'vendor/propel/config.php';
 		}
 	
 		$fullFileName = realpath($includePath . DIRECTORY_SEPARATOR . $fileName);
-		file_put_contents('textroute.txt', $fullFileName.PHP_EOL, FILE_APPEND);
 		
 		if (file_exists($fullFileName)) {
 			require $fullFileName;
