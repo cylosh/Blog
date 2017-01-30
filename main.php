@@ -249,7 +249,8 @@ require 'vendor/autoload.php';
 		$method = $controller::$defaultMethod;
 	}
     
-    if(!empty($method) && $method!='presentation'){
+    if(!empty($method) && !in_array($method, array('presentation', 'registerCall', 'validateInput'))){
+		$controller->validateInput();
 		$controller->registerCall($class.'/'.$method);
 		$controller->$method();
     }
