@@ -4,14 +4,15 @@ define("HEADER_TITLE", 'Sign Up');
 define("HEADER_SUBTITLE", 'For Cylosh Services');
 ?><!DOCTYPE html>
 <html>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
-
+<head>
+	<?php include $this->GetTemplate('head'); ?>
+</head>
 <body>
 
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
+	<?php include $this->GetTemplate('header'); ?>
 
 
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
+	<?php include $this->GetTemplate('menu'); ?>
 
 
 	<!-- start:register -->
@@ -62,7 +63,8 @@ define("HEADER_SUBTITLE", 'For Cylosh Services');
 	<!-- end:register -->
 
 	<!-- start:footer -->
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
+	<?php include $this->GetTemplate('footer'); ?>
+
 
 
 	<!-- start:javascript -->

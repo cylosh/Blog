@@ -32,6 +32,13 @@
                   <li><a href="article">VIEW ARTICLE</a></li>
                </ul>
             </li>
+            <li class="dropdown">
+               <a href="#"  class="dropdown-toggle" data-toggle="dropdown">User Panel <b class="caret"></b></a>
+               <ul class="dropdown-menu">
+                  <li><a href="users/settings">Settings</a></li>
+                  <li><a href="users/profile">Profile</a></li>
+               </ul>
+            </li>
          </ul>
          <form class="navbar-form navbar-right" role="search">
             <div class="input-group">

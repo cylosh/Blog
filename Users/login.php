@@ -4,15 +4,20 @@ define("HEADER_TITLE", 'Login to');
 define("HEADER_SUBTITLE", 'Cylosh Services');
 ?><!DOCTYPE html>
 <html>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
+<head>
+<?php include $this->GetTemplate('head'); ?>
+
+</head>
 <body>
 
 	<!-- start:header -->
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
+	<?php include $this->GetTemplate('header'); ?>
+
 	<!-- end:header -->
 
 	<!-- start:navbar -->
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
+	<?php include $this->GetTemplate('menu'); ?>
+
 
 	<!-- end:navbar -->
 
@@ -54,10 +59,9 @@ define("HEADER_SUBTITLE", 'Cylosh Services');
 	</div>
 	<!-- end:login -->
 
-	<!-- start:footer -->
-	<!-- end:footer -->
 	<!-- start:footer bottom -->
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
+	<?php include $this->GetTemplate('footer'); ?>
+
 
 	<!-- end:footer bottom -->
 

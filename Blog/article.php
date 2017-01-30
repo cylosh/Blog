@@ -5,13 +5,13 @@ define("HEADER_SUBTITLE", 'Unfolding the Article');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
+<?php include $this->GetTemplate('head'); ?>
 </head>
 <body>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
-<article id="scrolltojs"></article> <!-- hack to check its an blog article that needs to automatically scroll to the content -->
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
+<?php include $this->GetTemplate('header'); ?>
 
+<article id="scrolltojs"></article> <!-- hack to check its an blog article that needs to automatically scroll to the content -->
+<?php include $this->GetTemplate('menu'); ?>
 
 	<!-- start:single blog -->
 	<div id="single-blog">
@@ -135,7 +135,7 @@ define("HEADER_SUBTITLE", 'Unfolding the Article');
 					</div>
 					<!-- end:single content -->
 				</div>
-				<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."sidemenu.php"; ?>
+<?php include $this->GetTemplate('sidemenu'); ?>
 
 			</div>
 		</div>
@@ -143,7 +143,7 @@ define("HEADER_SUBTITLE", 'Unfolding the Article');
 	<!-- end:single blog -->
 
 	<!-- start:footer -->
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
+<?php include $this->GetTemplate('footer'); ?>
 
 
 	<!-- start:javascript -->

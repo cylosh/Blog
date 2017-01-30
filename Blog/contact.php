@@ -6,13 +6,12 @@ define("MENU_ACTIVE", 'contact');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
+<?php include $this->GetTemplate('head'); ?>
+
 </head>
 <body>
-
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
-
+<?php include $this->GetTemplate('header'); ?>
+<?php include $this->GetTemplate('menu'); ?>
 
 	<!-- start:main contact -->
 	<div id="main-contact">
@@ -82,7 +81,7 @@ define("MENU_ACTIVE", 'contact');
 	<!-- end:main contact -->
 
 	<!-- start:footer -->
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
+<?php include $this->GetTemplate('footer'); ?>
 
 
 	<!-- start:javascript -->

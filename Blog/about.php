@@ -7,16 +7,14 @@ define("MENU_ACTIVE", 'about');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head.php"; ?>
+<?php include $this->GetTemplate('head'); ?>
+
 <link rel="stylesheet" type="text/css" href="cached-assets/css/bookblock.css" />
 </head>
 
    <body>
-		
-			
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header.php"; ?>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
-
+<?php include $this->GetTemplate('header'); ?>
+<?php include $this->GetTemplate('menu'); ?>
       <!-- start:about -->
       <div id="about">
          <div class="container">
@@ -243,8 +241,8 @@ define("MENU_ACTIVE", 'about');
       </div>
       <!-- end:about -->
       <!-- start:footer -->
-     <?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
 
+<?php include $this->GetTemplate('footer'); ?>
 
 
 	<!-- start:javascript -->

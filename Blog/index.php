@@ -4,11 +4,11 @@ define("MENU_ACTIVE", 'index');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."head-main.php"; ?>
+<?php include $this->GetTemplate('head-main'); ?>
 </head>
 <body>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."header-main.php"; ?>
-<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."menu.php"; ?>
+<?php include $this->GetTemplate('header-main'); ?>
+<?php include $this->GetTemplate('menu'); ?>
 
 	<!-- start:main -->
 	<div id="main">
@@ -99,14 +99,14 @@ define("MENU_ACTIVE", 'index');
 					</div>
 					<!-- end:content -->
 				</div>
-				<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."sidemenu.php"; ?>
+<?php include $this->GetTemplate('sidemenu'); ?>
 
 			</div>
 		</div>
 	</div>
 	<!-- end:main -->
 
-	<?php include dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR."footer.php"; ?>
+<?php include $this->GetTemplate('footer'); ?>
 
 
 	<!-- start:javascript -->
