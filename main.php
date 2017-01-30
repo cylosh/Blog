@@ -41,7 +41,7 @@ session_start();
 require("config.php");
 require 'vendor/autoload.php';
 
-	/*
+	/**
 	 * Exception & Error Handlers
 	 */
 	function default_exception_handler(\Exception $e){
@@ -113,7 +113,8 @@ require 'vendor/autoload.php';
 			3,
 			dirname(__FILE__).DIRECTORY_SEPARATOR."system".DIRECTORY_SEPARATOR."Logs".DIRECTORY_SEPARATOR."Exceptions-errors.log", 1
 		);
-		#header('Location: error/500');
+		http_response_code(500);
+		header("Location: ".SITE_URI."/error/500");
 	}
 	function exceptions_error_handler($severity, $message, $filename, $lineno) {
 		if (error_reporting() == 0) {
@@ -128,7 +129,7 @@ require 'vendor/autoload.php';
 	set_exception_handler("default_exception_handler");
 
 
-	/*
+	/**
 	 * URLRewrite - avoid ending trail issue
 	 */
 	$urlBase = parse_url($_SERVER['REQUEST_URI']);
@@ -153,7 +154,7 @@ require 'vendor/autoload.php';
 
 			$url = $siteBase['scheme'].'://'.$siteBase['host'].$urlBasePath;
 			
-			if($urlBaseQ != '')
+			if(isset($urlBaseQ) && $urlBaseQ != '')
 				$url .= '?'.$urlBaseQ;
 			
 			header("Location: ".$url);
@@ -161,14 +162,14 @@ require 'vendor/autoload.php';
 		}
 	}
 
-	/*
+	/**
 	 * URLRewrite Parameters 
 	 */
     $class = isset($_GET['action']) ? $_GET['action'] : 'Blog'; // default Site index page
     $method = isset($_GET['met']) ? $_GET['met'] : '';
     $reqId = isset($_GET['id']) ? $_GET['id'] : '';
   
-	/*
+	/**
 	 * Autoloader 
 	 */
 	function factory($class) { 
@@ -177,7 +178,7 @@ require 'vendor/autoload.php';
 			$class = __NAMESPACE__ . '\\' . $class; 
 		} 
 		
-		return new $class(); 
+		return new $class; 
 	} 
 	spl_autoload_register(
 		function ($className) {
@@ -207,11 +208,12 @@ require 'vendor/autoload.php';
 				
 				// Check to see whether the include declared the class
 				if (!class_exists($className, false) AND !class_exists($namespace.'\\'.$className, false)) {
+					http_response_code(400);
 					header("Location: ".SITE_URI."/error/400");
 					exit;
 				}
 			} else {
-			
+				http_response_code(501);
 				header("Location: ".SITE_URI."/error/501");
 				exit;
 			}
@@ -219,19 +221,26 @@ require 'vendor/autoload.php';
 
 	);
 	
-	/*
+	/**
 	 * Routing 
 	 */
+	
     $controller = factory("system\\Controllers\\$class");
 	
-	if($controller === false) $controller->error->accessDeny();
-	
+	// Verify user permission for the requested module
+	if( $controller->authorise() === false){
+		
+		$controller->presentation();
+		exit;
+	}
+
     // Check to see the method exists or its accessible
     $allowedCalls = get_class_methods($controller);
 	
     if($method != '' && !in_array($method, $allowedCalls)
     ){
-        #header("Location: ".SITE_URI."/error/405");
+		http_response_code(405);
+        header("Location: ".SITE_URI."/error/405");
         exit;
     }
 	
@@ -241,13 +250,15 @@ require 'vendor/autoload.php';
 	}
     
     if(!empty($method) && $method!='presentation'){
-        $controller->$method();
+		$controller->registerCall($class.'/'.$method);
+		$controller->$method();
     }
 	/*
 	 * End Routing 
 	 */
 	
-	/*
+	
+	/**
 	 * Viewer 
 	 */
     $controller->presentation();

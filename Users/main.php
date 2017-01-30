@@ -10,4 +10,5 @@ if (preg_match('%.+users/([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)(/|$)%i'
 	$_GET['met'] = $method['1'];
 
 }
-include('../main.php');
+chdir("../");
+include('main.php');
