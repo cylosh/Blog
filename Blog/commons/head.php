@@ -3,14 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?php echo (defined("TITLE") ? TITLE : 'Cylosh Blog'); ?></title>
 <link rel="icon" href="favicon.ico" type="image/x-icon" />
-<?php
-echo "<style>";
-include "assets/css/bootstrap.min.css";
-include "assets/css/fontgoogleapis.min.css";
-include "assets/css/owl.carousel.min.css";
-include "assets/css/style-pages.min.css";
-echo "</style>";
-?>
+<link rel="stylesheet" type="text/css" href="cached-assets/css/bootstrap.min.css,fontgoogleapis.min.css,owl.carousel.min.css,style-pages.min.css">
 <link rel="stylesheet" type="text/css" href="cached-assets/css/font-awesome.min.css,style.min.css,particles.css">
 <meta name="description" content="Cyberlinks Open Source Supporter" />
 <meta name="keywords" content="Cyberspace, Cyberlinks, Cylosh, Blog, Open Source" />
