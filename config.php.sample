@@ -7,3 +7,9 @@ if (__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
 
 // base where application is hosted
 define("SITE_URI", ($isSecure ? 'https' : 'http').":://site.com/blog"); // don't include ending trail
+
+define("ADMINDOCROOT", "Backend"); // Document root of Admin
+define("USERDOCROOT", "Users"); // Document root for Users
+define("DOCROOT", "Blog"); // Document root for public
+
+define("USER_SESSION", "3600"); // Seconds without activity before the user has to relogin

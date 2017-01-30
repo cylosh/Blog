@@ -10,29 +10,28 @@ require_once 'vendor/propel/config.php';
 
 class Login extends Core{
     	
+	public static $permissions = '0';
 	public static $defaultMethod = 'login';
+	
     function __construct(){
+		$this->HtmlView(array("Users", "login"));
     }
     
     public function login(){
-        return $this->HtmlView(array("Users", "login"));
+	
     }
 	
     public function check(){
+
 		
-		$class = new Accounts();
+		return $this->Response['error-redirect'];
+		
+		/* $class = new Accounts();
 
 		$class->setFname("das");
 		$zeroDate = new \DateTime("NOW");
 		$zeroDate = $zeroDate->format('Y-m-d H:i:s');
 
-		$class->save();
+		$class->save(); */
     }
-    
-	// return boolean depending on user permissions
-    public function __toString()
-    {
-        return true;
-    }
-
 }

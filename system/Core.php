@@ -24,11 +24,6 @@ abstract class Page(){
 
 		
 	}
-
-	// return boolean depending on user permissions
-	function __static{
-		return $this->authorise();
-	}
 	
 	
 	// daca e comments atunci SESION_USERID == DB_COMMENT_USERID
@@ -56,37 +51,38 @@ class Core{
 	/*
 	 *	Controller response
 	 */
-	private $Response = array();
+	protected $Response;
+	
+	/*
+	 *	Path for HTML templates
+	 */
+	protected $templatePath;
 	
 	
 	// static debug = true; // if(debug) log/debug -> add
 
-	// function __construct(){
-		// $permissions = ['admin'=>0, 'user'=>1];
-		
-	// }
+	function __construct(){
+		$this->Response = array();
+	}
 	
-	
-	// function error(){
-		// $caller = new $error;
-		// return $caller;
-	// }
-	
-	// parse external input from POST, GET & others - DELETE, PUT
-	/*
+	/**
+	 * userInput external input from POST, GET & others - DELETE, PUT
+	 *
+	 *
+	 *
 	 * returns array('type'=>,'data'=>)
  	 */
-	// protected function userInput(){
-		// $method = $_SERVER['REQUEST_METHOD'];
+	private function userInput(){
+		$method = $_SERVER['REQUEST_METHOD'];
 		
-		// switch(CRUD){
+		switch(CRUD){
 		
-		// default:
-			// READ;
-		// }
+		default:
+			
+		}
 		
 		
-	// }
+	}
 	
 	
 	/**
@@ -145,8 +141,9 @@ class Core{
 		
 		$path = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.implode(DIRECTORY_SEPARATOR, $location).'.php';
 		
+		// Treat as invalid request if no HTML template is set;
 		if(!file_exists($path)){
-			
+			http_response_code(503);
 			header("Location: ".SITE_URI."/error/503");
 			exit;
 		}
@@ -159,18 +156,91 @@ class Core{
 	
 	/**
 	 * authorise: Grant Access manager
-	 * 
-	 * @return boolean
-	**/
-    protected function authorise(){
-        echo "content ".$this->var;
-                var_dump($_SESSION);
+	 * 		
+	 * @returns boolean depending on permissions of current user
+	 */
+    public function authorise(){
+	
+		// Allow access if module has no permission set
+		if(!property_exists($this, 'permissions') OR empty($this::$permissions))
+			return true;
+		
+		$perms = explode(',', $this::$permissions);
+
+		if (in_array("admin", $perms)) {
+			if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === TRUE)
+				return true;
+			else{
+				$this->Response['error-redirect'] = array('redir'=>'/login','toCall'=>'login/login', 'message'=>'Access denied!');
+				return false;
+			}
+		}
+		if (in_array("user", $perms)) {
+			if(isset($_SESSION['is_user']) && $_SESSION['is_user'] === TRUE)
+				return true;
+			else{
+				$this->Response['error-redirect'] = array('redir'=>'/login','toCall'=>'login/login', 'message'=>'You have to be logged in!');
+				return false;
+			}
+		}
+		
+		if(!isset($_SESSION['user_session_start'])
+			||
+			($_SESSION['user_session_start'] + USER_SESSION) < time()
+		){
+			$this->Response['error-redirect'] = array('redir'=>'/login','toCall'=>'login/login', 'message'=>'Your session expired. Please re-login!');
+			return false;
+		}
+		
+		return false;
 		/* if($this->permission > $permissions){
 		
 			// si in plus daca $this->permission $this->userInput e post sau update atunci $this->getowner si s
 		} */
     }
     
+	/**
+	 * GetTemplate: Retrieve template based on user permission
+	 * 
+	 * @param string $template
+	 * @return boolean
+	 */
+	public function GetTemplate($template){
+		
+		$common = DIRECTORY_SEPARATOR.'commons'.DIRECTORY_SEPARATOR.$template.".php";
+		// check access file
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === TRUE && file_exists(ADMINDOCROOT.$common))
+			return realpath(ADMINDOCROOT.$common);
+		elseif(isset($_SESSION['is_user']) && $_SESSION['is_user'] === TRUE && file_exists(USERDOCROOT.$common))
+			return realpath(USERDOCROOT.$common);
+		elseif(file_exists(DOCROOT.$common)) // reverse to public templates
+			return realpath(DOCROOT.$common);
+		else{
+			http_response_code(503);
+			header("Location: ".SITE_URI."/error/503");
+			exit;
+		}
+		
+		exit;
+	}
+    
+	/**
+	 * RegisterCall: -store the previously called methods
+	 *				-will also push into Viewer the previous Error via session
+	 * 
+	 * @param string $caller
+	 *		class/method to check
+	 *		
+	 * @return boolean
+	 */
+	public function registerCall($caller){
+		if(!empty($_SESSION['error']) && preg_match('%'.preg_quote($_SESSION['controller']).'%i',$caller))
+			$this->Response['error'] = $_SESSION['error'];
+			
+		unset($_SESSION['error']);
+		$_SESSION['controller'] = $caller;
+	}
+
 	/**
 	 * presentation: Framework Viewer
 	 * 
@@ -183,19 +253,22 @@ class Core{
 		
 		$content = '';
 		
-		// Treat as API request if no HTML template is set;
-		if(empty($this->HTMLPath)){
-			if(!isset($_GET['xml']))
-				$_GET['json'] = true;
-				
-			http_response_code(503);
-			$this->Response['error'] = 'Template path missing!';
-		}
 		if(!is_array($this->Response))
 			$this->Response = array();
 			
 		if(count($this->Response) < 1)
 			$this->Response['success'] = true;
+		
+		// Process redirects differently for API and HTML views
+		// eg. if user wants to place a comment but session expired he will be redirected to login form
+		$redirect = false;
+		
+		if(isset($this->Response['error-redirect'])){
+			$this->Response['error'] = $_SESSION['error'] = $this->Response['error-redirect']['message'];
+			$_SESSION['controller'] = $this->Response['error-redirect']['toCall'];
+			$redirect = $this->Response['error-redirect']['redir'];
+			unset($this->Response['error-redirect']);
+		}
 		
 		// get content shipping method
 		if(isset($_GET['json'])){
@@ -217,12 +290,21 @@ class Core{
 			
 		}else{ //default html
 			$_SESSION['shipment'] = 'html';
+
+			if($redirect && !empty($redirect)){
+				header("Location: ".SITE_URI.$redirect);
+				exit;
+			}
 			
 			 // ENABLE COMPRESSION for HTML
+			ob_end_clean();
 			ob_start("ob_gzhandler");
-			include $this->HTMLPath; 
+			if(file_exists($this->HTMLPath)) include $this->HTMLPath; 
 			$content = $this->linkBridge(ob_get_clean());
-			
+			if(empty($content)){
+				header("Location: ".SITE_URI);
+				exit;
+			}
 			// Determine supported compression method
 			$gzip = strstr($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$deflate = strstr($_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate');
