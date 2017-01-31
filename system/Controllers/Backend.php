@@ -74,16 +74,27 @@ class Backend extends Core{
 					return $this->Response['error']['alert'] = 'Ooops article image missing!'.$article_id;
 				
 				if(!empty($article_id)){
-					$article = \ArticlesQuery::create()->findPk($article_id);
+					$AccDBQ = new \ArticlesQuery();
+					
+					$article = $AccDBQ->findPk($article_id);
 					$url = $article->getUrl();
+					
+					//set slug manually
+					if(empty($url)){
+						$url = '/blog/';
+						$url .= preg_replace('/[^\w]+/u', '-', $article->getTitle());
+						
+						$AccDBQ->filterById($article_id)->update(array('Url'=>$url));
+					}
+					
 					if(!empty($this->userInput['data']['title']) && $article->getTitle()!=$this->userInput['data']['title'])
-						\ArticlesQuery::create()->filterById($article_id)->update(array('Title'=>$this->userInput['data']['title']));
+						$AccDBQ->filterById($article_id)->update(array('Title'=>$this->userInput['data']['title']));
 
 					if(!empty($this->userInput['data']['content']) && $article->getContent()!=$this->userInput['data']['content'])
-						\ArticlesQuery::create()->filterById($article_id)->update(array('Content'=>$this->userInput['data']['content']));
+						$AccDBQ->filterById($article_id)->update(array('Content'=>$this->userInput['data']['content']));
 
 					if(!empty($picturePath))
-						\ArticlesQuery::create()->filterById($article_id)->update(array('ImgPath'=>$picturePath));
+						$AccDBQ->filterById($article_id)->update(array('ImgPath'=>$picturePath));
 
 				}else{
 					$ArtDB = new \Articles();
@@ -121,6 +132,21 @@ class Backend extends Core{
 	
     public function listArticles(){
 		$this->HtmlView(array("Backend", "list"));
+
+		switch($this->userInput['type']){
+			case "R": //new article
+				$article = \ArticlesQuery::create()->find();
+				
+				if(is_null($article)){
+					return $this->Response['error']['alert'] = 'Articles not found!';
+				}
+				
+				$this->Response = $article->toArray();
+				
+			default:
+				$this->Response['error']['alert'] = 'Invalid articles request!';
+				break;
+		}
 		
 	}
 

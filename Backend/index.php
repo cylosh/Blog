@@ -113,7 +113,7 @@ define("MENU_ACTIVE", 'apanel');
 					<a class="btn btn-default" data-edit="clearformat" title="Clear Formatting" onClick="$('#editor').html($('#editor').text());"><i class='glyphicon glyphicon-fire'></i></a>
 				</div>
 			</div>
-			<div id="editor" class="lead" data-placeholder="Write your new blog here"><?php if(isset($this->Response['Content'])) echo 'value="'.$this->Response['Content'].'"';?></div>
+			<div id="editor" class="lead" data-placeholder="Write your new blog here"><?php if(isset($this->Response['Content'])) echo $this->Response['Content'];?></div>
 			
 			<p style="text-align: center;;">
 				<a id="newArticle" class="btn btn-large btn-default jumbo" href="#" onclick="waitingDialog.show('Printing Article..', {dialogSize: 'm', progressType: 'primary'});">Submit</a>

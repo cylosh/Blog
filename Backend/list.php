@@ -38,42 +38,25 @@ define("MENU_ACTIVE", 'apanel');
 				</tr>
 			</tfoot>
 			<tbody>
-				<tr>
-					<td>1</td>
-					<td>DDDDDDDDDDD</td>
-					<td>2017-01-31 07:07:24</td>
-    <td><p data-placement="left" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-    <td><p data-placement="right" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>DDDDDDDDDDD</td>
-					<td>2017-01-31 07:07:24</td>
-    <td><p data-placement="left" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-    <td><p data-placement="right" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>DDDDDDDDDDD</td>
-					<td>2017-01-31 07:07:24</td>
-    <td><p data-placement="left" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-    <td><p data-placement="right" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>DDDDDDDDDDD</td>
-					<td>2017-01-31 07:07:24</td>
-    <td><p data-placement="left" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-    <td><p data-placement="right" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>DDDDDDDDDDD</td>
-					<td>2017-01-31 07:07:24</td>
-    <td><p data-placement="left" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="edit-1" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-    <td><p data-placement="right" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
-				</tr>
 				
+				<?php
+				foreach($this->Response as $article){
+					if(!isset($article['Id']) || !isset($article['Title']) || !isset($article['Created']))
+						continue;
+					
+					$id = htmlspecialchars($article['Id'], ENT_QUOTES, 'utf-8');
+					$title = htmlspecialchars($article['Title'], ENT_QUOTES, 'utf-8');
+					$date = htmlspecialchars($article['Created'], ENT_QUOTES, 'utf-8');
+					$date = date('Y\-m\-j\ H\:i\:s', strtotime($date));
+					echo '<tr>
+					<td>'.$id.'</td>
+					<td>'.$title.'</td>
+					<td>'.$date.'</td>
+    <td><p data-placement="left" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="edit-'.$id.'" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
+    <td><p data-placement="right" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="delete-'.$id.'" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
+				</tr>';
+				}
+				?>
 			</tbody>
 		</table>
 		</div>
@@ -116,12 +99,20 @@ define("MENU_ACTIVE", 'apanel');
 	<script type='text/javascript'>
 		
 		$(document).ready(function() {
-			$('#articles').DataTable();
+			$('#articles').dataTable( {
+  "pageLength": 50
+} );
 			
 			$("[data-toggle=tooltip]").tooltip();
-			$("[data-target^=edit-]").click(function(){
+
+			
+			$("#articles tbody").on("click","[data-target^=edit-]", function(){
+				
+				
+			
 				var ArticleId = $(this).data("target").split('-');
 				
+				window.location.href = '../backend/AddArticle?id='+ArticleId[1];
 				
 				
 			});

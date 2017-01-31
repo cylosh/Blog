@@ -41,7 +41,7 @@ function onSubmitArticle() {
 		
         //prepare the form data to be sent to server
         var formData = new FormData();
-		if(articleID.length >0){
+		if(articleID != undefined && articleID.length >0){
 			formData.append("id", articleID);
 		}
         formData.append("title",titleText);
