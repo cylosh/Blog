@@ -318,7 +318,24 @@ class Core{
 	 * @returns boolean depending on permissions of current user
 	 */
     public function authorise(){
-	
+		
+		// Make sure we don't loop around here
+		if(isset($_SESSION['authorise'])){
+			unset($_SESSION['authorise']);
+			return;
+		}
+		// Log out user after USER_SESSION
+		if(isset($_SESSION['user_session_start'])
+			&&
+			($_SESSION['user_session_start'] + USER_SESSION) < time()
+		){
+			$_SESSION['authorise'] = true;
+			$this->Response['error-redirect'] = array('redir'=>'/login/out','toCall'=>'login/out', 'message'=>'Your session expired. Please re-login!');
+			return false;
+		}elseif(isset($_SESSION['user_session_start']) && isset($_SESSION['user_session_interval']))
+			$_SESSION['user_session_start']	= time()+$_SESSION['user_session_interval'];
+		
+		
 		// Allow access if module has no permission set
 		if(!property_exists($this, 'permissions') OR empty($this::$permissions))
 			return true;
@@ -342,19 +359,9 @@ class Core{
 			}
 		}
 		
-		if(!isset($_SESSION['user_session_start'])
-			||
-			($_SESSION['user_session_start'] + USER_SESSION) < time()
-		){
-			$this->Response['error-redirect'] = array('redir'=>'/login','toCall'=>'login/login', 'message'=>'Your session expired. Please re-login!');
-			return false;
-		}
+		
 		
 		return false;
-		/* if($this->permission > $permissions){
-		
-			// si in plus daca $this->permission $this->userInput e post sau update atunci $this->getowner si s
-		} */
     }
     
 	/**
@@ -485,11 +492,9 @@ class Core{
 				header('Content-Encoding: '.$encoding);
 				header('Vary: Accept-Encoding');
 			}
-			$offset = 60 * 60 * 24;
-			$expire = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
 			header("content-type: text/html; charset=UTF-8");
-			header( $expire );
-			header("Cache-Control: max-age=".$offset);
+			header('Expires: Mon, 7 Aug 1989 05:00:00 GMT');
+			header('Cache-Control: no-cache, must-revalidate');
 			header('Content-Length: ' . strlen( $content ) );
 
 		}

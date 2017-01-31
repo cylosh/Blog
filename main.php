@@ -251,6 +251,7 @@ require_once 'vendor/propel/config.php';
     $controller = factory("system\\Controllers\\$class");
 	
 	// Verify user permission for the requested module
+	
 	if( $controller->authorise() === false){
 		
 		$controller->presentation();
@@ -271,7 +272,7 @@ require_once 'vendor/propel/config.php';
 	if($method == ''){
 		$method = $controller::$defaultMethod;
 	}
-    
+	
     if(!empty($method) && !in_array($method, array('presentation', 'registerCall', 'validateInput'))){
 		$controller->validateInput();
 		$controller->registerCall($class.'/'.$method);

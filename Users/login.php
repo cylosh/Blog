@@ -20,12 +20,14 @@ define("HEADER_SUBTITLE", 'Cylosh Services');
 
 
 	<!-- end:navbar -->
-
+	
+	
 	<!-- start:login -->
 	<div id="login-alt">
 		<div class="container">
 			<div class="box-login-alt">
-				<form>
+				<form method="post" action="./login">
+					<?php if(isset($this->Alert)) print $this->Alert; ?>
 					<div class="text-center">
 						<h3>Login to your account</h3>
 					</div>
@@ -33,18 +35,18 @@ define("HEADER_SUBTITLE", 'Cylosh Services');
 					<div class="form-group">
 						<div class="input-group">
 						  	<span class="input-group-addon"><i class="fa fa-user"></i></span>
-						  	<input type="text" class="form-control" placeholder="Username">
+						  	<input type="text" name="uname" class="form-control" placeholder="Email" <?php if(isset($this->safeOutput['data']['uname'])) echo 'value="'.$this->safeOutput['data']['uname'].'"'; ?>>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
 						  	<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-						  	<input type="text" class="form-control" placeholder="Password">
+						  	<input type="password" name="password" class="form-control" placeholder="Password">
 						</div>
 					</div>
 					<div class="checkbox">
 					    <label>
-					      	<input type="checkbox"> Stay Sign in
+					      	<input type="checkbox" name="persist" <?php if(isset($this->safeOutput['data']['persist'])) echo "checked=checked"; ?>> Stay Sign in
 					    </label>
 					</div>
 					<div class="form-group">

@@ -2,7 +2,7 @@
 define("TITLE", 'Admin Panel | Cylosh Blog');
 define("HEADER_TITLE", 'Admin Panel');
 define("HEADER_SUBTITLE", 'Manage settings');
-define("MENU_ACTIVE", 'admin');
+define("MENU_ACTIVE", 'apanel');
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -18,7 +18,7 @@ define("MENU_ACTIVE", 'admin');
 	<div id="blank-page">
 		<div class="container">
 			<div class="box-blank-page">
-				<p>This is blank page.</p>
+				<p><?php var_dump($_SESSION); ?></p>
 			</div>
 		</div>
 	</div>
