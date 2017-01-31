@@ -140,13 +140,37 @@ class Backend extends Core{
 				if(is_null($article)){
 					return $this->Response['error']['alert'] = 'Articles not found!';
 				}
-				
-				$this->Response = $article->toArray();
+				return $this->Response['data'] = $article->toArray();
 				
 			default:
 				$this->Response['error']['alert'] = 'Invalid articles request!';
 				break;
 		}
+		
+	}
+
+    public function DeleteArticle(){
+		
+        if(empty($article_id))
+			$article_id = $this->RequestID;
+		
+		if(empty($article_id))
+			return $this->Response['error-redirect'] = array('redir'=>'/backend/listArticles','toCall'=>'backend/listArticles', 'message'=>'Could not delete article: invalid id!');
+		
+		
+		$AccDBQ = new \ArticlesQuery();
+		
+		$article = $AccDBQ->findPk($article_id);
+	
+		
+		if(is_null($article)){
+			return $this->Response['error-redirect'] = array('redir'=>'/backend/listArticles','toCall'=>'backend/listArticles', 'message'=>'Article '.$article_id.' for deletion not found!');
+		}
+		$title = $article->getTitle();
+		$delete = $article->delete();
+		
+		return $this->Response['error-redirect'] = array('redir'=>'/backend/listArticles','toCall'=>'backend/listArticles', 'message'=>'Article '.$title.' <b>has been deleted!</b>');
+		
 		
 	}
 

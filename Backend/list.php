@@ -16,8 +16,10 @@ define("MENU_ACTIVE", 'apanel');
 <?php include $this->GetTemplate('header'); ?>
 <?php include $this->GetTemplate('menu'); ?>
 
-	<div id="blank-page">
+	<div>
 		<div class="container">
+		<?php if(isset($this->Alert)) print $this->Alert; ?>
+		
 			<table id="articles" class="table table-striped table-bordered" cellspacing="0" width="100%">
 			<thead>
 				<tr>
@@ -40,12 +42,16 @@ define("MENU_ACTIVE", 'apanel');
 			<tbody>
 				
 				<?php
-				foreach($this->Response as $article){
+				foreach($this->Response['data'] as $article){
 					if(!isset($article['Id']) || !isset($article['Title']) || !isset($article['Created']))
 						continue;
 					
 					$id = htmlspecialchars($article['Id'], ENT_QUOTES, 'utf-8');
 					$title = htmlspecialchars($article['Title'], ENT_QUOTES, 'utf-8');
+					$url = htmlspecialchars($article['Url'], ENT_QUOTES, 'utf-8');
+					if(!empty($url))
+						$title = '<a href="'.$url.'">'.$title.'</a>';
+						
 					$date = htmlspecialchars($article['Created'], ENT_QUOTES, 'utf-8');
 					$date = date('Y\-m\-j\ H\:i\:s', strtotime($date));
 					echo '<tr>
@@ -64,27 +70,6 @@ define("MENU_ACTIVE", 'apanel');
 
 
     
-    <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-      <div class="modal-dialog">
-    <div class="modal-content">
-          <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-        <h4 class="modal-title custom_align" id="Heading">Delete this entry</h4>
-      </div>
-          <div class="modal-body">
-       
-       <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to delete this Record?</div>
-       
-      </div>
-        <div class="modal-footer ">
-        <button type="button" class="btn btn-success" ><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> No</button>
-      </div>
-        </div>
-    <!-- /.modal-content --> 
-  </div>
-      <!-- /.modal-dialog --> 
-    </div>
 	
       <!-- start:footer -->
 <?php include $this->GetTemplate('footer'); ?>
@@ -115,6 +100,15 @@ define("MENU_ACTIVE", 'apanel');
 				window.location.href = '../backend/AddArticle?id='+ArticleId[1];
 				
 				
+			});
+			$("#articles tbody").on("click","[data-target^=delete-]", function(){
+				var ArticleId = $(this).data("target").split('-');
+				var deleteArt = confirm("Are you sure you want to delete article "+ArticleId[1]+"?");
+				
+				if (deleteArt == true) {
+					window.location.href = '../backend/DeleteArticle?id='+ArticleId[1];
+				}
+
 			});
 		} );
 	</script>
