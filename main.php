@@ -260,8 +260,11 @@ require_once 'vendor/propel/config.php';
 
     // Check to see the method exists or its accessible
     $allowedCalls = get_class_methods($controller);
-	
-    if($method != '' && !in_array($method, $allowedCalls)
+	$exceptions = array('blog'); /* Cases where the Class has a __call and does the URL routing itself
+								  * eg. Articles where sluggish url is used and for duplicates it adds an /NR to the url
+								  * so it confuses to a proper method called or doesn't contains any spaces
+								  */
+    if($method != '' && !in_array($method, $allowedCalls) && !in_array($class, $exceptions)
     ){
 		http_response_code(405);
         header("Location: ".SITE_URI."/error/405");
@@ -276,6 +279,7 @@ require_once 'vendor/propel/config.php';
     if(!empty($method) && !in_array($method, array('presentation', 'registerCall', 'validateInput'))){
 		$controller->validateInput();
 		$controller->registerCall($class.'/'.$method);
+		$controller->setRequestedID($reqId);
 		$controller->$method();
     }
 	/*

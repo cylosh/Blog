@@ -78,6 +78,7 @@ class Login extends Core{
 				
 				if($userData['Password'] === crypt($password, $userData['Password'])){//password match
 					$_SESSION['is_user'] = true;
+					$_SESSION['userID'] = $userData['Id'];
 					
 					if($userData['Status'] === 0){	// admin
 						$_SESSION['is_admin'] = true;

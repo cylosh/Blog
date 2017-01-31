@@ -20,25 +20,18 @@ define("HEADER_SUBTITLE", 'Unfolding the Article');
 				<div class="col-lg-8 col-md-8">
 					<!-- start:single content -->
 					<div id="main-single-content">
-						<img src="assets/images/content/thumbnail8.jpg" class="img-responsive">
+						<img src="<?php if(isset($this->Response['ImgPath'])) echo $this->Response['ImgPath']; ?> " class="img-responsive">
 						<div class="content-single">
-							<h2>Niki Postingan Sing Kepisan Njeh, Perdana Ngoten</h2>
+							<h2><?php if(isset($this->Response['Title'])) echo $this->Response['Title']; ?></h2>
 							<div class="tag">
 								<p>	
-									<span><i class="fa fa-user"></i> <a href="#">Admin</a></span> 
-									<i class="fa fa-circle"></i> 
-									<span><i class="fa fa-calendar"></i> <a href="#">Juni, 30 2014</a></span>
+									<span><i class="fa fa-calendar"></i> <a href="#" onclick="return false;"><?php if(isset($this->Response['Created'])) echo date('j\ M\ Y', strtotime($this->Response['Created'])); ?></a></span>
 									<i class="fa fa-circle"></i>
-									<span><i class="fa fa-folder"></i> <a href="#">Uncategories</a>, <a href="#">Lanscape</a></span>
-									<i class="fa fa-circle"></i>
-									<span><i class="fa fa-tag"></i> <a href="#">Acesories</a>, <a href="#">Furniture</a></span>
+									<span><i class="fa fa-tag"></i> <?php if(!empty($this->Response['Tags'])){ $tags = explode(',', $this->Response['tags']); foreach($tags as $tag) echo '<a href="#" onclick="return false;">'.$tag.'</a>'; } ?></span>
 								</p>
 							</div>
 							<div class="hr-single"></div>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas euismod diam at commodo sagittis. Nam id molestie velit. Nunc id nisl tristique, dapibus tellus quis, dictum metus. Pellentesque id imperdiet est. Maecenas adipiscing dui at enim placerat hendrerit. Curabitur pulvinar fermentum ante id bibendum. Etiam est sem, pharetra in luctus quis, tempor facilisis urna. Etiam ullamcorper dictum elit sit amet hendrerit. Donec porta mauris a est rhoncus pharetra.</p>
-							<p>Mauris pellentesque sem sem, sit amet faucibus purus venenatis id. Ut vitae risus eleifend, tristique elit vitae, rhoncus sapien. Nunc ipsum lacus, tincidunt et cursus sit amet, gravida auctor risus. Praesent quam tellus, fringilla in ante eu, euismod euismod orci. Aenean a tincidunt leo, lobortis vulputate neque. Pellentesque faucibus dignissim est consequat ultrices. Quisque elementum dolor vel posuere auctor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris dictum magna quis dolor imperdiet vestibulum. Proin ultricies malesuada diam id gravida. Aenean commodo aliquet gravida. Donec bibendum non libero id tincidunt.</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas euismod diam at commodo sagittis. Nam id molestie velit. Nunc id nisl tristique, dapibus tellus quis, dictum metus. Pellentesque id imperdiet est. Maecenas adipiscing dui at enim placerat hendrerit. Curabitur pulvinar fermentum ante id bibendum. Etiam est sem, pharetra in luctus quis, tempor facilisis urna. Etiam ullamcorper dictum elit sit amet hendrerit. Donec porta mauris a est rhoncus pharetra.</p>
-							<p>Mauris pellentesque sem sem, sit amet faucibus purus venenatis id. Ut vitae risus eleifend, tristique elit vitae, rhoncus sapien. Nunc ipsum lacus, tincidunt et cursus sit amet, gravida auctor risus. Praesent quam tellus, fringilla in ante eu, euismod euismod orci. Aenean a tincidunt leo, lobortis vulputate neque. Pellentesque faucibus dignissim est consequat ultrices. Quisque elementum dolor vel posuere auctor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris dictum magna quis dolor imperdiet vestibulum. Proin ultricies malesuada diam id gravida. Aenean commodo aliquet gravida. Donec bibendum non libero id tincidunt.</p>
+							<div style="word-wrap: break-word;"><?php if(isset($this->Response['Content'])) echo $this->Response['Content']; ?></div>
 							<div class="hr-single"></div>
 							<!-- start:comments -->
 							<div id="comments-list">

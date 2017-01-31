@@ -46,17 +46,19 @@ class Core{
 	/*
 	 *	Viewer path
 	 */
-	private $HTMLPath;
+	protected $HTMLPath;
 	
-	/*
-	 *	Controller response
-	 */
-	protected $Response;
 	
 	/*
 	 *	Path for HTML templates
 	 */
 	protected $templatePath;
+	
+	
+	/*
+	 *	ID of Method requested by client
+	 */
+	protected $RequestID;
 	
 	
 	/*
@@ -73,6 +75,10 @@ class Core{
 	 */
 	public $Alert;
 	
+	/*
+	 *	Controller response
+	 */
+	public $Response;
 	
 	// static debug = true; // if(debug) log/debug -> add
 
@@ -146,9 +152,73 @@ class Core{
 		
 		$this->HTMLPath = realpath($path);
 		
-		return true;
+		return $this->HTMLPath;
 	}
 	
+	/**
+	 * Mime: Provides mime support by attempting to use
+	 * multiple PHP functions like finfo_open, getimagesize
+	 * and exif_imagetype - whichever is allowed to run
+	 * on the PHP installation
+	 *
+	 * @version 1.0: 31 Jan 2017
+	 *		build with gif, png, jpg and mp3 file supports
+	 *
+	 * @param string $path
+	 *		Path of the file to get mime from
+	 * @return string
+	 */
+    protected function Mime($path)
+    {
+		$filetype = '';
+		
+		if (is_file($path) === true && filesize($path)!= 0) {
+			
+			if (function_exists('finfo_open') === true) {
+				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				
+				if (is_resource($finfo) === true) {
+					$filetype = finfo_file($finfo, $path);
+				}
+				
+				finfo_close($finfo);
+				
+			} elseif (function_exists('getimagesize')) {
+				$file_info = getimagesize($path);
+				$filetype  = image_type_to_mime_type($file_info['2']);
+			} elseif (function_exists('exif_imagetype') === true) {
+				$filetype = image_type_to_mime_type(exif_imagetype($path));
+			}
+		}
+		
+		
+		switch (strtolower($filetype)) {
+			case 'image/gif':
+			return '.gif';
+			break;
+			case 'image/png':
+			return '.png';
+			break;
+			
+			case 'image/jpeg':
+			return '.jpg';
+			break;
+			
+			case 'audio/mpeg':
+			case 'application/octet-stream':
+			return '.mp3';
+			break;
+			
+			default:
+			return $filetype;
+		}
+	
+    }
+	
+	public function setRequestedID($id){
+		$this->RequestID = $id;
+	}
+
 	
 	/**
 	 * HTMLAlerts: display alerts
@@ -449,7 +519,9 @@ class Core{
 			header('Cache-Control: no-cache, must-revalidate');
 			header('Expires: Mon, 7 Aug 1989 05:00:00 GMT');
 			header('Content-type: application/json');
-
+			if(isset($this->Response['error']))
+				http_response_code(406);
+				
 			$content = json_encode($this->Response);
 		}
 		elseif(isset($_GET['xml'])){
@@ -463,18 +535,20 @@ class Core{
 		}else{ //default html
 			$_SESSION['shipment'] = 'html';
 
-			if($redirect && !empty($redirect)){
+			if($redirect && !empty($redirect)){	
 				header("Location: ".SITE_URI.$redirect);
 				exit;
 			}
 			
 			if(isset($this->Response['error']) && is_array($this->Response['error']))
 				$this->Alert = $this->HTMLAlerts($this->Response['error']);
-			
+				
 			 // ENABLE COMPRESSION for HTML
 			if (ob_get_length()) ob_clean();
 			ob_start("ob_gzhandler");
+			
 			if(file_exists($this->HTMLPath)) include $this->HTMLPath; 
+			
 			$content = $this->linkBridge(ob_get_clean());
 			if(empty($content)){
 				header("Location: ".SITE_URI);

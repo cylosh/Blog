@@ -10,16 +10,28 @@ class Article extends Core{
 	public static $defaultMethod = 'blog';
 	
     function __construct(){
+		return $this->HtmlView(array("Blog", "article"));
     }
     
-    public function blog(){
-        return $this->HtmlView(array("Blog", "article"));
+    public function blog($article_id = ''){
+		
+		if(empty($article_id))
+			$article_id = $this->RequestID;
+			
+		$article = \ArticlesQuery::create()->findPk($article_id);
+		
+		if(is_null($article)){
+			return $this->Response = array("error-redirect"=>array('redir'=>'/blog','toCall'=>'/', 'message'=>'Invalid Article!'));
+		}
+		
+		return $this->Response = $article->toArray();
+		
     }
     
 	// return boolean depending on user permissions
     public function __toString()
     {
-        return true;
+        return $this->HTMLPath;
     }
 
 }

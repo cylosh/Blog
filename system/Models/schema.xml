@@ -29,7 +29,7 @@
     <column name="content" phpName="Content" type="LONGVARCHAR"/>
     <column name="tags" phpName="Tags" type="LONGVARCHAR"/>
     <column name="likes" phpName="Likes" type="SMALLINT"/>
-    <column name="img_path" phpName="ImgPath" type="VARCHAR" size="55"/>
+    <column name="img_path" phpName="ImgPath" type="VARCHAR" size="100"/>
     <column name="img_frame" phpName="ImgFrame" type="VARCHAR" size="25"/>
     <column name="comments_allowed" phpName="CommentsAllowed" type="BOOLEAN" size="1"/>
     <column name="modified" phpName="Modified" type="TIMESTAMP" defaultValue="0000-00-00 00:00:00"/>

@@ -25,7 +25,13 @@
                   <li><a href="resources.html">RESOURCES</a></li>
                </ul>
             </li>
-            <li <?php if(defined("MENU_ACTIVE") && MENU_ACTIVE == 'apanel') echo 'class="active"'; ?>><a href="backend">ADMIN PANEL</a></li>
+			<li class="dropdown <?php if(defined("MENU_ACTIVE") && MENU_ACTIVE == 'apanel') echo 'active'; ?>">
+               <a href="#" class="dropdown-toggle active" data-toggle="dropdown">ADMIN PANEL <b class="caret"></b></a>
+               <ul class="dropdown-menu">
+                  <li><a href="backend">NEW BLOG</a></li>
+                  <li><a href="backend/listArticles">ARTICLES</a></li>
+               </ul>
+            </li>
          </ul>
 		
          <form class="navbar-form navbar-right" role="search">
