@@ -23,9 +23,10 @@ class Backend extends Core{
 		
         if(empty($article_id))
 			$article_id = $this->RequestID;
-			
+		
 		switch($this->userInput['type']){
 			case "C": //new article
+				$article_id = (isset($this->userInput['data']['id']) ? $this->userInput['data']['id'] : '');
 				
 				if(isset($_FILES['file']) && !empty($_FILES['file']['tmp_name'])){
 					$newfolder = "assets/images/content";
@@ -67,27 +68,53 @@ class Backend extends Core{
 						}
 			
 					} catch (RuntimeException $e) {
-						return $this->Response['error']['alert'][] = $e->getMessage();
+						return $this->Response['error']['alert'] = $e->getMessage();
 					}
-				}else
-					return $this->Response['error']['alert'][] = 'Ooops article image missing!';
+				}elseif(empty($article_id))
+					return $this->Response['error']['alert'] = 'Ooops article image missing!'.$article_id;
 				
-				$ArtDB = new \Articles();
-				$ArtDB->setTitle($this->userInput['data']['title']);
-				$ArtDB->setContent($this->userInput['data']['content']);
-				$ArtDB->setImgPath($picturePath);
-				$ArtDB->setUserId($_SESSION['userID']);
-				$ArtDB->save();
-				
-				return $this->Response['successURL'] = '..'.$ArtDB->getSlug();
+				if(!empty($article_id)){
+					$article = \ArticlesQuery::create()->findPk($article_id);
+					$url = $article->getUrl();
+					if(!empty($this->userInput['data']['title']) && $article->getTitle()!=$this->userInput['data']['title'])
+						\ArticlesQuery::create()->filterById($article_id)->update(array('Title'=>$this->userInput['data']['title']));
+
+					if(!empty($this->userInput['data']['content']) && $article->getContent()!=$this->userInput['data']['content'])
+						\ArticlesQuery::create()->filterById($article_id)->update(array('Content'=>$this->userInput['data']['content']));
+
+					if(!empty($picturePath))
+						\ArticlesQuery::create()->filterById($article_id)->update(array('ImgPath'=>$picturePath));
+
+				}else{
+					$ArtDB = new \Articles();
+					$ArtDB->setTitle($this->userInput['data']['title']);
+					$ArtDB->setContent($this->userInput['data']['content']);
+					$ArtDB->setImgPath($picturePath);
+					$ArtDB->setUserId($_SESSION['userID']);
+					$ArtDB->save();
+					$url = $ArtDB->getSlug();
+				}
+				return $this->Response['successURL'] = '..'.$url;
 				
 				break;
 			
 			
 			case "U":
 			case "D":
-				$this->Response['error']['alert'][] = 'Invalid add article request!';
+				$this->Response['error']['alert'] = 'Invalid add article request!';
 				break;
+			
+			case "R":
+				$article = \ArticlesQuery::create()->findPk($article_id);
+		
+				if(!is_null($article)){
+					
+					 $this->Response = $article->toArray();
+					
+					 return;
+				}
+				
+				
 		}
     }
 	

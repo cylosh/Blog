@@ -13,6 +13,7 @@ function onSubmitArticle() {
 		
         //~ //extract input data
         var titleText = $("input[name='title']").val();
+        var articleID = $('#articleID').val();
         var contentText = $('#editor').html();
         var articleImgElem = $("#inputpic");
 		
@@ -40,6 +41,9 @@ function onSubmitArticle() {
 		
         //prepare the form data to be sent to server
         var formData = new FormData();
+		if(articleID.length >0){
+			formData.append("id", articleID);
+		}
         formData.append("title",titleText);
         formData.append("content",contentText);
         formData.append("file",articleImg);

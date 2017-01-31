@@ -18,29 +18,30 @@ define("MENU_ACTIVE", 'apanel');
 
 	<div id="blank-page">
 		<div class="container">
-		
-			<div class="container" id="error-ajax" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%"id="error-ajax-message">Enter a valid Title</h6>
+			
+			<div class="container" id="error-ajax" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%" id="error-ajax-message">Enter a valid Title</span>
 			</div></div>
 
-			<div class="container" id="error-title" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%">Enter a valid Title</h6>
+			<div class="container" id="error-title" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%">Enter a valid Title</span>
 			</div></div>
 
-			<div class="container" id="error-content" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%">Enter at least 100 characters for the article</h6>
+			<div class="container" id="error-content" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%">Enter at least 100 characters for the article</span>
 			</div></div>
 			
 
-			<div class="container" id="error-picture" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%">Upload a picture for the article</h6>
+			<div class="container" id="error-picture" style="display:none;"> <div class="alert alert-danger fade in" style="text-align:left;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;<span style="font-size:120%">Upload a picture for the article</span>
 			</div></div>
 			
+			<?php if(isset($this->Response['Id'])) echo '<input type="hidden" id="articleID" value="'.$this->Response['Id'].'">';?>
 			<h2>Article Title</h2>
-			<div class="form-group col-md-8 col-xs-12"> <input class="form-control input-lg" placeholder="Name.." name="title"> </div>
+			<div class="form-group col-md-8 col-xs-12"> <input class="form-control input-lg" placeholder="Name.." name="title" <?php if(isset($this->Response['Title'])) echo 'value="'.$this->Response['Title'].'"';?>> </div>
 			<Br /><Br /><Br /><Br /><Br />
 			
 			<h2>Article Picture</h2>
 <label class="control-label">Select File</label>
 <input id="inputpic" name="inputpic[]" type="file" multiple class="file-loading">
 			<Br /><Br /><Br /><Br /><Br />
-			
+			<?php if(isset($this->Response['ImgPath'])) echo '<img src="'.$this->Response['ImgPath'].'" style="max-height:400px;">';?>
 			<h2>Article Content</h2>
 			<div class="btn-toolbar" data-role="editor-toolbar"
 				data-target="#editor">
@@ -112,7 +113,7 @@ define("MENU_ACTIVE", 'apanel');
 					<a class="btn btn-default" data-edit="clearformat" title="Clear Formatting" onClick="$('#editor').html($('#editor').text());"><i class='glyphicon glyphicon-fire'></i></a>
 				</div>
 			</div>
-			<div id="editor" class="lead" data-placeholder="Write your new blog here"></div>
+			<div id="editor" class="lead" data-placeholder="Write your new blog here"><?php if(isset($this->Response['Content'])) echo 'value="'.$this->Response['Content'].'"';?></div>
 			
 			<p style="text-align: center;;">
 				<a id="newArticle" class="btn btn-large btn-default jumbo" href="#" onclick="waitingDialog.show('Printing Article..', {dialogSize: 'm', progressType: 'primary'});">Submit</a>

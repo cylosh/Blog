@@ -23,13 +23,14 @@ Article.prototype.add = function(formData){
         processData:false,
         contentType: false,
         success: function(resp) {
-            if ( resp.successURL.length ) {
+            if ( resp.successURL != undefined && resp.successURL.length ) {
 				window.location.href = resp.successURL;
 			}
         },
         error: function(resp){
             var response = JSON.parse(resp.responseText);
 			$('#error-ajax').show();
+			$('#error-ajax-message').show();
 			$('#error-ajax-message').html(response.error.alert);
 			console.log(response.error.alert);
         }
