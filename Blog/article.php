@@ -1,5 +1,5 @@
 <?php
-define("TITLE", 'Blog Title | Cylosh Blog');
+define("TITLE", (isset($this->Response['Title']) ? $this->Response['Title'] : 'Blog Title | Cylosh Blog'));
 define("HEADER_TITLE", 'The Cylosh Blog');
 define("HEADER_SUBTITLE", 'Unfolding the Article');
 ?><!DOCTYPE html>
