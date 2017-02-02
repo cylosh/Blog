@@ -24,9 +24,7 @@ ini_set('session.cookie_httponly', 1);
 // **PREVENTING SESSION FIXATION**
 // Session ID cannot be passed through URLs
 ini_set('session.use_only_cookies', 1);
-
-// Uses a secure connection (HTTPS) if possible
-ini_set('session.cookie_secure', 1);
+ini_set('session.use_strict_mode', 1);
 
 // detect https & avoid CORS issues(Origin Resource Sharing)
 $isSecure = false;
@@ -37,11 +35,42 @@ elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED
     $isSecure = true;
 }
 
+if($isSecure)
+	// Uses a secure connection (HTTPS) if possible
+	ini_set('session.cookie_secure', 1);
+
+
 session_start();
+
+// Prevent session hijacking
+if(isset($_SESSION['call'])){
+	$_SESSION['call']++;
+	$newSess = false;
+	if($isSecure){ /** https makes session fixation very hard to pull of
+					 * so regenerate it less often
+					 */
+		if(($_SESSION['call'] % 100)==0) $newSess = true;
+	}else
+		if(($_SESSION['call'] % 5)==0) $newSess = true;
+	
+	if($newSess){
+		$sessData = $_SESSION; // in case session_regenerate_id returns false erase the old session;
+		session_destroy();
+		session_commit();
+		session_regenerate_id('true');
+		session_start();
+		$_SESSION = $sessData;
+		$_SESSION['call'] = 0;
+	}
+		
+}
+else
+	$_SESSION['call']=0;
 
 require("config.php");
 require 'vendor/autoload.php';
 require_once 'vendor/propel/config.php';
+
 
 	/**
 	 * Exception & Error Handlers

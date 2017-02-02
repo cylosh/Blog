@@ -406,6 +406,7 @@ class Core{
 			$_SESSION['user_session_start']	= time()+$_SESSION['user_session_interval'];
 		
 		
+		
 		// Allow access if module has no permission set
 		if(!property_exists($this, 'permissions') OR empty($this::$permissions))
 			return true;
@@ -413,6 +414,7 @@ class Core{
 		$perms = explode(',', $this::$permissions);
 
 		if (in_array("admin", $perms)) {
+		
 			if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === TRUE)
 				return true;
 			else{
@@ -428,7 +430,6 @@ class Core{
 				return false;
 			}
 		}
-		
 		
 		
 		return false;
@@ -535,7 +536,7 @@ class Core{
 		}else{ //default html
 			$_SESSION['shipment'] = 'html';
 
-			if($redirect && !empty($redirect)){	
+			if($redirect && !empty($redirect)){
 				header("Location: ".SITE_URI.$redirect);
 				exit;
 			}

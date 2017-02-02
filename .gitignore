@@ -7,3 +7,4 @@ error_log
 !*.gitkeep
 *.log
 /vendor/
+/system/Logs/

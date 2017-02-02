@@ -22,7 +22,8 @@ class Blog extends Core{
 			case "R": //new article
 				
 				// Check if Article was requested
-				if (preg_match('%.*?(blog/.{3,}?)(?:\?|$)%', $_SERVER['REQUEST_URI'], $match)) {
+				if (preg_match('%.*?(blog/.{3,}?)(?:\?|$)%i', $_SERVER['REQUEST_URI'], $match)) {
+				
 					$slugURL = '/'.$match['1'];
 				}else
 					return $this->HtmlView(array("Blog", "index"));
