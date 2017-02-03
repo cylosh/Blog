@@ -2,12 +2,11 @@
 
 namespace Base;
 
-use \Accounts as ChildAccounts;
-use \AccountsQuery as ChildAccountsQuery;
+use \ContactQuery as ChildContactQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
-use Map\AccountsTableMap;
+use Map\ContactTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -22,18 +21,18 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'accounts' table.
+ * Base class that represents a row from the 'contact' table.
  *
  * 
  *
  * @package    propel.generator..Base
  */
-abstract class Accounts implements ActiveRecordInterface 
+abstract class Contact implements ActiveRecordInterface 
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\AccountsTableMap';
+    const TABLE_MAP = '\\Map\\ContactTableMap';
 
 
     /**
@@ -70,32 +69,18 @@ abstract class Accounts implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the fname field.
+     * The value for the user_id field.
      * 
-     * @var        string
+     * @var        int
      */
-    protected $fname;
+    protected $user_id;
 
     /**
-     * The value for the lname field.
+     * The value for the name field.
      * 
      * @var        string
      */
-    protected $lname;
-
-    /**
-     * The value for the profile_pic field.
-     * 
-     * @var        string
-     */
-    protected $profile_pic;
-
-    /**
-     * The value for the password field.
-     * 
-     * @var        string
-     */
-    protected $password;
+    protected $name;
 
     /**
      * The value for the email field.
@@ -105,53 +90,18 @@ abstract class Accounts implements ActiveRecordInterface
     protected $email;
 
     /**
-     * The value for the age field.
-     * 
-     * @var        int
-     */
-    protected $age;
-
-    /**
-     * The value for the phone field.
+     * The value for the message field.
      * 
      * @var        string
      */
-    protected $phone;
+    protected $message;
 
     /**
-     * The value for the gender field.
-     * 
-     * @var        string
-     */
-    protected $gender;
-
-    /**
-     * The value for the status field.
-     * 
-     * @var        int
-     */
-    protected $status;
-
-    /**
-     * The value for the newsletter field.
-     * 
-     * @var        boolean
-     */
-    protected $newsletter;
-
-    /**
-     * The value for the created field.
+     * The value for the date field.
      * 
      * @var        DateTime
      */
-    protected $created;
-
-    /**
-     * The value for the modified field.
-     * 
-     * @var        DateTime
-     */
-    protected $modified;
+    protected $date;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -162,7 +112,7 @@ abstract class Accounts implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Base\Accounts object.
+     * Initializes internal state of Base\Contact object.
      */
     public function __construct()
     {
@@ -257,9 +207,9 @@ abstract class Accounts implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Accounts</code> instance.  If
-     * <code>obj</code> is an instance of <code>Accounts</code>, delegates to
-     * <code>equals(Accounts)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Contact</code> instance.  If
+     * <code>obj</code> is an instance of <code>Contact</code>, delegates to
+     * <code>equals(Contact)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -325,7 +275,7 @@ abstract class Accounts implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Accounts The current object, for fluid interface
+     * @return $this|Contact The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -397,43 +347,23 @@ abstract class Accounts implements ActiveRecordInterface
     }
 
     /**
-     * Get the [fname] column value.
+     * Get the [user_id] column value.
      * 
-     * @return string
+     * @return int
      */
-    public function getFname()
+    public function getUserId()
     {
-        return $this->fname;
+        return $this->user_id;
     }
 
     /**
-     * Get the [lname] column value.
+     * Get the [name] column value.
      * 
      * @return string
      */
-    public function getLname()
+    public function getName()
     {
-        return $this->lname;
-    }
-
-    /**
-     * Get the [profile_pic] column value.
-     * 
-     * @return string
-     */
-    public function getProfilePic()
-    {
-        return $this->profile_pic;
-    }
-
-    /**
-     * Get the [password] column value.
-     * 
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
+        return $this->name;
     }
 
     /**
@@ -447,67 +377,17 @@ abstract class Accounts implements ActiveRecordInterface
     }
 
     /**
-     * Get the [age] column value.
-     * 
-     * @return int
-     */
-    public function getAge()
-    {
-        return $this->age;
-    }
-
-    /**
-     * Get the [phone] column value.
+     * Get the [message] column value.
      * 
      * @return string
      */
-    public function getPhone()
+    public function getMessage()
     {
-        return $this->phone;
+        return $this->message;
     }
 
     /**
-     * Get the [gender] column value.
-     * 
-     * @return string
-     */
-    public function getGender()
-    {
-        return $this->gender;
-    }
-
-    /**
-     * Get the [status] column value.
-     * 
-     * @return int
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * Get the [newsletter] column value.
-     * 
-     * @return boolean
-     */
-    public function getNewsletter()
-    {
-        return $this->newsletter;
-    }
-
-    /**
-     * Get the [newsletter] column value.
-     * 
-     * @return boolean
-     */
-    public function isNewsletter()
-    {
-        return $this->getNewsletter();
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [created] column value.
+     * Get the [optionally formatted] temporal [date] column value.
      * 
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
@@ -517,32 +397,12 @@ abstract class Accounts implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreated($format = NULL)
+    public function getDate($format = NULL)
     {
         if ($format === null) {
-            return $this->created;
+            return $this->date;
         } else {
-            return $this->created instanceof \DateTimeInterface ? $this->created->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [modified] column value.
-     * 
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getModified($format = NULL)
-    {
-        if ($format === null) {
-            return $this->modified;
-        } else {
-            return $this->modified instanceof \DateTimeInterface ? $this->modified->format($format) : null;
+            return $this->date instanceof \DateTimeInterface ? $this->date->format($format) : null;
         }
     }
 
@@ -550,7 +410,7 @@ abstract class Accounts implements ActiveRecordInterface
      * Set the value of [id] column.
      * 
      * @param int $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
+     * @return $this|\Contact The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -560,97 +420,57 @@ abstract class Accounts implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_ID] = true;
+            $this->modifiedColumns[ContactTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [fname] column.
+     * Set the value of [user_id] column.
      * 
-     * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
+     * @param int $v new value
+     * @return $this|\Contact The current object (for fluent API support)
      */
-    public function setFname($v)
+    public function setUserId($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
-        if ($this->fname !== $v) {
-            $this->fname = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_FNAME] = true;
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[ContactTableMap::COL_USER_ID] = true;
         }
 
         return $this;
-    } // setFname()
+    } // setUserId()
 
     /**
-     * Set the value of [lname] column.
+     * Set the value of [name] column.
      * 
      * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
+     * @return $this|\Contact The current object (for fluent API support)
      */
-    public function setLname($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->lname !== $v) {
-            $this->lname = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_LNAME] = true;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[ContactTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setLname()
-
-    /**
-     * Set the value of [profile_pic] column.
-     * 
-     * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setProfilePic($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->profile_pic !== $v) {
-            $this->profile_pic = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_PROFILE_PIC] = true;
-        }
-
-        return $this;
-    } // setProfilePic()
-
-    /**
-     * Set the value of [password] column.
-     * 
-     * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setPassword($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->password !== $v) {
-            $this->password = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_PASSWORD] = true;
-        }
-
-        return $this;
-    } // setPassword()
+    } // setName()
 
     /**
      * Set the value of [email] column.
      * 
      * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
+     * @return $this|\Contact The current object (for fluent API support)
      */
     public function setEmail($v)
     {
@@ -660,159 +480,51 @@ abstract class Accounts implements ActiveRecordInterface
 
         if ($this->email !== $v) {
             $this->email = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_EMAIL] = true;
+            $this->modifiedColumns[ContactTableMap::COL_EMAIL] = true;
         }
 
         return $this;
     } // setEmail()
 
     /**
-     * Set the value of [age] column.
-     * 
-     * @param int $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setAge($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->age !== $v) {
-            $this->age = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_AGE] = true;
-        }
-
-        return $this;
-    } // setAge()
-
-    /**
-     * Set the value of [phone] column.
+     * Set the value of [message] column.
      * 
      * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
+     * @return $this|\Contact The current object (for fluent API support)
      */
-    public function setPhone($v)
+    public function setMessage($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->phone !== $v) {
-            $this->phone = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_PHONE] = true;
+        if ($this->message !== $v) {
+            $this->message = $v;
+            $this->modifiedColumns[ContactTableMap::COL_MESSAGE] = true;
         }
 
         return $this;
-    } // setPhone()
+    } // setMessage()
 
     /**
-     * Set the value of [gender] column.
-     * 
-     * @param string $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setGender($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->gender !== $v) {
-            $this->gender = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_GENDER] = true;
-        }
-
-        return $this;
-    } // setGender()
-
-    /**
-     * Set the value of [status] column.
-     * 
-     * @param int $v new value
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setStatus($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->status !== $v) {
-            $this->status = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_STATUS] = true;
-        }
-
-        return $this;
-    } // setStatus()
-
-    /**
-     * Sets the value of the [newsletter] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * 
-     * @param  boolean|integer|string $v The new value
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setNewsletter($v)
-    {
-        if ($v !== null) {
-            if (is_string($v)) {
-                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                $v = (boolean) $v;
-            }
-        }
-
-        if ($this->newsletter !== $v) {
-            $this->newsletter = $v;
-            $this->modifiedColumns[AccountsTableMap::COL_NEWSLETTER] = true;
-        }
-
-        return $this;
-    } // setNewsletter()
-
-    /**
-     * Sets the value of [created] column to a normalized version of the date/time value specified.
+     * Sets the value of [date] column to a normalized version of the date/time value specified.
      * 
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return $this|\Accounts The current object (for fluent API support)
+     * @return $this|\Contact The current object (for fluent API support)
      */
-    public function setCreated($v)
+    public function setDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->created !== null || $dt !== null) {
-            if ($this->created === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created->format("Y-m-d H:i:s.u")) {
-                $this->created = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[AccountsTableMap::COL_CREATED] = true;
+        if ($this->date !== null || $dt !== null) {
+            if ($this->date === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->date->format("Y-m-d H:i:s.u")) {
+                $this->date = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ContactTableMap::COL_DATE] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setCreated()
-
-    /**
-     * Sets the value of [modified] column to a normalized version of the date/time value specified.
-     * 
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Accounts The current object (for fluent API support)
-     */
-    public function setModified($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->modified !== null || $dt !== null) {
-            if ($this->modified === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->modified->format("Y-m-d H:i:s.u")) {
-                $this->modified = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[AccountsTableMap::COL_MODIFIED] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setModified()
+    } // setDate()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -850,50 +562,26 @@ abstract class Accounts implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : AccountsTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ContactTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AccountsTableMap::translateFieldName('Fname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->fname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ContactTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AccountsTableMap::translateFieldName('Lname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->lname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ContactTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AccountsTableMap::translateFieldName('ProfilePic', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->profile_pic = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AccountsTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->password = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AccountsTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ContactTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AccountsTableMap::translateFieldName('Age', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->age = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ContactTableMap::translateFieldName('Message', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->message = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : AccountsTableMap::translateFieldName('Phone', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->phone = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : AccountsTableMap::translateFieldName('Gender', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->gender = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : AccountsTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->status = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : AccountsTableMap::translateFieldName('Newsletter', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->newsletter = (null !== $col) ? (boolean) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : AccountsTableMap::translateFieldName('Created', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ContactTableMap::translateFieldName('Date', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->created = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : AccountsTableMap::translateFieldName('Modified', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->modified = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $this->date = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -902,10 +590,10 @@ abstract class Accounts implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = AccountsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ContactTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Accounts'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Contact'), 0, $e);
         }
     }
 
@@ -947,13 +635,13 @@ abstract class Accounts implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(AccountsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ContactTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildAccountsQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildContactQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -972,8 +660,8 @@ abstract class Accounts implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Accounts::setDeleted()
-     * @see Accounts::isDeleted()
+     * @see Contact::setDeleted()
+     * @see Contact::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -982,11 +670,11 @@ abstract class Accounts implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AccountsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ContactTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildAccountsQuery::create()
+            $deleteQuery = ChildContactQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -1021,7 +709,7 @@ abstract class Accounts implements ActiveRecordInterface
         }
  
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AccountsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ContactTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -1029,20 +717,8 @@ abstract class Accounts implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-                
-                if (!$this->isColumnModified(AccountsTableMap::COL_CREATED)) {
-                    $this->setCreated(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
-                if (!$this->isColumnModified(AccountsTableMap::COL_MODIFIED)) {
-                    $this->setModified(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(AccountsTableMap::COL_MODIFIED)) {
-                    $this->setModified(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1052,7 +728,7 @@ abstract class Accounts implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                AccountsTableMap::addInstanceToPool($this);
+                ContactTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1109,54 +785,33 @@ abstract class Accounts implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[AccountsTableMap::COL_ID] = true;
+        $this->modifiedColumns[ContactTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . AccountsTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ContactTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(AccountsTableMap::COL_ID)) {
+        if ($this->isColumnModified(ContactTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_FNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'fname';
+        if ($this->isColumnModified(ContactTableMap::COL_USER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_LNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'lname';
+        if ($this->isColumnModified(ContactTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_PROFILE_PIC)) {
-            $modifiedColumns[':p' . $index++]  = 'profile_pic';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_PASSWORD)) {
-            $modifiedColumns[':p' . $index++]  = 'password';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_EMAIL)) {
+        if ($this->isColumnModified(ContactTableMap::COL_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = 'email';
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_AGE)) {
-            $modifiedColumns[':p' . $index++]  = 'age';
+        if ($this->isColumnModified(ContactTableMap::COL_MESSAGE)) {
+            $modifiedColumns[':p' . $index++]  = 'message';
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_PHONE)) {
-            $modifiedColumns[':p' . $index++]  = 'phone';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_GENDER)) {
-            $modifiedColumns[':p' . $index++]  = 'gender';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_STATUS)) {
-            $modifiedColumns[':p' . $index++]  = 'status';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_NEWSLETTER)) {
-            $modifiedColumns[':p' . $index++]  = 'newsletter';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_CREATED)) {
-            $modifiedColumns[':p' . $index++]  = 'created';
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_MODIFIED)) {
-            $modifiedColumns[':p' . $index++]  = 'modified';
+        if ($this->isColumnModified(ContactTableMap::COL_DATE)) {
+            $modifiedColumns[':p' . $index++]  = 'date';
         }
 
         $sql = sprintf(
-            'INSERT INTO accounts (%s) VALUES (%s)',
+            'INSERT INTO contact (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1168,41 +823,20 @@ abstract class Accounts implements ActiveRecordInterface
                     case 'id':                        
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'fname':                        
-                        $stmt->bindValue($identifier, $this->fname, PDO::PARAM_STR);
+                    case 'user_id':                        
+                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'lname':                        
-                        $stmt->bindValue($identifier, $this->lname, PDO::PARAM_STR);
-                        break;
-                    case 'profile_pic':                        
-                        $stmt->bindValue($identifier, $this->profile_pic, PDO::PARAM_STR);
-                        break;
-                    case 'password':                        
-                        $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
+                    case 'name':                        
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
                     case 'email':                        
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
                         break;
-                    case 'age':                        
-                        $stmt->bindValue($identifier, $this->age, PDO::PARAM_INT);
+                    case 'message':                        
+                        $stmt->bindValue($identifier, $this->message, PDO::PARAM_STR);
                         break;
-                    case 'phone':                        
-                        $stmt->bindValue($identifier, $this->phone, PDO::PARAM_STR);
-                        break;
-                    case 'gender':                        
-                        $stmt->bindValue($identifier, $this->gender, PDO::PARAM_STR);
-                        break;
-                    case 'status':                        
-                        $stmt->bindValue($identifier, $this->status, PDO::PARAM_INT);
-                        break;
-                    case 'newsletter':
-                        $stmt->bindValue($identifier, (int) $this->newsletter, PDO::PARAM_INT);
-                        break;
-                    case 'created':                        
-                        $stmt->bindValue($identifier, $this->created ? $this->created->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'modified':                        
-                        $stmt->bindValue($identifier, $this->modified ? $this->modified->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'date':                        
+                        $stmt->bindValue($identifier, $this->date ? $this->date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1250,7 +884,7 @@ abstract class Accounts implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = AccountsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ContactTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1270,40 +904,19 @@ abstract class Accounts implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getFname();
+                return $this->getUserId();
                 break;
             case 2:
-                return $this->getLname();
+                return $this->getName();
                 break;
             case 3:
-                return $this->getProfilePic();
-                break;
-            case 4:
-                return $this->getPassword();
-                break;
-            case 5:
                 return $this->getEmail();
                 break;
-            case 6:
-                return $this->getAge();
+            case 4:
+                return $this->getMessage();
                 break;
-            case 7:
-                return $this->getPhone();
-                break;
-            case 8:
-                return $this->getGender();
-                break;
-            case 9:
-                return $this->getStatus();
-                break;
-            case 10:
-                return $this->getNewsletter();
-                break;
-            case 11:
-                return $this->getCreated();
-                break;
-            case 12:
-                return $this->getModified();
+            case 5:
+                return $this->getDate();
                 break;
             default:
                 return null;
@@ -1328,32 +941,21 @@ abstract class Accounts implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
-        if (isset($alreadyDumpedObjects['Accounts'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Contact'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Accounts'][$this->hashCode()] = true;
-        $keys = AccountsTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Contact'][$this->hashCode()] = true;
+        $keys = ContactTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getFname(),
-            $keys[2] => $this->getLname(),
-            $keys[3] => $this->getProfilePic(),
-            $keys[4] => $this->getPassword(),
-            $keys[5] => $this->getEmail(),
-            $keys[6] => $this->getAge(),
-            $keys[7] => $this->getPhone(),
-            $keys[8] => $this->getGender(),
-            $keys[9] => $this->getStatus(),
-            $keys[10] => $this->getNewsletter(),
-            $keys[11] => $this->getCreated(),
-            $keys[12] => $this->getModified(),
+            $keys[1] => $this->getUserId(),
+            $keys[2] => $this->getName(),
+            $keys[3] => $this->getEmail(),
+            $keys[4] => $this->getMessage(),
+            $keys[5] => $this->getDate(),
         );
-        if ($result[$keys[11]] instanceof \DateTime) {
-            $result[$keys[11]] = $result[$keys[11]]->format('c');
-        }
-        
-        if ($result[$keys[12]] instanceof \DateTime) {
-            $result[$keys[12]] = $result[$keys[12]]->format('c');
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
         
         $virtualColumns = $this->virtualColumns;
@@ -1374,11 +976,11 @@ abstract class Accounts implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Accounts
+     * @return $this|\Contact
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = AccountsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ContactTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1389,7 +991,7 @@ abstract class Accounts implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Accounts
+     * @return $this|\Contact
      */
     public function setByPosition($pos, $value)
     {
@@ -1398,40 +1000,19 @@ abstract class Accounts implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setFname($value);
+                $this->setUserId($value);
                 break;
             case 2:
-                $this->setLname($value);
+                $this->setName($value);
                 break;
             case 3:
-                $this->setProfilePic($value);
-                break;
-            case 4:
-                $this->setPassword($value);
-                break;
-            case 5:
                 $this->setEmail($value);
                 break;
-            case 6:
-                $this->setAge($value);
+            case 4:
+                $this->setMessage($value);
                 break;
-            case 7:
-                $this->setPhone($value);
-                break;
-            case 8:
-                $this->setGender($value);
-                break;
-            case 9:
-                $this->setStatus($value);
-                break;
-            case 10:
-                $this->setNewsletter($value);
-                break;
-            case 11:
-                $this->setCreated($value);
-                break;
-            case 12:
-                $this->setModified($value);
+            case 5:
+                $this->setDate($value);
                 break;
         } // switch()
 
@@ -1457,46 +1038,25 @@ abstract class Accounts implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = AccountsTableMap::getFieldNames($keyType);
+        $keys = ContactTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setFname($arr[$keys[1]]);
+            $this->setUserId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setLname($arr[$keys[2]]);
+            $this->setName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setProfilePic($arr[$keys[3]]);
+            $this->setEmail($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPassword($arr[$keys[4]]);
+            $this->setMessage($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setEmail($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setAge($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setPhone($arr[$keys[7]]);
-        }
-        if (array_key_exists($keys[8], $arr)) {
-            $this->setGender($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setStatus($arr[$keys[9]]);
-        }
-        if (array_key_exists($keys[10], $arr)) {
-            $this->setNewsletter($arr[$keys[10]]);
-        }
-        if (array_key_exists($keys[11], $arr)) {
-            $this->setCreated($arr[$keys[11]]);
-        }
-        if (array_key_exists($keys[12], $arr)) {
-            $this->setModified($arr[$keys[12]]);
+            $this->setDate($arr[$keys[5]]);
         }
     }
 
@@ -1517,7 +1077,7 @@ abstract class Accounts implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Accounts The current object, for fluid interface
+     * @return $this|\Contact The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1537,46 +1097,25 @@ abstract class Accounts implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(AccountsTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ContactTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(AccountsTableMap::COL_ID)) {
-            $criteria->add(AccountsTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(ContactTableMap::COL_ID)) {
+            $criteria->add(ContactTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_FNAME)) {
-            $criteria->add(AccountsTableMap::COL_FNAME, $this->fname);
+        if ($this->isColumnModified(ContactTableMap::COL_USER_ID)) {
+            $criteria->add(ContactTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_LNAME)) {
-            $criteria->add(AccountsTableMap::COL_LNAME, $this->lname);
+        if ($this->isColumnModified(ContactTableMap::COL_NAME)) {
+            $criteria->add(ContactTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_PROFILE_PIC)) {
-            $criteria->add(AccountsTableMap::COL_PROFILE_PIC, $this->profile_pic);
+        if ($this->isColumnModified(ContactTableMap::COL_EMAIL)) {
+            $criteria->add(ContactTableMap::COL_EMAIL, $this->email);
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_PASSWORD)) {
-            $criteria->add(AccountsTableMap::COL_PASSWORD, $this->password);
+        if ($this->isColumnModified(ContactTableMap::COL_MESSAGE)) {
+            $criteria->add(ContactTableMap::COL_MESSAGE, $this->message);
         }
-        if ($this->isColumnModified(AccountsTableMap::COL_EMAIL)) {
-            $criteria->add(AccountsTableMap::COL_EMAIL, $this->email);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_AGE)) {
-            $criteria->add(AccountsTableMap::COL_AGE, $this->age);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_PHONE)) {
-            $criteria->add(AccountsTableMap::COL_PHONE, $this->phone);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_GENDER)) {
-            $criteria->add(AccountsTableMap::COL_GENDER, $this->gender);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_STATUS)) {
-            $criteria->add(AccountsTableMap::COL_STATUS, $this->status);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_NEWSLETTER)) {
-            $criteria->add(AccountsTableMap::COL_NEWSLETTER, $this->newsletter);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_CREATED)) {
-            $criteria->add(AccountsTableMap::COL_CREATED, $this->created);
-        }
-        if ($this->isColumnModified(AccountsTableMap::COL_MODIFIED)) {
-            $criteria->add(AccountsTableMap::COL_MODIFIED, $this->modified);
+        if ($this->isColumnModified(ContactTableMap::COL_DATE)) {
+            $criteria->add(ContactTableMap::COL_DATE, $this->date);
         }
 
         return $criteria;
@@ -1594,8 +1133,8 @@ abstract class Accounts implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildAccountsQuery::create();
-        $criteria->add(AccountsTableMap::COL_ID, $this->id);
+        $criteria = ChildContactQuery::create();
+        $criteria->add(ContactTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1657,25 +1196,18 @@ abstract class Accounts implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Accounts (or compatible) type.
+     * @param      object $copyObj An object of \Contact (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setFname($this->getFname());
-        $copyObj->setLname($this->getLname());
-        $copyObj->setProfilePic($this->getProfilePic());
-        $copyObj->setPassword($this->getPassword());
+        $copyObj->setUserId($this->getUserId());
+        $copyObj->setName($this->getName());
         $copyObj->setEmail($this->getEmail());
-        $copyObj->setAge($this->getAge());
-        $copyObj->setPhone($this->getPhone());
-        $copyObj->setGender($this->getGender());
-        $copyObj->setStatus($this->getStatus());
-        $copyObj->setNewsletter($this->getNewsletter());
-        $copyObj->setCreated($this->getCreated());
-        $copyObj->setModified($this->getModified());
+        $copyObj->setMessage($this->getMessage());
+        $copyObj->setDate($this->getDate());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1691,7 +1223,7 @@ abstract class Accounts implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Accounts Clone of current object.
+     * @return \Contact Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1712,18 +1244,11 @@ abstract class Accounts implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->fname = null;
-        $this->lname = null;
-        $this->profile_pic = null;
-        $this->password = null;
+        $this->user_id = null;
+        $this->name = null;
         $this->email = null;
-        $this->age = null;
-        $this->phone = null;
-        $this->gender = null;
-        $this->status = null;
-        $this->newsletter = null;
-        $this->created = null;
-        $this->modified = null;
+        $this->message = null;
+        $this->date = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1753,21 +1278,7 @@ abstract class Accounts implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(AccountsTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-    
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildAccounts The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[AccountsTableMap::COL_MODIFIED] = true;
-    
-        return $this;
+        return (string) $this->exportTo(ContactTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

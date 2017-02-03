@@ -59,7 +59,7 @@ class AccountsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 12;
+    const NUM_COLUMNS = 13;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class AccountsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 12;
+    const NUM_HYDRATE_COLUMNS = 13;
 
     /**
      * the column name for the id field
@@ -105,6 +105,11 @@ class AccountsTableMap extends TableMap
      * the column name for the age field
      */
     const COL_AGE = 'accounts.age';
+
+    /**
+     * the column name for the phone field
+     */
+    const COL_PHONE = 'accounts.phone';
 
     /**
      * the column name for the gender field
@@ -143,11 +148,11 @@ class AccountsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Fname', 'Lname', 'ProfilePic', 'Password', 'Email', 'Age', 'Gender', 'Status', 'Newsletter', 'Created', 'Modified', ),
-        self::TYPE_CAMELNAME     => array('id', 'fname', 'lname', 'profilePic', 'password', 'email', 'age', 'gender', 'status', 'newsletter', 'created', 'modified', ),
-        self::TYPE_COLNAME       => array(AccountsTableMap::COL_ID, AccountsTableMap::COL_FNAME, AccountsTableMap::COL_LNAME, AccountsTableMap::COL_PROFILE_PIC, AccountsTableMap::COL_PASSWORD, AccountsTableMap::COL_EMAIL, AccountsTableMap::COL_AGE, AccountsTableMap::COL_GENDER, AccountsTableMap::COL_STATUS, AccountsTableMap::COL_NEWSLETTER, AccountsTableMap::COL_CREATED, AccountsTableMap::COL_MODIFIED, ),
-        self::TYPE_FIELDNAME     => array('id', 'fname', 'lname', 'profile_pic', 'password', 'email', 'age', 'gender', 'status', 'newsletter', 'created', 'modified', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        self::TYPE_PHPNAME       => array('Id', 'Fname', 'Lname', 'ProfilePic', 'Password', 'Email', 'Age', 'Phone', 'Gender', 'Status', 'Newsletter', 'Created', 'Modified', ),
+        self::TYPE_CAMELNAME     => array('id', 'fname', 'lname', 'profilePic', 'password', 'email', 'age', 'phone', 'gender', 'status', 'newsletter', 'created', 'modified', ),
+        self::TYPE_COLNAME       => array(AccountsTableMap::COL_ID, AccountsTableMap::COL_FNAME, AccountsTableMap::COL_LNAME, AccountsTableMap::COL_PROFILE_PIC, AccountsTableMap::COL_PASSWORD, AccountsTableMap::COL_EMAIL, AccountsTableMap::COL_AGE, AccountsTableMap::COL_PHONE, AccountsTableMap::COL_GENDER, AccountsTableMap::COL_STATUS, AccountsTableMap::COL_NEWSLETTER, AccountsTableMap::COL_CREATED, AccountsTableMap::COL_MODIFIED, ),
+        self::TYPE_FIELDNAME     => array('id', 'fname', 'lname', 'profile_pic', 'password', 'email', 'age', 'phone', 'gender', 'status', 'newsletter', 'created', 'modified', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -157,11 +162,11 @@ class AccountsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Fname' => 1, 'Lname' => 2, 'ProfilePic' => 3, 'Password' => 4, 'Email' => 5, 'Age' => 6, 'Gender' => 7, 'Status' => 8, 'Newsletter' => 9, 'Created' => 10, 'Modified' => 11, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'fname' => 1, 'lname' => 2, 'profilePic' => 3, 'password' => 4, 'email' => 5, 'age' => 6, 'gender' => 7, 'status' => 8, 'newsletter' => 9, 'created' => 10, 'modified' => 11, ),
-        self::TYPE_COLNAME       => array(AccountsTableMap::COL_ID => 0, AccountsTableMap::COL_FNAME => 1, AccountsTableMap::COL_LNAME => 2, AccountsTableMap::COL_PROFILE_PIC => 3, AccountsTableMap::COL_PASSWORD => 4, AccountsTableMap::COL_EMAIL => 5, AccountsTableMap::COL_AGE => 6, AccountsTableMap::COL_GENDER => 7, AccountsTableMap::COL_STATUS => 8, AccountsTableMap::COL_NEWSLETTER => 9, AccountsTableMap::COL_CREATED => 10, AccountsTableMap::COL_MODIFIED => 11, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'fname' => 1, 'lname' => 2, 'profile_pic' => 3, 'password' => 4, 'email' => 5, 'age' => 6, 'gender' => 7, 'status' => 8, 'newsletter' => 9, 'created' => 10, 'modified' => 11, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Fname' => 1, 'Lname' => 2, 'ProfilePic' => 3, 'Password' => 4, 'Email' => 5, 'Age' => 6, 'Phone' => 7, 'Gender' => 8, 'Status' => 9, 'Newsletter' => 10, 'Created' => 11, 'Modified' => 12, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'fname' => 1, 'lname' => 2, 'profilePic' => 3, 'password' => 4, 'email' => 5, 'age' => 6, 'phone' => 7, 'gender' => 8, 'status' => 9, 'newsletter' => 10, 'created' => 11, 'modified' => 12, ),
+        self::TYPE_COLNAME       => array(AccountsTableMap::COL_ID => 0, AccountsTableMap::COL_FNAME => 1, AccountsTableMap::COL_LNAME => 2, AccountsTableMap::COL_PROFILE_PIC => 3, AccountsTableMap::COL_PASSWORD => 4, AccountsTableMap::COL_EMAIL => 5, AccountsTableMap::COL_AGE => 6, AccountsTableMap::COL_PHONE => 7, AccountsTableMap::COL_GENDER => 8, AccountsTableMap::COL_STATUS => 9, AccountsTableMap::COL_NEWSLETTER => 10, AccountsTableMap::COL_CREATED => 11, AccountsTableMap::COL_MODIFIED => 12, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'fname' => 1, 'lname' => 2, 'profile_pic' => 3, 'password' => 4, 'email' => 5, 'age' => 6, 'phone' => 7, 'gender' => 8, 'status' => 9, 'newsletter' => 10, 'created' => 11, 'modified' => 12, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -188,6 +193,7 @@ class AccountsTableMap extends TableMap
         $this->addColumn('password', 'Password', 'VARCHAR', false, 100, null);
         $this->addColumn('email', 'Email', 'VARCHAR', false, 150, null);
         $this->addColumn('age', 'Age', 'INTEGER', false, 3, null);
+        $this->addColumn('phone', 'Phone', 'VARCHAR', false, 15, null);
         $this->addColumn('gender', 'Gender', 'CHAR', false, null, null);
         $this->addColumn('status', 'Status', 'TINYINT', false, null, null);
         $this->addColumn('newsletter', 'Newsletter', 'BOOLEAN', false, 1, null);
@@ -363,6 +369,7 @@ class AccountsTableMap extends TableMap
             $criteria->addSelectColumn(AccountsTableMap::COL_PASSWORD);
             $criteria->addSelectColumn(AccountsTableMap::COL_EMAIL);
             $criteria->addSelectColumn(AccountsTableMap::COL_AGE);
+            $criteria->addSelectColumn(AccountsTableMap::COL_PHONE);
             $criteria->addSelectColumn(AccountsTableMap::COL_GENDER);
             $criteria->addSelectColumn(AccountsTableMap::COL_STATUS);
             $criteria->addSelectColumn(AccountsTableMap::COL_NEWSLETTER);
@@ -376,6 +383,7 @@ class AccountsTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.password');
             $criteria->addSelectColumn($alias . '.email');
             $criteria->addSelectColumn($alias . '.age');
+            $criteria->addSelectColumn($alias . '.phone');
             $criteria->addSelectColumn($alias . '.gender');
             $criteria->addSelectColumn($alias . '.status');
             $criteria->addSelectColumn($alias . '.newsletter');

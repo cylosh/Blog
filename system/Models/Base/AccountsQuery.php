@@ -26,6 +26,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccountsQuery orderByPassword($order = Criteria::ASC) Order by the password column
  * @method     ChildAccountsQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildAccountsQuery orderByAge($order = Criteria::ASC) Order by the age column
+ * @method     ChildAccountsQuery orderByPhone($order = Criteria::ASC) Order by the phone column
  * @method     ChildAccountsQuery orderByGender($order = Criteria::ASC) Order by the gender column
  * @method     ChildAccountsQuery orderByStatus($order = Criteria::ASC) Order by the status column
  * @method     ChildAccountsQuery orderByNewsletter($order = Criteria::ASC) Order by the newsletter column
@@ -39,6 +40,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccountsQuery groupByPassword() Group by the password column
  * @method     ChildAccountsQuery groupByEmail() Group by the email column
  * @method     ChildAccountsQuery groupByAge() Group by the age column
+ * @method     ChildAccountsQuery groupByPhone() Group by the phone column
  * @method     ChildAccountsQuery groupByGender() Group by the gender column
  * @method     ChildAccountsQuery groupByStatus() Group by the status column
  * @method     ChildAccountsQuery groupByNewsletter() Group by the newsletter column
@@ -63,6 +65,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccounts findOneByPassword(string $password) Return the first ChildAccounts filtered by the password column
  * @method     ChildAccounts findOneByEmail(string $email) Return the first ChildAccounts filtered by the email column
  * @method     ChildAccounts findOneByAge(int $age) Return the first ChildAccounts filtered by the age column
+ * @method     ChildAccounts findOneByPhone(string $phone) Return the first ChildAccounts filtered by the phone column
  * @method     ChildAccounts findOneByGender(string $gender) Return the first ChildAccounts filtered by the gender column
  * @method     ChildAccounts findOneByStatus(int $status) Return the first ChildAccounts filtered by the status column
  * @method     ChildAccounts findOneByNewsletter(boolean $newsletter) Return the first ChildAccounts filtered by the newsletter column
@@ -79,6 +82,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccounts requireOneByPassword(string $password) Return the first ChildAccounts filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByEmail(string $email) Return the first ChildAccounts filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByAge(int $age) Return the first ChildAccounts filtered by the age column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAccounts requireOneByPhone(string $phone) Return the first ChildAccounts filtered by the phone column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByGender(string $gender) Return the first ChildAccounts filtered by the gender column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByStatus(int $status) Return the first ChildAccounts filtered by the status column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAccounts requireOneByNewsletter(boolean $newsletter) Return the first ChildAccounts filtered by the newsletter column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -93,6 +97,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAccounts[]|ObjectCollection findByPassword(string $password) Return ChildAccounts objects filtered by the password column
  * @method     ChildAccounts[]|ObjectCollection findByEmail(string $email) Return ChildAccounts objects filtered by the email column
  * @method     ChildAccounts[]|ObjectCollection findByAge(int $age) Return ChildAccounts objects filtered by the age column
+ * @method     ChildAccounts[]|ObjectCollection findByPhone(string $phone) Return ChildAccounts objects filtered by the phone column
  * @method     ChildAccounts[]|ObjectCollection findByGender(string $gender) Return ChildAccounts objects filtered by the gender column
  * @method     ChildAccounts[]|ObjectCollection findByStatus(int $status) Return ChildAccounts objects filtered by the status column
  * @method     ChildAccounts[]|ObjectCollection findByNewsletter(boolean $newsletter) Return ChildAccounts objects filtered by the newsletter column
@@ -196,7 +201,7 @@ abstract class AccountsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, fname, lname, profile_pic, password, email, age, gender, status, newsletter, created, modified FROM accounts WHERE id = :p0';
+        $sql = 'SELECT id, fname, lname, profile_pic, password, email, age, phone, gender, status, newsletter, created, modified FROM accounts WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -491,6 +496,31 @@ abstract class AccountsQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(AccountsTableMap::COL_AGE, $age, $comparison);
+    }
+
+    /**
+     * Filter the query on the phone column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPhone('fooValue');   // WHERE phone = 'fooValue'
+     * $query->filterByPhone('%fooValue%', Criteria::LIKE); // WHERE phone LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $phone The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAccountsQuery The current query, for fluid interface
+     */
+    public function filterByPhone($phone = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($phone)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AccountsTableMap::COL_PHONE, $phone, $comparison);
     }
 
     /**

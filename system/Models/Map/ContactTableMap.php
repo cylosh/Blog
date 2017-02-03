@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Articles;
-use \ArticlesQuery;
+use \Contact;
+use \ContactQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'articles' table.
+ * This class defines the structure of the 'contact' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ArticlesTableMap extends TableMap
+class ContactTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class ArticlesTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.ArticlesTableMap';
+    const CLASS_NAME = '.Map.ContactTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class ArticlesTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'articles';
+    const TABLE_NAME = 'contact';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Articles';
+    const OM_CLASS = '\\Contact';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Articles';
+    const CLASS_DEFAULT = 'Contact';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 12;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,67 +69,37 @@ class ArticlesTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 12;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'articles.id';
+    const COL_ID = 'contact.id';
 
     /**
      * the column name for the user_id field
      */
-    const COL_USER_ID = 'articles.user_id';
+    const COL_USER_ID = 'contact.user_id';
 
     /**
-     * the column name for the title field
+     * the column name for the name field
      */
-    const COL_TITLE = 'articles.title';
+    const COL_NAME = 'contact.name';
 
     /**
-     * the column name for the url field
+     * the column name for the email field
      */
-    const COL_URL = 'articles.url';
+    const COL_EMAIL = 'contact.email';
 
     /**
-     * the column name for the content field
+     * the column name for the message field
      */
-    const COL_CONTENT = 'articles.content';
+    const COL_MESSAGE = 'contact.message';
 
     /**
-     * the column name for the tags field
+     * the column name for the date field
      */
-    const COL_TAGS = 'articles.tags';
-
-    /**
-     * the column name for the likes field
-     */
-    const COL_LIKES = 'articles.likes';
-
-    /**
-     * the column name for the img_path field
-     */
-    const COL_IMG_PATH = 'articles.img_path';
-
-    /**
-     * the column name for the img_frame field
-     */
-    const COL_IMG_FRAME = 'articles.img_frame';
-
-    /**
-     * the column name for the comments_allowed field
-     */
-    const COL_COMMENTS_ALLOWED = 'articles.comments_allowed';
-
-    /**
-     * the column name for the modified field
-     */
-    const COL_MODIFIED = 'articles.modified';
-
-    /**
-     * the column name for the created field
-     */
-    const COL_CREATED = 'articles.created';
+    const COL_DATE = 'contact.date';
 
     /**
      * The default string format for model objects of the related table
@@ -143,11 +113,11 @@ class ArticlesTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Title', 'Url', 'Content', 'Tags', 'Likes', 'ImgPath', 'ImgFrame', 'CommentsAllowed', 'Modified', 'Created', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'title', 'url', 'content', 'tags', 'likes', 'imgPath', 'imgFrame', 'commentsAllowed', 'modified', 'created', ),
-        self::TYPE_COLNAME       => array(ArticlesTableMap::COL_ID, ArticlesTableMap::COL_USER_ID, ArticlesTableMap::COL_TITLE, ArticlesTableMap::COL_URL, ArticlesTableMap::COL_CONTENT, ArticlesTableMap::COL_TAGS, ArticlesTableMap::COL_LIKES, ArticlesTableMap::COL_IMG_PATH, ArticlesTableMap::COL_IMG_FRAME, ArticlesTableMap::COL_COMMENTS_ALLOWED, ArticlesTableMap::COL_MODIFIED, ArticlesTableMap::COL_CREATED, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'title', 'url', 'content', 'tags', 'likes', 'img_path', 'img_frame', 'comments_allowed', 'modified', 'created', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Name', 'Email', 'Message', 'Date', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'name', 'email', 'message', 'date', ),
+        self::TYPE_COLNAME       => array(ContactTableMap::COL_ID, ContactTableMap::COL_USER_ID, ContactTableMap::COL_NAME, ContactTableMap::COL_EMAIL, ContactTableMap::COL_MESSAGE, ContactTableMap::COL_DATE, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'name', 'email', 'message', 'date', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -157,11 +127,11 @@ class ArticlesTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Title' => 2, 'Url' => 3, 'Content' => 4, 'Tags' => 5, 'Likes' => 6, 'ImgPath' => 7, 'ImgFrame' => 8, 'CommentsAllowed' => 9, 'Modified' => 10, 'Created' => 11, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'title' => 2, 'url' => 3, 'content' => 4, 'tags' => 5, 'likes' => 6, 'imgPath' => 7, 'imgFrame' => 8, 'commentsAllowed' => 9, 'modified' => 10, 'created' => 11, ),
-        self::TYPE_COLNAME       => array(ArticlesTableMap::COL_ID => 0, ArticlesTableMap::COL_USER_ID => 1, ArticlesTableMap::COL_TITLE => 2, ArticlesTableMap::COL_URL => 3, ArticlesTableMap::COL_CONTENT => 4, ArticlesTableMap::COL_TAGS => 5, ArticlesTableMap::COL_LIKES => 6, ArticlesTableMap::COL_IMG_PATH => 7, ArticlesTableMap::COL_IMG_FRAME => 8, ArticlesTableMap::COL_COMMENTS_ALLOWED => 9, ArticlesTableMap::COL_MODIFIED => 10, ArticlesTableMap::COL_CREATED => 11, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'title' => 2, 'url' => 3, 'content' => 4, 'tags' => 5, 'likes' => 6, 'img_path' => 7, 'img_frame' => 8, 'comments_allowed' => 9, 'modified' => 10, 'created' => 11, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Name' => 2, 'Email' => 3, 'Message' => 4, 'Date' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'name' => 2, 'email' => 3, 'message' => 4, 'date' => 5, ),
+        self::TYPE_COLNAME       => array(ContactTableMap::COL_ID => 0, ContactTableMap::COL_USER_ID => 1, ContactTableMap::COL_NAME => 2, ContactTableMap::COL_EMAIL => 3, ContactTableMap::COL_MESSAGE => 4, ContactTableMap::COL_DATE => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'name' => 2, 'email' => 3, 'message' => 4, 'date' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -174,25 +144,19 @@ class ArticlesTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('articles');
-        $this->setPhpName('Articles');
+        $this->setName('contact');
+        $this->setPhpName('Contact');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Articles');
+        $this->setClassName('\\Contact');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
-        $this->addColumn('title', 'Title', 'VARCHAR', false, 255, null);
-        $this->addColumn('url', 'Url', 'VARCHAR', false, 255, null);
-        $this->addColumn('content', 'Content', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('tags', 'Tags', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('likes', 'Likes', 'SMALLINT', false, null, null);
-        $this->addColumn('img_path', 'ImgPath', 'VARCHAR', false, 100, null);
-        $this->addColumn('img_frame', 'ImgFrame', 'VARCHAR', false, 25, null);
-        $this->addColumn('comments_allowed', 'CommentsAllowed', 'BOOLEAN', false, 1, null);
-        $this->addColumn('modified', 'Modified', 'TIMESTAMP', false, null, '0000-00-00 00:00:00');
-        $this->addColumn('created', 'Created', 'TIMESTAMP', false, null, '0000-00-00 00:00:00');
+        $this->addColumn('name', 'Name', 'VARCHAR', false, 155, null);
+        $this->addColumn('email', 'Email', 'VARCHAR', false, 155, null);
+        $this->addColumn('message', 'Message', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('date', 'Date', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -201,20 +165,6 @@ class ArticlesTableMap extends TableMap
     public function buildRelations()
     {
     } // buildRelations()
-
-    /**
-     *
-     * Gets the list of behaviors registered for this table
-     *
-     * @return array Associative array (name => parameters) of behaviors
-     */
-    public function getBehaviors()
-    {
-        return array(
-            'timestampable' => array('create_column' => 'created', 'update_column' => 'modified', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
-            'sluggable' => array('slug_column' => 'url', 'slug_pattern' => '/blog/{Title}', 'replace_pattern' => '/[^\w]+/u', 'replacement' => '-', 'separator' => '/', 'permanent' => 'true', 'scope_column' => '', 'unique_constraint' => 'true', ),
-        );
-    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -273,7 +223,7 @@ class ArticlesTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ArticlesTableMap::CLASS_DEFAULT : ArticlesTableMap::OM_CLASS;
+        return $withPrefix ? ContactTableMap::CLASS_DEFAULT : ContactTableMap::OM_CLASS;
     }
 
     /**
@@ -287,22 +237,22 @@ class ArticlesTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Articles object, last column rank)
+     * @return array           (Contact object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ArticlesTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ArticlesTableMap::getInstanceFromPool($key))) {
+        $key = ContactTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ContactTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ArticlesTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ContactTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ArticlesTableMap::OM_CLASS;
-            /** @var Articles $obj */
+            $cls = ContactTableMap::OM_CLASS;
+            /** @var Contact $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ArticlesTableMap::addInstanceToPool($obj, $key);
+            ContactTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -325,18 +275,18 @@ class ArticlesTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ArticlesTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ArticlesTableMap::getInstanceFromPool($key))) {
+            $key = ContactTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ContactTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Articles $obj */
+                /** @var Contact $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ArticlesTableMap::addInstanceToPool($obj, $key);
+                ContactTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -357,31 +307,19 @@ class ArticlesTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ArticlesTableMap::COL_ID);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_TITLE);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_URL);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_CONTENT);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_TAGS);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_LIKES);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_IMG_PATH);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_IMG_FRAME);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_COMMENTS_ALLOWED);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_MODIFIED);
-            $criteria->addSelectColumn(ArticlesTableMap::COL_CREATED);
+            $criteria->addSelectColumn(ContactTableMap::COL_ID);
+            $criteria->addSelectColumn(ContactTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(ContactTableMap::COL_NAME);
+            $criteria->addSelectColumn(ContactTableMap::COL_EMAIL);
+            $criteria->addSelectColumn(ContactTableMap::COL_MESSAGE);
+            $criteria->addSelectColumn(ContactTableMap::COL_DATE);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.user_id');
-            $criteria->addSelectColumn($alias . '.title');
-            $criteria->addSelectColumn($alias . '.url');
-            $criteria->addSelectColumn($alias . '.content');
-            $criteria->addSelectColumn($alias . '.tags');
-            $criteria->addSelectColumn($alias . '.likes');
-            $criteria->addSelectColumn($alias . '.img_path');
-            $criteria->addSelectColumn($alias . '.img_frame');
-            $criteria->addSelectColumn($alias . '.comments_allowed');
-            $criteria->addSelectColumn($alias . '.modified');
-            $criteria->addSelectColumn($alias . '.created');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.email');
+            $criteria->addSelectColumn($alias . '.message');
+            $criteria->addSelectColumn($alias . '.date');
         }
     }
 
@@ -394,7 +332,7 @@ class ArticlesTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ArticlesTableMap::DATABASE_NAME)->getTable(ArticlesTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ContactTableMap::DATABASE_NAME)->getTable(ContactTableMap::TABLE_NAME);
     }
 
     /**
@@ -402,16 +340,16 @@ class ArticlesTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ArticlesTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ArticlesTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ArticlesTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ContactTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(ContactTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new ContactTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Articles or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Contact or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Articles object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Contact object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -422,27 +360,27 @@ class ArticlesTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ArticlesTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ContactTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Articles) { // it's a model object
+        } elseif ($values instanceof \Contact) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ArticlesTableMap::DATABASE_NAME);
-            $criteria->add(ArticlesTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(ContactTableMap::DATABASE_NAME);
+            $criteria->add(ContactTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = ArticlesQuery::create()->mergeWith($criteria);
+        $query = ContactQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ArticlesTableMap::clearInstancePool();
+            ContactTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ArticlesTableMap::removeInstanceFromPool($singleval);
+                ContactTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -450,20 +388,20 @@ class ArticlesTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the articles table.
+     * Deletes all rows from the contact table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ArticlesQuery::create()->doDeleteAll($con);
+        return ContactQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Articles or Criteria object.
+     * Performs an INSERT on the database, given a Contact or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Articles object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Contact object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -472,22 +410,22 @@ class ArticlesTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ArticlesTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ContactTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Articles object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Contact object
         }
 
-        if ($criteria->containsKey(ArticlesTableMap::COL_ID) && $criteria->keyContainsValue(ArticlesTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ArticlesTableMap::COL_ID.')');
+        if ($criteria->containsKey(ContactTableMap::COL_ID) && $criteria->keyContainsValue(ContactTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ContactTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = ArticlesQuery::create()->mergeWith($criteria);
+        $query = ContactQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -496,7 +434,7 @@ class ArticlesTableMap extends TableMap
         });
     }
 
-} // ArticlesTableMap
+} // ContactTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ArticlesTableMap::buildTableMap();
+ContactTableMap::buildTableMap();

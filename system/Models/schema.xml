@@ -8,6 +8,7 @@
     <column name="password" phpName="Password" type="VARCHAR" size="100"/>
     <column name="email" phpName="Email" type="VARCHAR" size="150"/>
     <column name="age" phpName="Age" type="INTEGER" size="3"/>
+	<column name="phone" phpName="Phone" type="VARCHAR" size="15"/>
     <column name="gender" phpName="Gender" type="CHAR"/>
     <column name="status" phpName="Status" type="TINYINT"/>
     <column name="newsletter" phpName="Newsletter" type="BOOLEAN" size="1"/>
@@ -82,4 +83,16 @@
       <parameter name="Engine" value="MyISAM"/>
     </vendor>
   </table>
+  <table name="contact" idMethod="native" phpName="Contact">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="155"/>
+    <column name="email" phpName="Email" type="VARCHAR" size="155"/>
+    <column name="message" phpName="Message" type="LONGVARCHAR"/>
+    <column name="date" phpName="Date" type="TIMESTAMP"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+
 </database>
