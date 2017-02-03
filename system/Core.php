@@ -7,11 +7,34 @@
  * @link : https://www.cylo.ro
  * @copyright : https://opensource.org/licenses/MIT
  *
- * @version 1.0: 23 January 2017
- * @version 2: 25 January 2017
+ * @version 1.0: 23 January 2017 {commit b9d9878bd6b8bb7bbf185fdf77ea8efa3057f28c}
+ * 
+ * @version 2: 25 January 2017 {commit d0b3cc98289a21472d10dede53d4285df52bea59}
  *			added link resolver
- * @version 3: 26 January 2017
+ *			
+ * @version 3: 26 January 2017 {commit c2fe8d0a7bb77ba93c0dcd5d4ff9385c409f261c}
  *			added cache capabilities for HTML content
+ *			
+ * @version 4: 29 January 2017 {commit 40dc3c3f0d41e2436f337b859db6b2db0973dc86}
+ *			added XML support
+ *			
+ * @version 5: 30 January 2017 {commit 40eb68039be39ba1510da6876302c7d47d8294b3}
+ *			added user rights manager
+ *			added template viewer based on user rights
+ *			added API support for presentation()
+ * @version 5.1: 30 January 2017 {commit bc5a506460c573f384d4e72325d14f5959a76607}
+ * 			implemented security on incoming data from client and sanitize Output
+ * @version 5.2: 31 January 2017 {commit b94ad2c24053d9f96dd3036c47436373b852a7f3}
+ * 			added redirect to URI along with error message for client
+ * @version 5.3: 31 January 2017 {commit 3060d75fb33e4707537217988404859399963094}
+ * 			bug fix for redirection in loop
+ * 			added user permission option for keep-logged in
+
+ * @version 6: 31 January 2017 {commit f1b9b1c19d9ecbab5bbad948afede6d05c792711}
+ * 			added
+ * @version 6.1: 3 February 2017
+ * 			fix $Response->alert type cast only to array
+ *			
 **/
 namespace system;
 
@@ -238,7 +261,7 @@ class Core{
 			foreach($alerts as $type => $alert){
 				
 				if(!is_array($alert))
-					continue;
+					$alert = array($alert);
 					
 				foreach($alert as $message){
 					switch((string)$type){
