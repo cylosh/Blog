@@ -33,13 +33,14 @@ define("MENU_ACTIVE", 'contact');
 							<h3 class="title-form-contact">
 								<span>//</span> SEND ME YOUR MESSAGE
 							</h3>
+							<?php if(isset($this->Alert)) print $this->Alert; ?>
 							<form role="form">
 								<div class="row">
 									<div class="form-group col-md-4">
-										<input class="form-control input-lg" placeholder="Name..">
+										<input class="form-control input-lg" placeholder="Name.." <?php if(isset($this->safeOutput['data']['name'])) echo 'value="'.$this->safeOutput['data']['name'].'"'; ?>>
 									</div>
 									<div class="form-group col-md-4">
-										<input class="form-control input-lg" placeholder="Email..">
+										<input class="form-control input-lg" placeholder="Email.." <?php if(isset($this->safeOutput['data']['email'])) echo 'value="'.$this->safeOutput['data']['email'].'"'; ?>>
 									</div>
 									<div class="form-group col-md-4">
 										<input class="form-control input-lg" placeholder="Phone..">
