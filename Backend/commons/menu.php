@@ -29,7 +29,7 @@
                <a href="#" class="dropdown-toggle active" data-toggle="dropdown">ADMIN PANEL <b class="caret"></b></a>
                <ul class="dropdown-menu">
                   <li><a href="backend">NEW BLOG</a></li>
-                  <li><a href="backend/listArticles">ARTICLES</a></li>
+                  <li><a href="backend/ListArticles">ARTICLES</a></li>
                </ul>
             </li>
          </ul>

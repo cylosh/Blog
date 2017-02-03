@@ -130,7 +130,7 @@ class Backend extends Core{
     }
 	
 	
-    public function listArticles(){
+    public function ListArticles(){
 		$this->HtmlView(array("Backend", "list"));
 
 		switch($this->userInput['type']){
