@@ -424,6 +424,9 @@ class Core{
 		){
 			$_SESSION['authorise'] = true;
 			$this->Response['error-redirect'] = array('redir'=>'/login/out','toCall'=>'login/out', 'message'=>'Your session expired. Please re-login!');
+			
+			unset($_SESSION['user_session_start']);
+			
 			return false;
 		}elseif(isset($_SESSION['user_session_start']) && isset($_SESSION['user_session_interval']))
 			$_SESSION['user_session_start']	= time()+$_SESSION['user_session_interval'];
