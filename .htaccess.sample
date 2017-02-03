@@ -7,10 +7,17 @@ ServerSignature Off
 </Files>
 
 <IfModule mod_headers.c>
-	<FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
-		Header set Access-Control-Allow-Origin "*"
-	</FilesMatch>
+    <FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
 </IfModule>
+Options All -Indexes
+ServerSignature Off
+
+<Files .htaccess>
+ order allow,deny
+ deny from all
+</Files>
 
 # BEGIN GZIP
 <IfModule mod_deflate.c>
@@ -19,6 +26,31 @@ ServerSignature Off
 	</IfModule>
 </IfModule>
 # END GZIP
+# START CACHING
+<FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
+	Header set Cache-Control "max-age=604800, public, must-revalidate"
+</FilesMatch>
+
+<FilesMatch "\.(js|css|swf)$">
+	Header set Cache-Control "max-age=604800, must-revalidate"
+</FilesMatch>
+
+# Turn off the ETags
+Header unset ETag
+FileETag None
+
+# Turn off the Last Modified header except for html docs
+<FilesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css)$">
+Header unset Last-Modified
+</FilesMatch>
+
+# END CACHING
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>
 
 # edit RewriteBase; don't modify unless 
 # you know what you're doing
@@ -34,11 +66,13 @@ RewriteRule ^cached-assets/(.*)$ assets/$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3&json" [L,QSA]
+RewriteRule ^api/([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff\-]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff\-]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3&json" [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3" [L,QSA]
+RewriteRule ^([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff\-]*)/?([a-zA-Z_\x7f-\xff]{0,1}[a-zA-Z0-9_\x7f-\xff\-]*)(?:/?|/(\d*))$ "main.php?action=$1&met=$2&id=$3" [L,QSA]
+
+RewriteRule  ^blog(.*)$  Blog$1 [L,QSA]
 </IfModule>
 # edit RewriteBase; don't modify unless 
 # you know what you're doing

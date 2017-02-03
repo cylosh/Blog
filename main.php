@@ -235,7 +235,8 @@ require_once 'vendor/propel/config.php';
 			
 			$class = __NAMESPACE__ . '\\' . $class; 
 		} 
-		
+		$class = str_replace('-', '', $class);
+
 		return new $class; 
 	}
 	function autoLoader ($className) {
@@ -289,6 +290,7 @@ require_once 'vendor/propel/config.php';
 
     // Check to see the method exists or its accessible
     $allowedCalls = get_class_methods($controller);
+	$method = str_replace('-', '', $method);
 	$exceptions = array('blog'); /* Cases where the Class has a __call and does the URL routing itself
 								  * eg. Articles where sluggish url is used and for duplicates it adds an /NR to the url
 								  * so it confuses to a proper method called or doesn't contains any spaces
