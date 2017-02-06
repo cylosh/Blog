@@ -417,6 +417,11 @@ class Core{
 			unset($_SESSION['authorise']);
 			return;
 		}
+		
+		// Allow access if module has no permission set
+		if(!property_exists($this, 'permissions') OR empty($this::$permissions))
+			return true;
+		
 		// Log out user after USER_SESSION
 		if(isset($_SESSION['user_session_start'])
 			&&
@@ -432,11 +437,7 @@ class Core{
 			$_SESSION['user_session_start']	= time()+$_SESSION['user_session_interval'];
 		
 		
-		
-		// Allow access if module has no permission set
-		if(!property_exists($this, 'permissions') OR empty($this::$permissions))
-			return true;
-		
+		// Check user rights	
 		$perms = explode(',', $this::$permissions);
 
 		if (in_array("admin", $perms)) {
@@ -449,6 +450,7 @@ class Core{
 			}
 		}
 		if (in_array("user", $perms)) {
+			
 			if(isset($_SESSION['is_user']) && $_SESSION['is_user'] === TRUE)
 				return true;
 			else{
