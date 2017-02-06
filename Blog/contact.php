@@ -34,19 +34,19 @@ define("MENU_ACTIVE", 'contact');
 								<span>//</span> SEND ME YOUR MESSAGE
 							</h3>
 							<?php if(isset($this->Alert)) print $this->Alert; ?>
-							<form role="form">
+							<form action="contact/send" method="POST">
 								<div class="row">
 									<div class="form-group col-md-4">
-										<input class="form-control input-lg" placeholder="Name.." <?php if(isset($this->safeOutput['data']['name'])) echo 'value="'.$this->safeOutput['data']['name'].'"'; ?>>
+										<input class="form-control input-lg" name="name" placeholder="Name.." <?php if(isset($this->safeOutput['data']['name'])) echo 'value="'.$this->safeOutput['data']['name'].'"'; ?>>
 									</div>
 									<div class="form-group col-md-4">
-										<input class="form-control input-lg" placeholder="Email.." <?php if(isset($this->safeOutput['data']['email'])) echo 'value="'.$this->safeOutput['data']['email'].'"'; ?>>
+										<input class="form-control input-lg" name="email" placeholder="Email.." <?php if(isset($this->safeOutput['data']['email'])) echo 'value="'.$this->safeOutput['data']['email'].'"'; ?>>
 									</div>
 									<div class="form-group col-md-4">
-										<input class="form-control input-lg" placeholder="Phone..">
+										<input class="form-control input-lg" name="phone" placeholder="Phone..">
 									</div>
 									<div class="form-group col-md-12">
-										<textarea class="form-control" rows="10" placeholder="Messages.."></textarea>
+										<textarea class="form-control" name="message" rows="10" placeholder="Messages.."></textarea>
 									</div>
 									<div class="form-group col-md-12">
 										<button class="btn btn-lg btn-default"><i class="fa fa-envelope"></i> SEND ME</button>
