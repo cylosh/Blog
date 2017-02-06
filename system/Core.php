@@ -124,7 +124,7 @@ class Core{
 		$ignores = array('http', 'skype');
 		
 		$newhtml = '';
-		while (preg_match('/href=("|\')(.*?)("|\')/', $html, $link, PREG_OFFSET_CAPTURE)) {
+		while (preg_match('/(?:href|action)=("|\')(.*?)("|\')/', $html, $link, PREG_OFFSET_CAPTURE)) {
 			
 			$newhtml .= substr($html,0, $link[2][1]);
 			$html = substr($html, $link[2][1]+strlen($link[2][0]));
