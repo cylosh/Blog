@@ -8,3 +8,5 @@ error_log
 *.log
 /vendor/
 /system/Logs/
+/assets/images/content/**
+/assets/images/user/**
