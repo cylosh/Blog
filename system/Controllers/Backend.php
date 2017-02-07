@@ -155,7 +155,7 @@ class Backend extends Core{
 			$article_id = $this->RequestID;
 		
 		if(empty($article_id))
-			return $this->Response['error-redirect'] = array('redir'=>'/backend/listArticles','toCall'=>'backend/listArticles', 'message'=>'Could not delete article: invalid id!');
+			return $this->Response['error-redirect'] = array('redir'=>'/backend/List-Articles','toCall'=>'backend/ListArticles', 'message'=>'Could not delete article: invalid id!');
 		
 		
 		$AccDBQ = new \ArticlesQuery();
@@ -164,12 +164,19 @@ class Backend extends Core{
 	
 		
 		if(is_null($article)){
-			return $this->Response['error-redirect'] = array('redir'=>'/backend/listArticles','toCall'=>'backend/listArticles', 'message'=>'Article '.$article_id.' for deletion not found!');
+			return $this->Response['error-redirect'] = array('redir'=>'/backend/List-Articles','toCall'=>'backend/ListArticles', 'message'=>'Article '.$article_id.' for deletion not found!');
 		}
-		$title = $article->getTitle();
-		$delete = $article->delete();
 		
-		return $this->Response['error-redirect'] = array('redir'=>'/backend/listArticles','toCall'=>'backend/listArticles', 'message'=>'Article '.$title.' <b>has been deleted!</b>');
+		$article->delete();
+		
+		// delete picture
+		if(!empty($article->getImgPath()))
+			$picture_path = realpath(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$article->getImgPath());
+		
+		if(!empty($picture_path))
+			unlink($picture_path);
+		
+		return $this->Response['error-redirect'] = array('redir'=>'/backend/List-Articles','toCall'=>'backend/ListArticles', 'message'=>'Article '.$article->getTitle().' <b>has been deleted!</b>');
 		
 		
 	}
