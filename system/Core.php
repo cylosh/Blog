@@ -264,6 +264,9 @@ class Core{
 					$alert = array($alert);
 					
 				foreach($alert as $message){
+					
+					$message = htmlspecialchars($message, ENT_NOQUOTES);
+					
 					switch((string)$type){
 						
 						case "alert":
@@ -304,7 +307,7 @@ class Core{
 			case 'warning': $body .= '<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>'; break;
 			case 'danger': $body .= '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'; break;
 		}
-		$body .= '&nbsp;<span style="font-size:120%">'.preg_replace(array('#&lt;(/?(?:pre|b|em|u|ul|br|a.*?))&gt;#', '#&amp;#'), array('<\1>', "&"), htmlspecialchars($message, ENT_NOQUOTES)).'</h6>';
+		$body .= '&nbsp;<span style="font-size:120%">'.preg_replace(array('#&lt;(/?(?:pre|b|em|u|ul|br|a.*?))&gt;#', '#&amp;#'), array('<\1>', "&"), $message).'</h6>';
 		$body .= '</div>';
 
 		return $body;
@@ -569,12 +572,14 @@ class Core{
 				exit;
 			}
 			
-			if(isset($this->Response['error']) && is_array($this->Response['error']))
-				$this->Alert = $this->HTMLAlerts($this->Response['error']);
-				
 			 // ENABLE COMPRESSION for HTML
 			if (ob_get_length()) ob_clean();
 			ob_start("ob_gzhandler");
+			
+			if(isset($this->Response['error']) && is_array($this->Response['error'])){
+				$this->Alert = $this->HTMLAlerts($this->Response['error']);
+				http_response_code(406);
+			}
 			
 			if(file_exists($this->HTMLPath)) include $this->HTMLPath; 
 			
