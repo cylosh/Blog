@@ -36,9 +36,11 @@ function onSubmitContact() {
 		jXHR = EM.send(formData);
 		jXHR.complete(function(resp) {
 			
-			$('#contact').before(Alerts.parse(resp.responseJSON));
+			$('#contact').before($(Alerts.parse(resp.responseJSON)).fadeIn(150));
 			
 			$("#newContact, #sendContact").toggle();
+			
+			$("div[class~='alert']").delay(3000).fadeOut("slow");
 
 		});
 		
