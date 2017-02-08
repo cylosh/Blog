@@ -34,7 +34,7 @@ define("MENU_ACTIVE", 'contact');
 								<span>//</span> SEND ME YOUR MESSAGE
 							</h3>
 							<?php if(isset($this->Alert)) print $this->Alert; ?>
-							<form action="contact/send" method="POST">
+							<form id="contact" action="contact/send" method="POST">
 								<div class="row">
 									<div class="form-group col-md-4">
 										<input class="form-control input-lg" name="name" placeholder="Name.." <?php if(isset($this->safeOutput['data']['name'])) echo 'value="'.$this->safeOutput['data']['name'].'"'; ?>>
@@ -49,7 +49,8 @@ define("MENU_ACTIVE", 'contact');
 										<textarea class="form-control" name="message" rows="10" placeholder="Messages.."></textarea>
 									</div>
 									<div class="form-group col-md-12">
-										<button class="btn btn-lg btn-default"><i class="fa fa-envelope"></i> SEND ME</button>
+										<button class="btn btn-lg btn-default" id="newContact"><i class="fa fa-envelope"></i> SEND ME</button>
+										<button class="btn btn-lg btn-warning collapse" id="sendContact"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Sending...</button>
 									</div>
 								</div>
 							</form>
@@ -87,6 +88,8 @@ define("MENU_ACTIVE", 'contact');
 
 	<!-- start:javascript -->
 	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,particles/winter.js,particles/min.js,particles/init.js"></script>
+	  <script src="cached-assets/js/services/alerts.js,models/Contact.js,services/SendContact.js"></script>
+
 	<!-- end:javascript -->
 
 </body>
