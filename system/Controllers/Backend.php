@@ -129,7 +129,6 @@ class Backend extends Core{
 		}
     }
 	
-	
     public function ListArticles(){
 		$this->HtmlView(array("Backend", "list"));
 

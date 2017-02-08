@@ -15,7 +15,7 @@ class Contact extends Core{
     
     public function index(){
 		switch($this->userInput['type']){
-			case "C": //login verify
+			case "R": //login verify
 				
 				if(isset($_SESSION['is_user']) && !empty($_SESSION['userID'])){
 					
@@ -55,8 +55,17 @@ class Contact extends Core{
 					$this->Response['error']['warn'][] = 'Oops the message is empty!';
 				else
 					$name = filter_var ($this->userInput['data']['name'], FILTER_SANITIZE_STRING);
-					
-					
+				
+				if(!isset($this->Response['error'])
+				   || !is_array($this->Response['error'])
+				   || count($this->Response['error']) == 0
+				   )
+					$this->Response['success'] = 'Your message was sent successfully!';
+				
+				break;
+			
+			case "R":
+				$this->index();
 				break;
 			
 			default:
