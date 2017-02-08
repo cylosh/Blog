@@ -48,13 +48,18 @@ class Contact extends Core{
 				
 				if(empty($this->userInput['data']['name']))
 					$this->Response['error']['warn'][] = 'Oops your name is missing!';
+				elseif(strlen($this->userInput['data']['name']) < 3)
+					$this->Response['error']['warn'][] = 'Oops your name is too short!';
 				else
 					$name = filter_var ($this->userInput['data']['name'], FILTER_SANITIZE_STRING);
 					
 				if(empty($this->userInput['data']['message']))
 					$this->Response['error']['warn'][] = 'Oops the message is empty!';
+				elseif(strlen($this->userInput['data']['message']) < 100)
+					$this->Response['error']['warn'][] = 'Oops your message needs to be longer than 100 characters!';
 				else
 					$name = filter_var ($this->userInput['data']['name'], FILTER_SANITIZE_STRING);
+				
 				
 				if(!isset($this->Response['error'])
 				   || !is_array($this->Response['error'])
