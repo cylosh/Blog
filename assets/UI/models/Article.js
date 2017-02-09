@@ -32,7 +32,6 @@ Article.prototype.add = function(formData){
 			$('#error-ajax').show();
 			$('#error-ajax-message').show();
 			$('#error-ajax-message').html(response.error.alert);
-			console.log(response.error.alert);
         }
     }).complete(function() {
 		waitingDialog.hide();
