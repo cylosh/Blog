@@ -14,6 +14,7 @@
  * 			added XSS prevention and Session protection
 */
 error_reporting(E_ALL & ~E_DEPRECATED);
+ini_set("display_errors", false);
 
 ini_set('zlib.output_compression_level', 1);
 
@@ -71,10 +72,26 @@ require("config.php");
 require 'vendor/autoload.php';
 require_once 'vendor/propel/config.php';
 
-
 	/**
 	 * Exception & Error Handlers
 	 */
+	function DB_Logger($exception, $error) {
+		
+		// propel DB errors
+		if($exception instanceof Propel\Runtime\Exception\PropelException){
+			error_log(
+				str_repeat("=", 10).PHP_EOL.date('Y-m-d H:i:s').PHP_EOL."\t".$exception->getMessage()."\n".var_export($error->toArray(), true)." in ".$exception->getFile()." on line ".$exception->getLine().PHP_EOL,
+				3,
+				dirname(__FILE__).DIRECTORY_SEPARATOR."system".DIRECTORY_SEPARATOR."Logs".DIRECTORY_SEPARATOR."Database-errors.log",
+				1
+			);
+			
+			return true;
+		}
+		
+		
+		return false;
+	}
 	function default_exception_handler(\Exception $e){
 		
 		$severity = "";
@@ -142,16 +159,17 @@ require_once 'vendor/propel/config.php';
 		error_log(
 			str_repeat("=", 10).PHP_EOL.date('Y-m-d H:i:s').PHP_EOL."\t".$fullTrace.$severity.' thrown within the exception handler. Message: '.$e->getMessage()." on line ".$e->getLine().PHP_EOL,
 			3,
-			dirname(__FILE__).DIRECTORY_SEPARATOR."system".DIRECTORY_SEPARATOR."Logs".DIRECTORY_SEPARATOR."Exceptions-errors.log", 1
+			dirname(__FILE__).DIRECTORY_SEPARATOR."system".DIRECTORY_SEPARATOR."Logs".DIRECTORY_SEPARATOR."Exceptions-errors.log",
+			1
 		);
 		http_response_code(500);
 		header("Location: ".SITE_URI."/error/500");
+		exit;
 	}
 	function exceptions_error_handler($severity, $message, $filename, $lineno) {
 		if (error_reporting() == 0) {
 			return;
 		}
-		
 		if (error_reporting() & $severity) {
 			throw new \ErrorException($message, 0, $severity, $filename, $lineno);
 		}
