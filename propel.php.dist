@@ -25,7 +25,8 @@ return [
                     'user' => '',
                     'password' => '',
                     'settings' => [
-                        'charset' => 'utf8'
+                        'charset' => 'utf8mb4',
+						'queries' => ['SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, COLLATION_CONNECTION = utf8mb4_unicode_ci, COLLATION_DATABASE = utf8mb4_unicode_ci, COLLATION_SERVER = utf8mb4_unicode_ci']
                     ]
                 ]
             ]
