@@ -2,6 +2,7 @@
 namespace system\Controllers;
 
 use \system\Core;
+use \Propel\Runtime\Exception\PropelException;
 
 defined("SITE_URI") OR die(header("Location: error/403"));
 
@@ -58,14 +59,32 @@ class Contact extends Core{
 				elseif(strlen($this->userInput['data']['message']) < 100)
 					$this->Response['error']['warn'][] = 'Oops your message needs to be longer than 100 characters!';
 				else
-					$name = filter_var ($this->userInput['data']['name'], FILTER_SANITIZE_STRING);
-				
+					$message = filter_var ($this->userInput['data']['message'], FILTER_SANITIZE_STRING);
+			
+				$phone = empty($this->userInput['data']['phone']) ? '' : $this->userInput['data']['phone'];
+				$user = empty($_SESSION['userID']) ? '' : $_SESSION['userID'];
 				
 				if(!isset($this->Response['error'])
 				   || !is_array($this->Response['error'])
 				   || count($this->Response['error']) == 0
-				   )
-					$this->Response['success'] = 'Your message was sent successfully!';
+				   ){
+					
+					try{
+						$db_contact = new \Contact();
+						$db_contact->setUserId($user);
+						$db_contact->setName($name);
+						$db_contact->setEmail($email);
+						$db_contact->setMessage($message);
+						$db_contact->setDate("now");
+						$db_contact->save();
+						$this->Response['success'] = 'Your message was sent successfully!';
+
+					}catch(PropelException $e){
+						$this->Response['error']['alert'] = 'Oops database error, please try again later!';
+						
+						DB_Logger($e, $db_contact);
+					}
+				   }
 				
 				break;
 			
