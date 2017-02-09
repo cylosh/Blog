@@ -27,14 +27,14 @@ define("MENU_ACTIVE", 'contact');
 						</div>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row" id="send">
 					<div class="col-lg-8 col-md-8 col-sm-7 col-xs-12">
 						<div class="form-contact">
 							<h3 class="title-form-contact">
 								<span>//</span> SEND ME YOUR MESSAGE
 							</h3>
 							<?php if(isset($this->Alert)) print $this->Alert; ?>
-							<form id="contact" action="contact/send" method="POST">
+							<form id="contact" action="contact/send" method="POST" id="form">
 								<div class="row">
 									<div class="form-group col-md-4">
 										<input class="form-control input-lg" name="name" placeholder="Name.." <?php if(isset($this->safeOutput['data']['name'])) echo 'value="'.$this->safeOutput['data']['name'].'"'; ?>>
