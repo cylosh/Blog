@@ -15,7 +15,7 @@ function onSubmitContact() {
 		
 		var name = $("input[name='name']");
 		var email = $("input[name='email']");
-		var phone = $("input[name='name']");
+		var phone = $("input[name='phone']");
 		var message = $("textarea[name='message']");
 		
 		//prepare the form data to be sent to server
@@ -32,18 +32,34 @@ function onSubmitContact() {
 		});
 		
 		$("#newContact, #sendContact").toggle();
-		
+
 		jXHR = EM.send(formData);
-		jXHR.complete(function(resp) {
+		jXHR.done(function(data, textStatus, resp) {
+			$('#contact').before($(Alerts.parse(resp.responseJSON)).fadeIn(150));
+			console.log(resp);
+			console.log(resp.responseJSON);
+			$("div[class~='alert']").delay(3000).fadeOut("slow");
+	
+			$(name).val(''),$(email).val(''),$(phone).val(''),$(message).val('');
+		})
+		.fail(function(resp) {
 			
 			$('#contact').before($(Alerts.parse(resp.responseJSON)).fadeIn(150));
 			
-			$("#newContact, #sendContact").toggle();
-			
-			$("div[class~='alert']").delay(3000).fadeOut("slow");
+			$("div[class~='alert']").delay(10000).fadeOut("slow");
 
+			$('#newContact').prop('disabled', true);
+			setTimeout(function ()
+			{
+				$('#newContact').prop('disabled', false);
+			}, 3000);
+			
 		});
 		
+		$("#newContact, #sendContact").toggle();
+		window.location.hash = 'send';
+		window.location.hash = 'form';
+
 
     
 	});
