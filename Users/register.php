@@ -19,7 +19,7 @@ define("HEADER_SUBTITLE", 'For Cylosh Services');
 	<div id="register-alt">
 		<div class="container">
 			<div class="box-register">
-				<form action="register">
+				<form action="register/create">
 					<div class="text-center">
 						<h3>Register a new account</h3>
 						<small>Already Signed Up? Click <a href="login">Sign In</a> to login your account.</small>
@@ -54,7 +54,7 @@ define("HEADER_SUBTITLE", 'For Cylosh Services');
 					    </label>
 					</div>
 					<div class="form-group">
-						<button class="btn btn-warning btn-block">LOGIN</button>
+						<button class="btn btn-warning btn-block">REGISTER</button>
 					</div>
 				</form>
 			</div>
