@@ -42,7 +42,8 @@ class Blog extends Core{
 					
 					$this->Response = $art->blog($dbarticle['Id']);
 					
-				}
+				}else
+					return $this->HtmlView(array("Blog", "index"));
 				
 				break;
 		
