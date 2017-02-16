@@ -32,9 +32,19 @@
 
  * @version 6: 31 January 2017 {commit f1b9b1c19d9ecbab5bbad948afede6d05c792711}
  * 			added
- * @version 6.1: 3 February 2017
+ * @version 6.1: 3 February 2017 {commit f1b9b1c19d9ecbab5bbad948afede6d05c792711}
  * 			fix $Response->alert type cast only to array
+ * @version 6.2: 3 February 2017 {commit efa2efcf921ef6810a109b8a7a80bc669eb0fe4c}
+ * 			fix bug with API login using old session data
+ * @version 6.3: 6 February 2017 {commit de5ff9b6c86a916f20abd3e5fc25e1898814d057, ea4c5306cf46604da7d83ef7018aa3c3b5a13f52}
+ * 			Adjust to action attribute resolver in forms
+ * 			Fix Unnecesary check user session expiration on public pages
  *			
+ * @version 7: 8 February 2017 {commit 5afaea7476e954a225d3ab75a5d6d7284869b17e}
+ * 			Optimize Core alerts processing
+
+ * @version 8: 16 February 2017
+ * 			Added security for internal system packages, can only be accessed via composition not external
 **/
 namespace system;
 
@@ -443,6 +453,11 @@ class Core{
 		// Check user rights	
 		$perms = explode(',', $this::$permissions);
 
+		if (in_array("system", $perms)) {
+			$this->Response['error-redirect'] = array('redir'=>'/','toCall'=>'/', 'message'=>'Access denied!');
+			return false;
+		}
+		
 		if (in_array("admin", $perms)) {
 		
 			if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === TRUE)
