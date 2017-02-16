@@ -7,7 +7,7 @@ defined("SITE_URI") OR die(header("Location: error/403"));
 
 class Register extends Core{
     
-	public static $defaultMethod = 'signup';
+	public static $defaultMethod = 'create';
     function __construct(){
 		// check if already logged in
 		if(isset($_SESSION['is_user']))

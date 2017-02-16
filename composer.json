@@ -7,9 +7,7 @@
     },
 	
 	"autoload": { 
-        "psr-4": {
-            "Model\\": "system/Models/"
-        }
+      "classmap": ["system/Models/"]
     },
     "license": "MIT",
     "authors": [
