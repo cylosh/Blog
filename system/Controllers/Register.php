@@ -17,11 +17,5 @@ class Register extends Core{
     public function create(){
         return $this->HtmlView(array("Users", "register"));
     }
-    
-	// return boolean depending on user permissions
-    public function __toString()
-    {
-        return true;
-    }
 
 }

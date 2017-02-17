@@ -1,4 +1,5 @@
 <?php
+namespace system;
 
 /**
  * Core: Enables access to core methods and properties of the framework
@@ -42,19 +43,18 @@
  *			
  * @version 7: 8 February 2017 {commit 5afaea7476e954a225d3ab75a5d6d7284869b17e}
  * 			Optimize Core alerts processing
-
- * @version 8: 16 February 2017
+ *
+ * @version 8: 16 February 2017 {commit 417a0607d6f4488295da674e146c6ea618214e58}
  * 			Added security for internal system packages, can only be accessed via composition not external
+ *
+ * @version 9: 17 February 2017
+ * 			Implemented API forced redirect, for when working in pure Ajax environment
 **/
-namespace system;
 
 /*
 abstract class Page(){
-
-
 	static permission = 'user, editor, admin';
 	function __construct(){
-
 		
 	}
 	
@@ -64,14 +64,11 @@ abstract class Page(){
 	// cerere catre baza de date catre orice care indica ca are drepturi speciale ca un admin
 	function getowner(0){
 	}
-
-
 	function sample(){
 	$this->userInput()
 	chekc if he owner or has sufficient access
 	}
 }
-
 */
 
 class Core{
@@ -134,7 +131,7 @@ class Core{
 		$ignores = array('http', 'skype');
 		
 		$newhtml = '';
-		while (preg_match('/(?:href|action)=("|\')(.*?)("|\')/', $html, $link, PREG_OFFSET_CAPTURE)) {
+		while (preg_match('/(?:href|action)=("|\')(.+?)("|\')/', $html, $link, PREG_OFFSET_CAPTURE)) {
 			
 			$newhtml .= substr($html,0, $link[2][1]);
 			$html = substr($html, $link[2][1]+strlen($link[2][0]));
@@ -326,7 +323,7 @@ class Core{
 	/**
 	 * validateInput: manipulate external input from POST, GET, DELETE, PUT
 	 *
-	 * returns array('type'=>,'data'=>)
+	 * @returns array('type'=>,'data'=>)
  	 */
 	public function validateInput(){
 	
@@ -452,7 +449,8 @@ class Core{
 		
 		// Check user rights	
 		$perms = explode(',', $this::$permissions);
-
+		
+		
 		if (in_array("system", $perms)) {
 			$this->Response['error-redirect'] = array('redir'=>'/','toCall'=>'/', 'message'=>'Access denied!');
 			return false;
@@ -544,7 +542,7 @@ class Core{
 		// Process redirects differently for API and HTML views
 		// eg. if user wants to place a comment but session expired he will be redirected to login form
 		$redirect = false;
-		
+
 		if(isset($this->Response['error-redirect'])){
 			$this->Response['error']['alert'] = $_SESSION['error'] = $this->Response['error-redirect']['message'];
 			$_SESSION['controller'] = $this->Response['error-redirect']['toCall'];
@@ -559,6 +557,7 @@ class Core{
 			unset($this->Response['redirect']);
 		}
 		
+	
 		// get content shipping method
 		if(isset($_GET['json'])){
 		
@@ -566,9 +565,18 @@ class Core{
 			header('Cache-Control: no-cache, must-revalidate');
 			header('Expires: Mon, 7 Aug 1989 05:00:00 GMT');
 			header('Content-type: application/json');
+			
 			if(isset($this->Response['error']))
 				http_response_code(406);
 				
+			// Force API redirect
+			if(isset($this->Response['force-redirect']) && $this->Response['force-redirect']
+				&& $redirect && !empty($redirect)
+			){
+				print json_encode(array('redirUrl'=>SITE_URI.$redirect));
+				exit;
+			}
+			
 			$content = json_encode($this->Response);
 		}
 		elseif(isset($_GET['xml'])){
@@ -576,6 +584,14 @@ class Core{
 			$_SESSION['shipment'] = 'xml';
 			header("Content-Type: application/xml;");
 			$xml = \Array2XML::createXML('response', $this->Response);
+			
+			// Force API redirect
+			if(isset($this->Response['force-redirect']) && $this->Response['force-redirect']
+				&& $redirect && !empty($redirect)
+			){
+				print \Array2XML::createXML('redirUrl', SITE_URI.$redirect);
+				exit;
+			}
 			
 			$content = sanitizeXML($xml->saveXML());
 			
