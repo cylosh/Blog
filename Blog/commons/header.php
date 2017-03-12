@@ -3,7 +3,7 @@
          <div class="overlay">
             <!-- start:header-top -->
             <div class="header-top">
-               <div class="text-center" id="particlesjs-winter">
+               <div class="text-center" id="particlesjs-standard">
                   <div class="sosmed-header-top">
 						<a href="https://twitter.com/Cylosh"><i class="fa fa-twitter" data-toggle="tooltip" data-placement="bottom" title="Twitter"></i></a>
 						<a href="https://github.com/cylosh"><i class="fa fa-github" data-toggle="tooltip" data-placement="bottom" title="Github"></i></a>

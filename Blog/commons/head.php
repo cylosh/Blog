@@ -15,6 +15,6 @@
 <![endif]-->
 <!-- Set configs -->
 <script>
-	var particlesID = 'particlesjs-winter';
+	var particlesID = 'particlesjs-standard';
 	var particlesHeight = '240px';
 </script>

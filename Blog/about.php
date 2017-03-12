@@ -246,7 +246,7 @@ define("MENU_ACTIVE", 'about');
 
 
 	<!-- start:javascript -->
-	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/winter.js,particles/min.js,particles/init.js,init.js,bookblock/modernizr.custom.js,bookblock/jquerypp.custom.min.js,bookblock/jquery.bookblock.js,bookblock/init.js"></script>
+	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/standard.js,particles/min.js,particles/init.js,init.js,bookblock/modernizr.custom.js,bookblock/jquerypp.custom.min.js,bookblock/jquery.bookblock.js,bookblock/init.js"></script>
 	<!-- end:javascript -->
 		
    </body>

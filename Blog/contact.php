@@ -87,7 +87,7 @@ define("MENU_ACTIVE", 'contact');
 
 
 	<!-- start:javascript -->
-	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,particles/winter.js,particles/min.js,particles/init.js"></script>
+	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,particles/standard.js,particles/min.js,particles/init.js"></script>
 	  <script src="cached-assets/js/services/alerts.js,models/Contact.js,services/SendContact.js"></script>
 
 	<!-- end:javascript -->

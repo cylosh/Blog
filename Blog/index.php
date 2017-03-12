@@ -110,7 +110,7 @@ define("MENU_ACTIVE", 'index');
 
 
 	<!-- start:javascript -->
-	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/winter.js,particles/min.js,particles/init.js,init.js"></script>
+	<script src="cached-assets/js/jquery-1.11.1.min.js,bootstrap.min.js,owl.carousel.min.js,particles/standard.js,particles/min.js,particles/init.js,init.js"></script>
 	<!-- end:javascript -->
 
 </body>
