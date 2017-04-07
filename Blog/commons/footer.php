@@ -13,7 +13,6 @@
 							<a href="http://www.w3.org/Status" title="W3C's Open Source, bringing you free Web quality tools and more"><img src="//www.w3.org/Icons/WWW/w3c_home_nb" alt="W3C" width="72" height="47"><img src="https://validator.w3.org/images/opensource-55x48.png" alt="Open-Source" title="We are building certified Open Source/Free Software. - see www.opensource.org" width="55" height="48"></a>
 						</p>
 						<div class="sosmed-footer">
-							<a href="https://twitter.com/Cylosh"><i class="fa fa-twitter" data-toggle="tooltip" data-placement="bottom" title="Twitter"></i></a>
 							<a href="http://stackoverflow.com/users/2039952/cylosh?tab=profile"><i class="fa fa-github" data-toggle="tooltip" data-placement="bottom" title="Github"></i></a>
 							<a href="https://github.com/cylosh"><i class="fa fa-stack-overflow" data-toggle="tooltip" data-placement="bottom" title="StackOverflow"></i></a>
 							<a href="https://www.linkedin.com/in/cylosh"><i class="fa fa-linkedin" data-toggle="tooltip" data-placement="bottom" title="Linkedin"></i></a>
